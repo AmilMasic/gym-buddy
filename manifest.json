@@ -4,6 +4,7 @@
 	"version": "0.1.0",
 	"minAppVersion": "1.0.0",
 	"description": "Mobile-first Obsidian plugin for logging workouts with lightning-fast UX, markdown-native storage, and progress visualization.",
-	"author": "",
+	"author": "Amil Masic",
+	"authorUrl": "https://amilmasic.com",
 	"isDesktopOnly": false
 }
