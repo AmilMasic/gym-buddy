@@ -1,6 +1,9 @@
 import esbuild from "esbuild";
 import process from "process";
 import { builtinModules, createRequire } from "node:module";
+import { copyFileSync, mkdirSync, existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
 const require = createRequire(import.meta.url);
 const sveltePlugin = require("esbuild-svelte");
 
@@ -11,6 +14,40 @@ if you want to view the source, please visit the github repository of this plugi
 `;
 
 const prod = process.argv[2] === "production";
+const vault = process.argv[2] === "vault";
+
+// Load .env file for vault plugin directory
+function loadEnv() {
+	try {
+		const envFile = readFileSync(".env", "utf-8");
+		for (const line of envFile.split("\n")) {
+			const trimmed = line.trim();
+			if (trimmed && !trimmed.startsWith("#")) {
+				const [key, ...valueParts] = trimmed.split("=");
+				const value = valueParts.join("=");
+				if (key && value) {
+					process.env[key.trim()] = value.trim();
+				}
+			}
+		}
+	} catch {
+		// .env file doesn't exist, that's fine for non-vault mode
+	}
+}
+
+loadEnv();
+
+// Vault plugin directory from .env
+const VAULT_PLUGIN_DIR = process.env.VAULT_PLUGIN_DIR;
+
+if (vault && !VAULT_PLUGIN_DIR) {
+	console.error("Error: VAULT_PLUGIN_DIR not set in .env file");
+	console.error("Copy .env.example to .env and set your vault path");
+	process.exit(1);
+}
+
+// Determine output directory
+const outdir = vault ? VAULT_PLUGIN_DIR : ".";
 
 const context = await esbuild.context({
 	banner: {
@@ -47,13 +84,46 @@ const context = await esbuild.context({
 	logLevel: "info",
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
-	outfile: "main.js",
+	outfile: resolve(outdir, "main.js"),
 	minify: prod,
 });
+
+// Copy manifest.json and styles.css to vault when in vault mode
+function copyToVault() {
+	if (!vault) return;
+
+	// Ensure plugin directory exists
+	if (!existsSync(VAULT_PLUGIN_DIR)) {
+		mkdirSync(VAULT_PLUGIN_DIR, { recursive: true });
+	}
+
+	copyFileSync("manifest.json", resolve(VAULT_PLUGIN_DIR, "manifest.json"));
+	if (existsSync("styles.css")) {
+		copyFileSync("styles.css", resolve(VAULT_PLUGIN_DIR, "styles.css"));
+	}
+	console.log("Copied manifest.json and styles.css to vault");
+}
 
 if (prod) {
 	await context.rebuild();
 	process.exit(0);
 } else {
+	// Copy static files initially for vault mode
+	copyToVault();
+
+	// Watch for changes
 	await context.watch();
+
+	// For vault mode, also watch manifest.json and styles.css
+	if (vault) {
+		const { watch } = await import("node:fs");
+		for (const file of ["manifest.json", "styles.css"]) {
+			if (existsSync(file)) {
+				watch(file, () => {
+					copyToVault();
+				});
+			}
+		}
+		console.log(`\nWatching for changes... (outputting to ${VAULT_PLUGIN_DIR})`);
+	}
 }
