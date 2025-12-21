@@ -11,8 +11,8 @@ import { ActiveWorkout } from "./types";
 
 export default class GymBuddyPlugin extends Plugin {
 	settings: GymBuddySettings;
-	private storage: Storage;
-	private activeWorkout: ActiveWorkout | null = null;
+	storage: Storage;
+	activeWorkout: ActiveWorkout | null = null;
 
 	async onload() {
 		await this.loadSettings();
@@ -21,7 +21,7 @@ export default class GymBuddyPlugin extends Plugin {
 		// Register sidebar view for active workout
 		this.registerView(
 			VIEW_TYPE_WORKOUT,
-			(leaf) => new ActiveWorkoutView(leaf)
+			(leaf) => new ActiveWorkoutView(leaf, this)
 		);
 
 		// Commands
@@ -86,7 +86,7 @@ export default class GymBuddyPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	private async startWorkout() {
+	async startWorkout() {
 		// Create new active workout
 		this.activeWorkout = {
 			startTime: new Date(),

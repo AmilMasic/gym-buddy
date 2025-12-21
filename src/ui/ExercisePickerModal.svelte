@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Exercise} from '../types';
+	import type {Exercise} from '../types';
 
 	interface Props {
 		exercises?: Exercise[];
@@ -59,7 +59,6 @@
 		class="gym-buddy-search-input"
 		placeholder="Search exercises..."
 		bind:value={searchQuery}
-		autofocus
 	/>
 
 	{#if recentExercises.length > 0}
