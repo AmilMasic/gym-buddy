@@ -19,11 +19,116 @@ export class Storage {
 	}
 
 	/**
-	 * Load exercise library from plugin data
+	 * Get default exercise library
+	 */
+	private getDefaultExercises(): Exercise[] {
+		return [
+			{
+				id: "bench-press",
+				name: "Bench Press",
+				muscles: ["Chest", "Triceps", "Shoulders"],
+				type: "weight",
+				trackWeight: true,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+			{
+				id: "squat",
+				name: "Squat",
+				muscles: ["Quadriceps", "Glutes", "Hamstrings"],
+				type: "weight",
+				trackWeight: true,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+			{
+				id: "deadlift",
+				name: "Deadlift",
+				muscles: ["Back", "Hamstrings", "Glutes"],
+				type: "weight",
+				trackWeight: true,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+			{
+				id: "overhead-press",
+				name: "Overhead Press",
+				muscles: ["Shoulders", "Triceps"],
+				type: "weight",
+				trackWeight: true,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+			{
+				id: "barbell-row",
+				name: "Barbell Row",
+				muscles: ["Back", "Biceps"],
+				type: "weight",
+				trackWeight: true,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+			{
+				id: "pull-ups",
+				name: "Pull-ups",
+				muscles: ["Back", "Biceps"],
+				type: "bodyweight",
+				trackWeight: false,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+			{
+				id: "push-ups",
+				name: "Push-ups",
+				muscles: ["Chest", "Triceps", "Shoulders"],
+				type: "bodyweight",
+				trackWeight: false,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+			{
+				id: "dips",
+				name: "Dips",
+				muscles: ["Triceps", "Chest", "Shoulders"],
+				type: "bodyweight",
+				trackWeight: false,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+		];
+	}
+
+	/**
+	 * Load exercise library from plugin data, initializing with defaults if empty
 	 */
 	async loadExerciseLibrary(): Promise<Exercise[]> {
 		const data = (await this.plugin.loadData()) as PluginData | null;
-		return data?.exercises || [];
+		const exercises = data?.exercises || [];
+		
+		// Initialize with default exercises if library is empty
+		if (exercises.length === 0) {
+			const defaultExercises = this.getDefaultExercises();
+			await this.saveExerciseLibrary(defaultExercises);
+			return defaultExercises;
+		}
+		
+		return exercises;
 	}
 
 	/**

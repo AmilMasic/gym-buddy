@@ -23,6 +23,10 @@ export class ExercisePickerModal extends Modal {
 
 		// Load exercises from storage
 		const exercises = await this.plugin.storage.loadExerciseLibrary();
+		// #region agent log
+		fetch('http://127.0.0.1:7242/ingest/344acf04-5640-444a-9df3-a382b3708a2b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ExercisePickerModal.ts:25',message:'Exercises loaded',data:{exerciseCount:exercises.length,exerciseNames:exercises.slice(0,5).map(e=>e.name)},timestamp:Date.now(),sessionId:'debug-session',runId:'search-debug',hypothesisId:'C'})}).catch(()=>{});
+		// #endregion
+		console.log('ExercisePickerModal: Loaded exercises', exercises.length, exercises);
 
 		// Get recent exercises (last 5 unique exercises from active workout)
 		const recentExercises: Exercise[] = [];
@@ -48,6 +52,10 @@ export class ExercisePickerModal extends Modal {
 				selectedMuscles: [],
 			},
 		});
+		// #region agent log
+		fetch('http://127.0.0.1:7242/ingest/344acf04-5640-444a-9df3-a382b3708a2b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ExercisePickerModal.ts:50',message:'Svelte component mounted',data:{hasComponent:!!this.component,exerciseCount:exercises.length},timestamp:Date.now(),sessionId:'debug-session',runId:'search-debug',hypothesisId:'E'})}).catch(()=>{});
+		// #endregion
+		console.log('ExercisePickerModal: Component mounted', this.component);
 
 		// Listen for exercise selection
 		const handleSelect = (event: CustomEvent) => {
