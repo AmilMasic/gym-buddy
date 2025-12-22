@@ -70,11 +70,17 @@ Mobile-first design with touch-friendly targets
 	color: var(--text-normal);
 }
 
-/* Stepper component styles (also in Svelte, but base styles here for fallback) */
+/* Stepper component styles */
 .gym-buddy-stepper {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
+}
+
+.gym-buddy-stepper-label {
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--text-normal);
 }
 
 .gym-buddy-stepper-controls {
@@ -122,6 +128,22 @@ Mobile-first design with touch-friendly targets
 	color: var(--text-normal);
 }
 
+/* Set Input Component Styles */
+.gym-buddy-set-input {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 16px;
+	background: var(--background-secondary);
+	border-radius: 12px;
+}
+
+.gym-buddy-set-input-row {
+	display: flex;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
 /* Log button */
 .gym-buddy-log-btn {
 	width: 100%;
@@ -150,6 +172,13 @@ Mobile-first design with touch-friendly targets
 .gym-buddy-log-btn:disabled {
 	opacity: 0.5;
 	cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+	.gym-buddy-log-btn {
+		height: 64px;
+		font-size: 20px;
+	}
 }
 
 /* Desktop: More compact UI */
@@ -838,7 +867,183 @@ Mobile-first design with touch-friendly targets
 	max-width: 600px;
 }
 
-/* Progress indicator */
+/* Split Picker Modal Styles */
+.gym-buddy-split-picker {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.gym-buddy-split-picker-header {
+	text-align: center;
+}
+
+.gym-buddy-split-picker-header h2 {
+	margin: 0 0 8px 0;
+	font-size: 18px;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.gym-buddy-split-suggestion {
+	background: var(--background-secondary);
+	border: 2px solid var(--interactive-accent);
+	border-radius: 12px;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	text-align: center;
+}
+
+.gym-buddy-split-suggestion-header {
+	display: flex;
+	justify-content: center;
+}
+
+.gym-buddy-today-label {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--interactive-accent);
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+.gym-buddy-split-suggestion-content {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.gym-buddy-suggested-split-name {
+	font-size: 24px;
+	font-weight: 700;
+	color: var(--text-normal);
+}
+
+.gym-buddy-suggested-split-muscles {
+	font-size: 14px;
+	color: var(--text-muted);
+}
+
+.gym-buddy-confirm-button {
+	padding: 14px 24px;
+	font-size: 16px;
+	font-weight: 600;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.gym-buddy-confirm-button:hover {
+	filter: brightness(1.1);
+}
+
+.gym-buddy-divider {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	color: var(--text-muted);
+	font-size: 12px;
+}
+
+.gym-buddy-divider::before,
+.gym-buddy-divider::after {
+	content: '';
+	flex: 1;
+	height: 1px;
+	background: var(--background-modifier-border);
+}
+
+.gym-buddy-split-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.gym-buddy-split-item {
+	padding: 16px;
+	text-align: left;
+	border: 2px solid var(--background-modifier-border);
+	border-radius: 10px;
+	background: var(--background-primary);
+	cursor: pointer;
+	transition: all 0.2s ease;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.gym-buddy-split-item:hover {
+	background: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+}
+
+.gym-buddy-split-name {
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.gym-buddy-split-muscles {
+	font-size: 13px;
+	color: var(--text-muted);
+}
+
+.gym-buddy-no-template {
+	text-align: center;
+	color: var(--text-muted);
+	padding: 20px;
+}
+
+/* Desktop: Split Picker Compact */
+@media (min-width: 769px) {
+	.gym-buddy-split-picker {
+		padding: 16px;
+		gap: 16px;
+	}
+
+	.gym-buddy-split-picker-header h2 {
+		font-size: 16px;
+	}
+
+	.gym-buddy-split-suggestion {
+		padding: 16px;
+		gap: 12px;
+	}
+
+	.gym-buddy-suggested-split-name {
+		font-size: 20px;
+	}
+
+	.gym-buddy-confirm-button {
+		padding: 12px 20px;
+		font-size: 14px;
+	}
+
+	.gym-buddy-split-list {
+		gap: 8px;
+	}
+
+	.gym-buddy-split-item {
+		padding: 12px;
+		gap: 4px;
+	}
+
+	.gym-buddy-split-name {
+		font-size: 14px;
+	}
+
+	.gym-buddy-split-muscles {
+		font-size: 12px;
+	}
+}
+
+/* Training Setup Modal Styles */
 .gym-buddy-setup-progress {
 	display: flex;
 	align-items: center;
