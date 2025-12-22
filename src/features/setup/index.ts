@@ -1,0 +1,1 @@
+export { TrainingSetupModal } from "./TrainingSetupModal";

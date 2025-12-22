@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { SplitTemplate, TrainingSplit } from '../types';
-	import type { AvailableSplit } from '../data/splitTemplates';
-	import { getAllAvailableSplits, createCompositeTemplate } from '../data/splitTemplates';
+	import type { SplitTemplate, TrainingSplit } from '../../types';
+	import type { AvailableSplit } from './splitTemplates';
+	import { getAllAvailableSplits, createCompositeTemplate } from './splitTemplates';
 
 	interface Props {
 		builtInTemplates?: SplitTemplate[];

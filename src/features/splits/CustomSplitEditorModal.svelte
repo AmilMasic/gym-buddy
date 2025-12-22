@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SplitTemplate, TrainingSplit } from '../types';
+	import type { SplitTemplate, TrainingSplit } from '../../types';
 
 	interface Props {
 		customTemplates?: SplitTemplate[];

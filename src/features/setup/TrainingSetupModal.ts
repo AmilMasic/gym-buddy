@@ -1,10 +1,10 @@
 import { Modal } from "obsidian";
 import { mount, unmount } from "svelte";
 import TrainingSetupModalComponent from "./TrainingSetupModal.svelte";
-import GymBuddyPlugin from "../main";
-import { BUILT_IN_TEMPLATES } from "../data/splitTemplates";
-import { WeeklySchedule } from "../settings";
-import { CustomSplitBuilderModal } from "./CustomSplitBuilderModal";
+import GymBuddyPlugin from "../../main";
+import { BUILT_IN_TEMPLATES } from "../splits/splitTemplates";
+import { WeeklySchedule } from "../../settings";
+import { CustomSplitBuilderModal } from "../splits/CustomSplitBuilderModal";
 
 interface SetupResult {
 	templateId: string;

@@ -1,7 +1,7 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
-import GymBuddyPlugin from "./main";
-import { WeightUnit, SplitTemplate } from "./types";
-import { BUILT_IN_TEMPLATES } from "./data/splitTemplates";
+import GymBuddyPlugin from "../main";
+import { WeightUnit, SplitTemplate } from "../types";
+import { BUILT_IN_TEMPLATES } from "../features/splits/splitTemplates";
 
 // Weekly schedule maps day of week to split ID
 export interface WeeklySchedule {

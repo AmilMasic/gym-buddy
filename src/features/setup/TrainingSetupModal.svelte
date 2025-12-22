@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { SplitTemplate, TrainingSplit } from '../types';
-	import type { WeeklySchedule } from '../settings';
+	import type { SplitTemplate, TrainingSplit } from '../../types';
+	import type { WeeklySchedule } from '../../settings';
 
 	interface Props {
 		templates?: SplitTemplate[];

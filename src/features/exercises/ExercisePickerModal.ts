@@ -1,9 +1,9 @@
 import { Modal } from "obsidian";
 import { mount, unmount } from "svelte";
 import ExercisePickerModalComponent from "./ExercisePickerModal.svelte";
-import { Exercise, TrainingSplit } from "../types";
-import GymBuddyPlugin from "../main";
-import { BUILT_IN_TEMPLATES } from "../data/splitTemplates";
+import { Exercise, TrainingSplit } from "../../types";
+import GymBuddyPlugin from "../../main";
+import { BUILT_IN_TEMPLATES } from "../splits/splitTemplates";
 
 export class ExercisePickerModal extends Modal {
 	private component: ReturnType<typeof mount> | null = null;
@@ -150,7 +150,7 @@ export class ExercisePickerModal extends Modal {
 
 		// Unmount existing component if any
 		if (this.component) {
-			unmount(this.component);
+			void unmount(this.component);
 		}
 
 		// Clear and remount
@@ -166,7 +166,7 @@ export class ExercisePickerModal extends Modal {
 	private setupEventListeners() {
 		// Listen for exercise selection
 		this.selectHandler = (event: CustomEvent) => {
-			const exercise = event.detail.exercise as Exercise;
+			const exercise = (event.detail as { exercise: Exercise }).exercise;
 			this.onSelect(exercise);
 			this.close();
 		};
@@ -178,7 +178,7 @@ export class ExercisePickerModal extends Modal {
 		// Listen for favorite toggle - remount component to update UI
 		this.toggleFavoriteHandler = (event: CustomEvent) => {
 			void (async () => {
-				const { exerciseId } = event.detail;
+				const { exerciseId } = event.detail as { exerciseId: string };
 				const splitIdForFavorites = this.currentSplit?.id || "global";
 
 				const isFavorite = await this.plugin.storage.toggleFavorite(
@@ -306,7 +306,7 @@ export class ExercisePickerModal extends Modal {
 
 	onClose() {
 		if (this.component) {
-			unmount(this.component);
+			void unmount(this.component);
 			this.component = null;
 		}
 

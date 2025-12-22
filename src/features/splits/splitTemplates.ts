@@ -1,4 +1,4 @@
-import { SplitTemplate, TrainingSplit } from "../types";
+import { SplitTemplate, TrainingSplit } from "../../types";
 
 /**
  * Built-in training split templates

@@ -1,12 +1,12 @@
 import { Modal } from "obsidian";
 import { mount, unmount } from "svelte";
 import CustomSplitEditorModalComponent from "./CustomSplitEditorModal.svelte";
-import { SplitTemplate } from "../types";
-import GymBuddyPlugin from "../main";
-import { BUILT_IN_TEMPLATES } from "../data/splitTemplates";
+import { SplitTemplate } from "../../types";
+import GymBuddyPlugin from "../../main";
+import { BUILT_IN_TEMPLATES } from "./splitTemplates";
 
 export class CustomSplitEditorModal extends Modal {
-	private component: any = null;
+	private component: ReturnType<typeof mount> | null = null;
 	private plugin: GymBuddyPlugin;
 	private onSave: (template: SplitTemplate) => void;
 	private saveHandler: ((event: CustomEvent) => void) | null = null;
@@ -46,27 +46,35 @@ export class CustomSplitEditorModal extends Modal {
 
 		// Listen for save event
 		const handleSave = (event: CustomEvent) => {
-			const template = event.detail.template as SplitTemplate;
+			const template = (event.detail as { template: SplitTemplate })
+				.template;
 			this.onSave(template);
 			this.close();
 		};
 
 		// Listen for delete event
 		const handleDelete = (event: CustomEvent) => {
-			const templateId = event.detail.templateId as string;
+			const templateId = (event.detail as { templateId: string })
+				.templateId;
 			this.onDelete(templateId);
 			// Don't close modal, allow editing another
 		};
 
 		this.saveHandler = handleSave;
 		this.deleteHandler = handleDelete;
-		document.addEventListener("save-split-template", handleSave as EventListener);
-		document.addEventListener("delete-split-template", handleDelete as EventListener);
+		document.addEventListener(
+			"save-split-template",
+			handleSave as EventListener
+		);
+		document.addEventListener(
+			"delete-split-template",
+			handleDelete as EventListener
+		);
 	}
 
 	onClose() {
 		if (this.component) {
-			unmount(this.component);
+			void unmount(this.component);
 			this.component = null;
 		}
 		// Clean up event listeners
@@ -86,4 +94,3 @@ export class CustomSplitEditorModal extends Modal {
 		}
 	}
 }
-

@@ -1,14 +1,14 @@
 import { Modal } from "obsidian";
 import { mount, unmount } from "svelte";
 import SplitPickerModalComponent from "./SplitPickerModal.svelte";
-import { TrainingSplit, SplitTemplate } from "../types";
-import GymBuddyPlugin from "../main";
+import { TrainingSplit, SplitTemplate } from "../../types";
+import GymBuddyPlugin from "../../main";
 import {
 	getSplitTemplate,
 	getTodaysSplit,
 	getTodayDayOfWeek,
 	BUILT_IN_TEMPLATES,
-} from "../data/splitTemplates";
+} from "./splitTemplates";
 
 export class SplitPickerModal extends Modal {
 	private component: ReturnType<typeof mount> | null = null;
@@ -67,18 +67,21 @@ export class SplitPickerModal extends Modal {
 
 		// Listen for split selection
 		const handleSelect = (event: CustomEvent) => {
-			const split = event.detail.split as TrainingSplit;
+			const split = (event.detail as { split: TrainingSplit }).split;
 			this.onSelect(split);
 			this.close();
 		};
 
 		this.selectHandler = handleSelect;
-		document.addEventListener("select-split", handleSelect as EventListener);
+		document.addEventListener(
+			"select-split",
+			handleSelect as EventListener
+		);
 	}
 
 	onClose() {
 		if (this.component) {
-			unmount(this.component);
+			void unmount(this.component);
 			this.component = null;
 		}
 		// Clean up event listener

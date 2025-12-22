@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Exercise, TrainingSplit} from '../types';
+	import type {Exercise, TrainingSplit} from '../../types';
 
 	interface Props {
 		exercises?: Exercise[];

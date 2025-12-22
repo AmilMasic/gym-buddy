@@ -4,13 +4,16 @@ import {
 	GymBuddySettings,
 	GymBuddySettingTab,
 } from "./settings";
-import { ActiveWorkoutView } from "./ui/ActiveWorkoutView";
+import { ActiveWorkoutView } from "./features/workout";
 import { VIEW_TYPE_WORKOUT } from "./constants";
-import { Storage } from "./data/storage";
+import { Storage } from "./data";
 import { ActiveWorkout, TrainingSplit } from "./types";
-import { SplitPickerModal } from "./ui/SplitPickerModal";
-import { TrainingSetupModal } from "./ui/TrainingSetupModal";
-import { getSplitTemplate, getTodaysSplit, BUILT_IN_TEMPLATES } from "./data/splitTemplates";
+import {
+	SplitPickerModal,
+	getTodaysSplit,
+	BUILT_IN_TEMPLATES,
+} from "./features/splits";
+import { TrainingSetupModal } from "./features/setup";
 
 export default class GymBuddyPlugin extends Plugin {
 	settings: GymBuddySettings;
@@ -102,7 +105,11 @@ export default class GymBuddyPlugin extends Plugin {
 	 */
 	openTrainingSetup(): void {
 		const modal = new TrainingSetupModal(this, (result) => {
-			new Notice(`Training configured: ${this.getTemplateName(result.templateId)}`);
+			new Notice(
+				`Training configured: ${this.getTemplateName(
+					result.templateId
+				)}`
+			);
 		});
 		modal.open();
 	}
@@ -115,7 +122,9 @@ export default class GymBuddyPlugin extends Plugin {
 			...BUILT_IN_TEMPLATES,
 			...this.settings.customSplitTemplates,
 		];
-		return allTemplates.find((t) => t.id === templateId)?.name || templateId;
+		return (
+			allTemplates.find((t) => t.id === templateId)?.name || templateId
+		);
 	}
 
 	/**
@@ -124,8 +133,9 @@ export default class GymBuddyPlugin extends Plugin {
 	private getActiveTemplate() {
 		const templateId = this.settings.activeSplitTemplateId;
 		return (
-			this.settings.customSplitTemplates.find((t) => t.id === templateId) ||
-			BUILT_IN_TEMPLATES.find((t) => t.id === templateId)
+			this.settings.customSplitTemplates.find(
+				(t) => t.id === templateId
+			) || BUILT_IN_TEMPLATES.find((t) => t.id === templateId)
 		);
 	}
 
@@ -152,7 +162,10 @@ export default class GymBuddyPlugin extends Plugin {
 		} else {
 			// Auto-detect today's split from weekly schedule
 			if (template) {
-				const todaysSplit = getTodaysSplit(this.settings.weeklySchedule, template);
+				const todaysSplit = getTodaysSplit(
+					this.settings.weeklySchedule,
+					template
+				);
 				if (todaysSplit) {
 					selectedSplit = todaysSplit;
 					new Notice(`Starting ${todaysSplit.name} workout`);

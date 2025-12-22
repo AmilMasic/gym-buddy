@@ -1,4 +1,4 @@
-import { Exercise, ExternalExercise, ExerciseType } from "../types";
+import { Exercise, ExternalExercise, ExerciseType } from "../../types";
 import exercisesData from "./exercises.json";
 
 /**
@@ -9,7 +9,7 @@ const MUSCLE_NORMALIZATION: Record<string, string> = {
 	// Core/abs
 	abdominals: "Abs",
 	abs: "Abs",
-	
+
 	// Back
 	lats: "Lats",
 	"middle back": "Middle Back",
@@ -17,21 +17,21 @@ const MUSCLE_NORMALIZATION: Record<string, string> = {
 	"upper back": "Upper Back",
 	back: "Back",
 	traps: "Traps",
-	
+
 	// Chest
 	chest: "Chest",
 	pectorals: "Chest",
-	
+
 	// Shoulders
 	shoulders: "Shoulders",
 	delts: "Shoulders",
 	"rear delts": "Rear Delts",
-	
+
 	// Arms
 	biceps: "Biceps",
 	triceps: "Triceps",
 	forearms: "Forearms",
-	
+
 	// Legs
 	quadriceps: "Quadriceps",
 	quads: "Quadriceps",
@@ -40,7 +40,7 @@ const MUSCLE_NORMALIZATION: Record<string, string> = {
 	calves: "Calves",
 	adductors: "Adductors",
 	abductors: "Abductors",
-	
+
 	// Other
 	cardiovascular: "Cardio",
 	neck: "Neck",
@@ -73,7 +73,10 @@ export class ExerciseDatabase {
 	 */
 	private normalizeMuscleName(muscle: string): string {
 		const normalized = MUSCLE_NORMALIZATION[muscle.toLowerCase()];
-		return normalized || muscle.charAt(0).toUpperCase() + muscle.slice(1).toLowerCase();
+		return (
+			normalized ||
+			muscle.charAt(0).toUpperCase() + muscle.slice(1).toLowerCase()
+		);
 	}
 
 	/**
@@ -104,7 +107,8 @@ export class ExerciseDatabase {
 			id: external.id,
 			name: external.name,
 			muscles: primaryMuscles,
-			secondaryMuscles: secondaryMuscles.length > 0 ? secondaryMuscles : undefined,
+			secondaryMuscles:
+				secondaryMuscles.length > 0 ? secondaryMuscles : undefined,
 			type: exerciseType,
 			trackWeight,
 			trackReps,
@@ -252,4 +256,3 @@ export function getExerciseDatabase(): ExerciseDatabase {
 	}
 	return databaseInstance;
 }
-

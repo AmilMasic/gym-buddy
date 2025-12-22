@@ -1,7 +1,7 @@
 import { TFile, TAbstractFile, TFolder } from "obsidian";
 import { Workout, Exercise, PRRecord, SplitFavorites } from "../types";
 import GymBuddyPlugin from "../main";
-import { getExerciseDatabase } from "./exerciseDatabase";
+import { getExerciseDatabase } from "../features/exercises/exerciseDatabase";
 
 interface PluginData {
 	exercises?: Exercise[]; // Custom exercises only
@@ -123,24 +123,24 @@ export class Storage {
 		// Initialize database
 		const database = getExerciseDatabase();
 		await database.initialize();
-		
+
 		// Get all exercises from database
 		const databaseExercises = database.getAllExercises();
-		
+
 		// Load custom exercises from plugin data
 		const data = (await this.plugin.loadData()) as PluginData | null;
 		const customExercises = data?.exercises || [];
-		
+
 		// Create a map of custom exercises by ID for quick lookup
 		const customMap = new Map<string, Exercise>();
 		for (const ex of customExercises) {
 			customMap.set(ex.id, ex);
 		}
-		
+
 		// Merge: database exercises take precedence, but custom exercises override
 		// Custom exercises are marked with source: 'custom'
 		const merged: Exercise[] = [];
-		
+
 		// Add all database exercises
 		for (const dbEx of databaseExercises) {
 			// If custom exercise exists with same ID, use custom (user override)
@@ -152,19 +152,19 @@ export class Storage {
 				merged.push(dbEx);
 			}
 		}
-		
+
 		// Add remaining custom exercises (new IDs not in database)
 		for (const customEx of customMap.values()) {
 			merged.push({ ...customEx, source: "custom" });
 		}
-		
+
 		// If no custom exercises exist and database is empty, initialize with defaults
 		if (merged.length === 0) {
 			const defaultExercises = this.getDefaultExercises();
 			await this.saveExerciseLibrary(defaultExercises);
 			return defaultExercises;
 		}
-		
+
 		return merged;
 	}
 
@@ -305,7 +305,7 @@ export class Storage {
 		const data =
 			((await this.plugin.loadData()) as PluginData | null) ||
 			({} as PluginData);
-		
+
 		if (!data.splitFavorites) {
 			data.splitFavorites = [];
 		}

@@ -1,9 +1,9 @@
 import { Modal } from "obsidian";
 import { mount, unmount } from "svelte";
 import CustomSplitBuilderModalComponent from "./CustomSplitBuilderModal.svelte";
-import { SplitTemplate } from "../types";
-import { BUILT_IN_TEMPLATES } from "../data/splitTemplates";
-import GymBuddyPlugin from "../main";
+import { SplitTemplate } from "../../types";
+import { BUILT_IN_TEMPLATES } from "./splitTemplates";
+import GymBuddyPlugin from "../../main";
 
 interface BuilderResult {
 	template: SplitTemplate;

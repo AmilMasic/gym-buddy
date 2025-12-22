@@ -64,6 +64,63 @@ npm run build
 - Keep the plugin small. Avoid large dependencies. Prefer browser-compatible packages.
 - Generated output should be placed at the plugin root or `dist/` depending on your build setup. Release artifacts must end up at the top level of the plugin folder in the vault (`main.js`, `manifest.json`, `styles.css`).
 
+## Folder Structure
+
+This project uses **feature-based organization**:
+
+- `src/features/` - Domain features (workout, exercises, splits, setup)
+  - Each feature folder contains:
+    - Modal wrapper (.ts) + Svelte component (.svelte) pairs
+    - Feature-specific data/logic
+    - `index.ts` exporting public API
+- `src/data/` - Cross-cutting data layer (storage, parser)
+- `src/ui/components/` - Shared reusable UI components
+- `src/settings/` - Plugin configuration
+
+**Current structure:**
+```
+src/
+├── main.ts                      # Plugin entry point
+├── constants.ts                 # App constants
+├── types.ts                     # Shared types
+├── settings/
+│   └── index.ts                 # Settings interface and defaults
+├── features/
+│   ├── workout/                 # Main workout logging feature
+│   │   ├── ActiveWorkoutView.ts
+│   │   └── index.ts
+│   ├── exercises/               # Exercise selection & database
+│   │   ├── ExercisePickerModal.ts
+│   │   ├── ExercisePickerModal.svelte
+│   │   ├── exerciseDatabase.ts
+│   │   ├── exercises.json
+│   │   └── index.ts
+│   ├── splits/                  # Training split management
+│   │   ├── SplitPickerModal.ts
+│   │   ├── SplitPickerModal.svelte
+│   │   ├── CustomSplitBuilderModal.ts
+│   │   ├── CustomSplitBuilderModal.svelte
+│   │   ├── CustomSplitEditorModal.ts
+│   │   ├── CustomSplitEditorModal.svelte
+│   │   ├── splitTemplates.ts
+│   │   └── index.ts
+│   └── setup/                   # Initial training setup
+│       ├── TrainingSetupModal.ts
+│       ├── TrainingSetupModal.svelte
+│       └── index.ts
+├── data/                        # Cross-cutting data layer
+│   ├── storage.ts               # Persistence (favorites, PRs, custom exercises)
+│   ├── parser.ts                # Markdown ↔ Workout conversion
+│   └── index.ts
+└── ui/                          # Shared UI components
+    └── components/
+        ├── NumberStepper.svelte
+        ├── SetInput.svelte
+        └── index.ts
+```
+
+When adding new features, create a new folder under `src/features/` and export from its `index.ts`.
+
 ## Manifest rules (`manifest.json`)
 
 - Must include (non-exhaustive):  
