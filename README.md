@@ -79,6 +79,10 @@ npm run build    # Production build
 npm run lint     # Run ESLint
 ```
 
+## Acknowledgments
+
+Exercise data provided by [free-exercise-db](https://github.com/yuhonas/free-exercise-db) by [yuhonas](https://github.com/yuhonas) - an open public domain exercise dataset with 800+ exercises in JSON format.
+
 ## License
 
 0-BSD
