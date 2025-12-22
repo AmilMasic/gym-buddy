@@ -12,7 +12,8 @@ export class ExercisePickerModal extends Modal {
 	private selectHandler: ((event: CustomEvent) => void) | null = null;
 	private toggleFavoriteHandler: ((event: CustomEvent) => void) | null = null;
 	private collapseHandler: ((event: CustomEvent) => void) | null = null;
-	private muscleSelectionHandler: ((event: CustomEvent) => void) | null = null;
+	private muscleSelectionHandler: ((event: CustomEvent) => void) | null =
+		null;
 
 	// Store current state for remounting
 	private exercises: Exercise[] = [];
@@ -75,8 +76,9 @@ export class ExercisePickerModal extends Modal {
 
 		// Load favorites - use current split or a global fallback
 		const splitIdForFavorites = this.currentSplit?.id || "global";
-		this.favoriteExercises =
-			await this.plugin.storage.getFavoriteExercises(splitIdForFavorites);
+		this.favoriteExercises = await this.plugin.storage.getFavoriteExercises(
+			splitIdForFavorites
+		);
 		this.favoriteIds = new Set(this.favoriteExercises.map((e) => e.id));
 
 		// Get collapse state from settings
@@ -87,8 +89,36 @@ export class ExercisePickerModal extends Modal {
 			this.plugin.settings.muscleGroupsExpanded ??
 			this.plugin.settings.defaultMuscleGroupsExpanded;
 
-		// Get persisted muscle group selections
-		const selectedMuscles = this.plugin.settings.selectedMuscleGroups || [];
+		// Auto-select muscle groups based on current split
+		let selectedMuscles: string[] = [];
+
+		if (this.currentSplit && this.currentSplit.muscleGroups.length > 0) {
+			// Check if this is a "full body" split (has all major muscle groups)
+			const allMajorMuscles = [
+				"Chest",
+				"Back",
+				"Shoulders",
+				"Biceps",
+				"Triceps",
+				"Quadriceps",
+				"Hamstrings",
+				"Glutes",
+				"Calves",
+				"Abs",
+			];
+			const splitMuscles = this.currentSplit.muscleGroups;
+			const isFullBody = allMajorMuscles.every((m) =>
+				splitMuscles.includes(m)
+			);
+
+			// Only auto-select if NOT full body
+			if (!isFullBody) {
+				selectedMuscles = [...this.currentSplit.muscleGroups];
+			}
+		} else {
+			// Fall back to persisted selections if no split
+			selectedMuscles = this.plugin.settings.selectedMuscleGroups || [];
+		}
 
 		// Mount Svelte component
 		this.mountComponent({
@@ -146,65 +176,96 @@ export class ExercisePickerModal extends Modal {
 		);
 
 		// Listen for favorite toggle - remount component to update UI
-		this.toggleFavoriteHandler = async (event: CustomEvent) => {
-			const { exerciseId } = event.detail;
-			const splitIdForFavorites = this.currentSplit?.id || "global";
+		this.toggleFavoriteHandler = (event: CustomEvent) => {
+			void (async () => {
+				const { exerciseId } = event.detail;
+				const splitIdForFavorites = this.currentSplit?.id || "global";
 
-			const isFavorite = await this.plugin.storage.toggleFavorite(
-				splitIdForFavorites,
-				exerciseId
-			);
-
-			// Update local state
-			if (isFavorite) {
-				this.favoriteIds.add(exerciseId);
-				const ex = this.exercises.find((e) => e.id === exerciseId);
-				if (ex) {
-					this.favoriteExercises.push(ex);
-				}
-			} else {
-				this.favoriteIds.delete(exerciseId);
-				this.favoriteExercises = this.favoriteExercises.filter(
-					(e) => e.id !== exerciseId
+				const isFavorite = await this.plugin.storage.toggleFavorite(
+					splitIdForFavorites,
+					exerciseId
 				);
-			}
 
-			// Get current state for remount
-			const recentExercises: Exercise[] = [];
-			if (this.plugin.activeWorkout) {
-				const recentIds = new Set<string>();
-				for (const workoutEx of this.plugin.activeWorkout.exercises
-					.slice(-5)
-					.reverse()) {
-					if (
-						workoutEx.exerciseId &&
-						!recentIds.has(workoutEx.exerciseId)
-					) {
-						const ex = this.exercises.find(
-							(e) => e.id === workoutEx.exerciseId
-						);
-						if (ex) {
-							recentExercises.push(ex);
-							recentIds.add(workoutEx.exerciseId);
+				// Update local state
+				if (isFavorite) {
+					this.favoriteIds.add(exerciseId);
+					const ex = this.exercises.find((e) => e.id === exerciseId);
+					if (ex) {
+						this.favoriteExercises.push(ex);
+					}
+				} else {
+					this.favoriteIds.delete(exerciseId);
+					this.favoriteExercises = this.favoriteExercises.filter(
+						(e) => e.id !== exerciseId
+					);
+				}
+
+				// Get current state for remount
+				const recentExercises: Exercise[] = [];
+				if (this.plugin.activeWorkout) {
+					const recentIds = new Set<string>();
+					for (const workoutEx of this.plugin.activeWorkout.exercises
+						.slice(-5)
+						.reverse()) {
+						if (
+							workoutEx.exerciseId &&
+							!recentIds.has(workoutEx.exerciseId)
+						) {
+							const ex = this.exercises.find(
+								(e) => e.id === workoutEx.exerciseId
+							);
+							if (ex) {
+								recentExercises.push(ex);
+								recentIds.add(workoutEx.exerciseId);
+							}
 						}
 					}
 				}
-			}
 
-			// Remount with updated favorites
-			this.mountComponent({
-				exercises: this.exercises,
-				recentExercises,
-				favoriteExercises: this.favoriteExercises,
-				favoriteIds: new Set(this.favoriteIds),
-				currentSplit: this.currentSplit,
-				selectedMuscles:
-					this.plugin.settings.selectedMuscleGroups || [],
-				recentExpanded:
-					this.plugin.settings.recentExercisesExpanded ?? true,
-				muscleGroupsExpanded:
-					this.plugin.settings.muscleGroupsExpanded ?? true,
-			});
+				// Determine selected muscles (auto-select based on split if applicable)
+				let selectedMuscles: string[] = [];
+				if (
+					this.currentSplit &&
+					this.currentSplit.muscleGroups.length > 0
+				) {
+					const allMajorMuscles = [
+						"Chest",
+						"Back",
+						"Shoulders",
+						"Biceps",
+						"Triceps",
+						"Quadriceps",
+						"Hamstrings",
+						"Glutes",
+						"Calves",
+						"Abs",
+					];
+					const splitMuscles = this.currentSplit.muscleGroups;
+					const isFullBody = allMajorMuscles.every((m) =>
+						splitMuscles.includes(m)
+					);
+					if (!isFullBody) {
+						selectedMuscles = [...this.currentSplit.muscleGroups];
+					}
+				} else {
+					selectedMuscles =
+						this.plugin.settings.selectedMuscleGroups || [];
+				}
+
+				// Remount with updated favorites
+				this.mountComponent({
+					exercises: this.exercises,
+					recentExercises,
+					favoriteExercises: this.favoriteExercises,
+					favoriteIds: new Set(this.favoriteIds),
+					currentSplit: this.currentSplit,
+					selectedMuscles,
+					recentExpanded:
+						this.plugin.settings.recentExercisesExpanded ?? true,
+					muscleGroupsExpanded:
+						this.plugin.settings.muscleGroupsExpanded ?? true,
+				});
+			})();
 		};
 		document.addEventListener(
 			"toggle-favorite",

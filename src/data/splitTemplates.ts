@@ -156,10 +156,70 @@ export const BUILT_IN_TEMPLATES: SplitTemplate[] = [
 			},
 		],
 	},
+	{
+		id: "hybrid",
+		name: "Hybrid (PPL + Upper/Lower)",
+		splits: [
+			{
+				id: "hybrid-push",
+				name: "Push",
+				muscleGroups: [
+					"Chest",
+					"Shoulders",
+					"Triceps",
+				],
+			},
+			{
+				id: "hybrid-pull",
+				name: "Pull",
+				muscleGroups: [
+					"Back",
+					"Biceps",
+					"Traps",
+					"Rear Delts",
+				],
+			},
+			{
+				id: "hybrid-legs",
+				name: "Legs",
+				muscleGroups: [
+					"Quadriceps",
+					"Hamstrings",
+					"Glutes",
+					"Calves",
+				],
+			},
+			{
+				id: "hybrid-upper",
+				name: "Upper Body",
+				muscleGroups: [
+					"Chest",
+					"Back",
+					"Shoulders",
+					"Biceps",
+					"Triceps",
+					"Traps",
+				],
+			},
+			{
+				id: "hybrid-lower",
+				name: "Lower Body",
+				muscleGroups: [
+					"Quadriceps",
+					"Hamstrings",
+					"Glutes",
+					"Calves",
+					"Abs",
+				],
+			},
+		],
+	},
 ];
 
 /**
- * Get a split template by ID
+ * Get a split template by ID (checks both built-in and custom templates)
+ * Note: This function only checks built-in templates. For custom templates,
+ * use the plugin's settings.customSplitTemplates directly.
  */
 export function getSplitTemplate(templateId: string): SplitTemplate | undefined {
 	return BUILT_IN_TEMPLATES.find((t) => t.id === templateId);
