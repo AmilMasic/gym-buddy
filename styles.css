@@ -1625,3 +1625,300 @@ Mobile-first design with touch-friendly targets
 .gym-buddy-modal-input-full-width {
 	width: 100%;
 }
+
+/* ===========================================
+   Exercise Picker - Selected Muscles Preview
+   =========================================== */
+.gym-buddy-selected-muscles-preview {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-top: 4px;
+}
+
+.gym-buddy-selected-muscles-label {
+	font-size: 12px;
+	color: var(--text-muted);
+	font-weight: 500;
+}
+
+.gym-buddy-selected-muscles-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.gym-buddy-selected-muscle-chip {
+	padding: 2px 8px;
+	font-size: 11px;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-radius: 12px;
+}
+
+.gym-buddy-current-split-badge {
+	padding: 8px 12px;
+	background: var(--background-secondary);
+	border: 1px solid var(--interactive-accent);
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--interactive-accent);
+	text-align: center;
+}
+
+.gym-buddy-exercise-content {
+	flex: 1;
+	cursor: pointer;
+}
+
+/* ===========================================
+   Custom Split Editor Modal
+   =========================================== */
+.gym-buddy-custom-split-editor {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	min-width: 400px;
+	max-width: 600px;
+}
+
+.gym-buddy-editor-header {
+	text-align: center;
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.gym-buddy-editor-header h2 {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.gym-buddy-empty-state {
+	text-align: center;
+	padding: 40px 20px;
+	color: var(--text-muted);
+}
+
+.gym-buddy-empty-state p {
+	margin-bottom: 16px;
+}
+
+/* Generic button styles */
+.gym-buddy-button-primary {
+	padding: 10px 20px;
+	font-size: 14px;
+	font-weight: 600;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.gym-buddy-button-primary:hover:not(:disabled) {
+	filter: brightness(1.1);
+}
+
+.gym-buddy-button-primary:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.gym-buddy-button-secondary {
+	padding: 10px 20px;
+	font-size: 14px;
+	font-weight: 500;
+	background: var(--background-modifier-border);
+	color: var(--text-normal);
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.gym-buddy-button-secondary:hover {
+	background: var(--background-modifier-hover);
+}
+
+.gym-buddy-button-danger {
+	padding: 10px 20px;
+	font-size: 14px;
+	font-weight: 500;
+	background: var(--text-error);
+	color: var(--text-on-accent);
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.gym-buddy-button-danger:hover {
+	opacity: 0.9;
+}
+
+.gym-buddy-button-danger-small {
+	padding: 4px 8px;
+	font-size: 12px;
+	font-weight: 500;
+	background: var(--text-error);
+	color: var(--text-on-accent);
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.gym-buddy-button-danger-small:hover {
+	opacity: 0.9;
+}
+
+/* Template list */
+.gym-buddy-template-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.gym-buddy-template-list-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 8px;
+}
+
+.gym-buddy-template-list-header h3 {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.gym-buddy-template-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 16px;
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+}
+
+.gym-buddy-template-info {
+	flex: 1;
+}
+
+.gym-buddy-template-info h4 {
+	margin: 0 0 4px 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.gym-buddy-template-info p {
+	margin: 0;
+	font-size: 12px;
+	color: var(--text-muted);
+}
+
+/* Editor form */
+.gym-buddy-editor-form {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.gym-buddy-form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.gym-buddy-form-group label {
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--text-muted);
+}
+
+.gym-buddy-form-group input,
+.gym-buddy-form-group select {
+	padding: 10px 12px;
+	font-size: 14px;
+	border: 2px solid var(--background-modifier-border);
+	border-radius: 6px;
+	background: var(--background-primary);
+	color: var(--text-normal);
+}
+
+.gym-buddy-form-group input:focus,
+.gym-buddy-form-group select:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
+}
+
+.gym-buddy-splits-section {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.gym-buddy-splits-section h3 {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.gym-buddy-split-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.gym-buddy-add-split {
+	padding: 16px;
+	background: var(--background-secondary);
+	border: 2px dashed var(--background-modifier-border);
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.gym-buddy-form-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 12px;
+	padding-top: 16px;
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+/* Training Setup - Text button */
+.gym-buddy-btn-text {
+	padding: 10px 16px;
+	font-size: 14px;
+	font-weight: 500;
+	background: transparent;
+	color: var(--text-muted);
+	border: none;
+	cursor: pointer;
+	transition: color 0.2s ease;
+}
+
+.gym-buddy-btn-text:hover {
+	color: var(--text-normal);
+}
+
+/* Stepper button variants */
+.gym-buddy-stepper-btn-minus {
+	/* Inherits from .gym-buddy-stepper-btn */
+}
+
+.gym-buddy-stepper-btn-plus {
+	/* Inherits from .gym-buddy-stepper-btn */
+}

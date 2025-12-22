@@ -40,6 +40,16 @@ npm run build
 - eslint will then create a report with suggestions for code improvement by file and line number.
 - If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder: `eslint ./src/`
 
+### CSS Class Linting
+
+Check for CSS classes used in Svelte components but not defined in `styles.css`:
+
+```bash
+npm run lint:css
+```
+
+This catches missing class definitions that would result in unstyled elements. Run this after adding new CSS classes to Svelte components.
+
 ## File & folder conventions
 
 - **Organize code into multiple files**: Split functionality across separate modules rather than putting everything in `main.ts`.
