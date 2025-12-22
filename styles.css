@@ -155,6 +155,10 @@ Mobile-first design with touch-friendly targets
 	background: var(--interactive-accent);
 	color: var(--text-on-accent);
 	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
 	transition: all 0.2s ease;
 	-webkit-tap-highlight-color: transparent;
 }
@@ -509,11 +513,42 @@ Mobile-first design with touch-friendly targets
 	gap: 12px;
 }
 
+.gym-buddy-favorite-button {
+	background: transparent;
+	border: none;
+	padding: 8px;
+	cursor: pointer;
+	color: var(--text-muted);
+	transition: all 0.2s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.gym-buddy-favorite-button.active {
+	color: var(--text-error);
+}
+
 .gym-buddy-section-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.gym-buddy-collapse-button {
+	background: transparent;
+	border: none;
+	padding: 4px;
+	cursor: pointer;
+	color: var(--text-muted);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.gym-buddy-collapse-button:hover {
+	color: var(--text-normal);
 }
 
 .gym-buddy-section-header-content {

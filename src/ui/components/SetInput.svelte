@@ -1,6 +1,7 @@
 <script lang="ts">
 	import NumberStepper from './NumberStepper.svelte';
 	import {WorkoutSet} from '../../types';
+	import { Check } from '@lucide/svelte';
 
 	interface Props {
 		set: WorkoutSet;
@@ -78,7 +79,7 @@
 		onclick={logSet}
 		disabled={weight <= 0 || reps <= 0}
 	>
-		✓ LOG SET
+		<Check size={16} /> LOG SET
 	</button>
 </div>
 

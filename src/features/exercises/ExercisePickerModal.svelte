@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type {Exercise, TrainingSplit} from '../../types';
+	import { Heart, ChevronDown, ChevronRight } from '@lucide/svelte';
 
 	interface Props {
 		exercises?: Exercise[];
@@ -153,7 +154,7 @@
 							onclick={(e) => toggleFavorite(exercise.id, e)}
 							title="Remove from favorites"
 						>
-							❤️
+							<Heart size={16} fill="currentColor" />
 						</button>
 					</div>
 				{/each}
@@ -170,7 +171,11 @@
 					onclick={toggleRecentExpanded}
 					title={recentExpandedState ? "Collapse" : "Expand"}
 				>
-					{recentExpandedState ? '▼' : '▶'}
+					{#if recentExpandedState}
+						<ChevronDown size={16} />
+					{:else}
+						<ChevronRight size={16} />
+					{/if}
 				</button>
 			</div>
 			{#if recentExpandedState}
@@ -200,7 +205,11 @@
 							onclick={(e) => toggleFavorite(exercise.id, e)}
 							title={isFavorite(exercise.id) ? "Remove from favorites" : "Add to favorites"}
 						>
-							{isFavorite(exercise.id) ? '❤️' : '🤍'}
+							{#if isFavorite(exercise.id)}
+								<Heart size={16} fill="currentColor" />
+							{:else}
+								<Heart size={16} />
+							{/if}
 						</button>
 					</div>
 				{/each}
@@ -229,7 +238,11 @@
 				onclick={toggleMuscleGroupsExpanded}
 				title={muscleGroupsExpandedState ? "Collapse" : "Expand"}
 			>
-				{muscleGroupsExpandedState ? '▼' : '▶'}
+				{#if muscleGroupsExpandedState}
+					<ChevronDown size={16} />
+				{:else}
+					<ChevronRight size={16} />
+				{/if}
 			</button>
 		</div>
 		{#if muscleGroupsExpandedState}
@@ -275,7 +288,11 @@
 						onclick={(e) => toggleFavorite(exercise.id, e)}
 						title={isFavorite(exercise.id) ? "Remove from favorites" : "Add to favorites"}
 					>
-						{isFavorite(exercise.id) ? '❤️' : '🤍'}
+						{#if isFavorite(exercise.id)}
+							<Heart size={16} fill="currentColor" />
+						{:else}
+							<Heart size={16} />
+						{/if}
 					</button>
 				</div>
 			{/each}

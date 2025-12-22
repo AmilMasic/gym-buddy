@@ -206,6 +206,17 @@ Follow Obsidian's **Developer Policies** and **Plugin Guidelines**. In particula
 - **Touch targets**: Minimum 48px height for buttons and interactive elements
 - Use `-webkit-tap-highlight-color: transparent` for touch optimization
 
+## Iconography Guidelines
+
+- **Use Lucide icons** via `@lucide/svelte` for all UI elements.
+- **No emojis** should be used for UI actions, buttons, or status indicators.
+- **Consistent sizing**:
+  - Main action buttons: `size={18}` (e.g., plus/minus in steppers)
+  - Standard buttons/menu items: `size={16}`
+  - Info icons/tooltips/inline text: `size={14}`
+- **Alignment**: Always wrap icons in a container or use flexbox in CSS to ensure perfect vertical centering.
+- **Colors**: Icons should inherit `currentColor` or use `fill="currentColor"` for solid variants (like `Heart`).
+
 ## Async/Await Patterns
 
 **Required patterns:**

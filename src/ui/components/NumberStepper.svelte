@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Minus, Plus } from '@lucide/svelte';
 	export let value: number;
 	export let min: number = 0;
 	export let max: number = 1000;
@@ -30,7 +31,7 @@
 			disabled={value <= min}
 			aria-label="Decrease {label}"
 		>
-			−
+			<Minus size={18} />
 		</button>
 		<div class="gym-buddy-stepper-value">
 			{value}{#if unit} {unit}{/if}
@@ -41,7 +42,7 @@
 			disabled={value >= max}
 			aria-label="Increase {label}"
 		>
-			+
+			<Plus size={18} />
 		</button>
 	</div>
 </div>

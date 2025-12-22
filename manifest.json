@@ -6,5 +6,6 @@
 	"description": "Mobile-first Obsidian plugin for logging workouts with lightning-fast UX, markdown-native storage, and progress visualization.",
 	"author": "Amil Masic",
 	"authorUrl": "https://amilmasic.com",
+	"fundingUrl": "https://buymeacoffee.com/amilmasic",
 	"isDesktopOnly": false
 }

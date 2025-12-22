@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { SplitTemplate, TrainingSplit } from '../../types';
 	import type { WeeklySchedule } from '../../settings';
+	import { Info, Pencil, Trash2 } from '@lucide/svelte';
 
 	interface Props {
 		templates?: SplitTemplate[];
@@ -184,7 +185,9 @@
 							<div class="gym-buddy-template-header">
 								<div class="gym-buddy-template-name">{template.name}</div>
 								<div class="gym-buddy-template-info-wrapper">
-									<span class="gym-buddy-template-info-icon" title={template.splits.map(s => s.name).join(' • ')}>ℹ️</span>
+									<span class="gym-buddy-template-info-icon" title={template.splits.map(s => s.name).join(' • ')}>
+										<Info size={14} />
+									</span>
 									<div class="gym-buddy-template-tooltip">
 										<div class="gym-buddy-tooltip-title">Splits:</div>
 										<div class="gym-buddy-tooltip-content">
@@ -210,7 +213,7 @@
 									}}
 									title="Rename template"
 								>
-									✏️
+									<Pencil size={14} />
 								</button>
 								<button
 									class="gym-buddy-template-action-btn gym-buddy-template-delete-btn"
@@ -223,7 +226,7 @@
 									}}
 									title="Delete template"
 								>
-									🗑️
+									<Trash2 size={14} />
 								</button>
 							</div>
 						{/if}
@@ -238,7 +241,9 @@
 					<div class="gym-buddy-template-header">
 						<div class="gym-buddy-template-name">Custom</div>
 						<div class="gym-buddy-template-info-wrapper">
-							<span class="gym-buddy-template-info-icon" title="Mix and match splits from any template">ℹ️</span>
+							<span class="gym-buddy-template-info-icon" title="Mix and match splits from any template">
+								<Info size={14} />
+							</span>
 							<div class="gym-buddy-template-tooltip">
 								<div class="gym-buddy-tooltip-title">Custom Builder:</div>
 								<div class="gym-buddy-tooltip-content">
