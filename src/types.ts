@@ -80,6 +80,7 @@ export interface TrainingSplit {
 	id: string;
 	name: string;
 	muscleGroups: string[];
+	sourceTemplateId?: string; // ID of template this split came from (for composite templates)
 }
 
 export interface SplitTemplate {
@@ -87,6 +88,7 @@ export interface SplitTemplate {
 	name: string;
 	splits: TrainingSplit[];
 	isCustom?: boolean;
+	isComposite?: boolean; // True if this template combines splits from other templates
 }
 
 // Per-split favorites

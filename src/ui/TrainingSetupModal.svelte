@@ -9,10 +9,16 @@
 	}
 
 	let { 
-		templates = [], 
+		templates: initialTemplates = [], 
 		currentTemplateId = "",
 		currentSchedule = {}
 	}: Props = $props();
+
+	// Track custom templates added during this session
+	let customTemplates = $state<SplitTemplate[]>([]);
+
+	// Combine initial templates with custom templates
+	const templates = $derived([...initialTemplates, ...customTemplates]);
 
 	// Setup wizard steps
 	type Step = 'template' | 'schedule' | 'confirm';
@@ -35,7 +41,29 @@
 		}
 	});
 
-	const selectedTemplate = $derived(templates.find(t => t.id === selectedTemplateId));
+	// Handle custom template created from builder
+	let customTemplate: SplitTemplate | null = $state(null);
+	
+	$effect(() => {
+		const handler = (event: CustomEvent) => {
+			const { template } = event.detail as { template: SplitTemplate };
+			customTemplate = template;
+			selectedTemplateId = template.id;
+			// Add to custom templates list if not already there
+			if (!customTemplates.find(t => t.id === template.id) && 
+			    !initialTemplates.find(t => t.id === template.id)) {
+				customTemplates = [...customTemplates, template];
+			}
+		};
+		document.addEventListener('custom-template-created', handler as EventListener);
+		return () => {
+			document.removeEventListener('custom-template-created', handler as EventListener);
+		};
+	});
+
+	const selectedTemplate = $derived(
+		customTemplate || templates.find(t => t.id === selectedTemplateId)
+	);
 
 	const days = [
 		{ key: 'monday', label: 'Monday', short: 'Mon' },
@@ -48,13 +76,21 @@
 	] as const;
 
 	function selectTemplate(templateId: string) {
+		if (templateId === 'custom-builder') {
+			// Emit event to open custom builder
+			const event = new CustomEvent('select-custom-builder', {
+				detail: { templateId: 'custom-builder' }
+			});
+			document.dispatchEvent(event);
+			return;
+		}
 		selectedTemplateId = templateId;
 		// Reset schedule when changing template
 		schedule = {};
 	}
 
 	function nextStep() {
-		if (currentStep === 'template' && selectedTemplateId) {
+		if (currentStep === 'template' && (selectedTemplateId || customTemplate)) {
 			currentStep = 'schedule';
 		} else if (currentStep === 'schedule') {
 			currentStep = 'confirm';
@@ -80,9 +116,10 @@
 	}
 
 	function confirmSetup() {
+		const finalTemplateId = customTemplate?.id || selectedTemplateId;
 		const event = new CustomEvent('confirm-setup', {
 			detail: { 
-				templateId: selectedTemplateId, 
+				templateId: finalTemplateId, 
 				schedule 
 			},
 		});
@@ -158,13 +195,33 @@
 						{/if}
 					</button>
 				{/each}
+				<!-- Custom Split Builder Option -->
+				<button
+					class="gym-buddy-template-card gym-buddy-custom-builder-card"
+					class:selected={selectedTemplateId === 'custom-builder'}
+					onclick={() => selectTemplate('custom-builder')}
+				>
+					<div class="gym-buddy-template-header">
+						<div class="gym-buddy-template-name">Custom</div>
+						<div class="gym-buddy-template-info-wrapper">
+							<span class="gym-buddy-template-info-icon" title="Mix and match splits from any template">ℹ️</span>
+							<div class="gym-buddy-template-tooltip">
+								<div class="gym-buddy-tooltip-title">Custom Builder:</div>
+								<div class="gym-buddy-tooltip-content">
+									Combine splits from any template to create your perfect split
+								</div>
+							</div>
+						</div>
+					</div>
+					<span class="gym-buddy-template-badge gym-buddy-custom-builder-badge">Build Your Own</span>
+				</button>
 			</div>
 
 			<div class="gym-buddy-setup-actions">
 				<button 
 					class="gym-buddy-btn-primary" 
 					onclick={nextStep}
-					disabled={!selectedTemplateId}
+					disabled={!selectedTemplateId && !customTemplate}
 				>
 					Continue
 				</button>
@@ -264,490 +321,3 @@
 		</div>
 	{/if}
 </div>
-
-<style>
-	.gym-buddy-training-setup {
-		padding: 24px;
-		display: flex;
-		flex-direction: column;
-		gap: 24px;
-		min-width: 400px;
-		max-width: 600px;
-	}
-
-	/* Progress indicator */
-	.gym-buddy-setup-progress {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 8px;
-		padding-bottom: 8px;
-	}
-
-	.gym-buddy-progress-step {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 4px;
-		opacity: 0.4;
-		transition: opacity 0.2s ease;
-	}
-
-	.gym-buddy-progress-step.active,
-	.gym-buddy-progress-step.completed {
-		opacity: 1;
-	}
-
-	.gym-buddy-progress-number {
-		width: 28px;
-		height: 28px;
-		border-radius: 50%;
-		background: var(--background-modifier-border);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 13px;
-		font-weight: 600;
-		color: var(--text-muted);
-		transition: all 0.2s ease;
-	}
-
-	.gym-buddy-progress-step.active .gym-buddy-progress-number {
-		background: var(--interactive-accent);
-		color: var(--text-on-accent);
-	}
-
-	.gym-buddy-progress-step.completed .gym-buddy-progress-number {
-		background: var(--interactive-accent);
-		color: var(--text-on-accent);
-	}
-
-	.gym-buddy-progress-label {
-		font-size: 11px;
-		color: var(--text-muted);
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
-	}
-
-	.gym-buddy-progress-line {
-		width: 40px;
-		height: 2px;
-		background: var(--background-modifier-border);
-		margin-bottom: 20px;
-		transition: background 0.2s ease;
-	}
-
-	.gym-buddy-progress-line.completed {
-		background: var(--interactive-accent);
-	}
-
-	/* Step content */
-	.gym-buddy-setup-step {
-		display: flex;
-		flex-direction: column;
-		gap: 20px;
-	}
-
-	.gym-buddy-setup-step h2 {
-		margin: 0;
-		font-size: 20px;
-		font-weight: 700;
-		color: var(--text-normal);
-		text-align: center;
-	}
-
-	.gym-buddy-setup-subtitle {
-		margin: -12px 0 0 0;
-		font-size: 14px;
-		color: var(--text-muted);
-		text-align: center;
-	}
-
-	/* Template grid */
-	.gym-buddy-template-grid {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.gym-buddy-template-card {
-		padding: 16px;
-		text-align: left;
-		border: 2px solid var(--background-modifier-border);
-		border-radius: 10px;
-		background: var(--background-primary);
-		cursor: pointer;
-		transition: all 0.2s ease;
-		position: relative;
-	}
-
-	.gym-buddy-template-card:hover {
-		background: var(--background-modifier-hover);
-		border-color: var(--interactive-accent-hover);
-	}
-
-	.gym-buddy-template-card.selected {
-		border-color: var(--interactive-accent);
-		background: var(--background-secondary);
-	}
-
-	.gym-buddy-template-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 8px;
-	}
-
-	.gym-buddy-template-name {
-		font-size: 16px;
-		font-weight: 600;
-		color: var(--text-normal);
-		flex: 1;
-	}
-
-	.gym-buddy-template-info-wrapper {
-		position: relative;
-		flex-shrink: 0;
-	}
-
-	.gym-buddy-template-info-icon {
-		display: inline-block;
-		font-size: 16px;
-		cursor: help;
-		opacity: 0.6;
-		transition: opacity 0.2s ease;
-		line-height: 1;
-	}
-
-	.gym-buddy-template-info-icon:hover {
-		opacity: 1;
-	}
-
-	.gym-buddy-template-tooltip {
-		position: absolute;
-		top: 100%;
-		right: 0;
-		margin-top: 8px;
-		padding: 10px 12px;
-		background: var(--background-secondary);
-		border: 1px solid var(--background-modifier-border);
-		border-radius: 6px;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-		white-space: nowrap;
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 0.2s ease;
-		z-index: 1000;
-		min-width: 200px;
-	}
-
-	.gym-buddy-template-info-wrapper:hover .gym-buddy-template-tooltip {
-		opacity: 1;
-		pointer-events: auto;
-	}
-
-	.gym-buddy-tooltip-title {
-		font-size: 11px;
-		font-weight: 600;
-		color: var(--text-muted);
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
-		margin-bottom: 4px;
-	}
-
-	.gym-buddy-tooltip-content {
-		font-size: 13px;
-		color: var(--text-normal);
-		white-space: normal;
-		line-height: 1.4;
-	}
-
-	.gym-buddy-template-badge {
-		position: absolute;
-		top: 12px;
-		right: 12px;
-		padding: 2px 8px;
-		font-size: 10px;
-		font-weight: 600;
-		text-transform: uppercase;
-		background: var(--interactive-accent);
-		color: var(--text-on-accent);
-		border-radius: 4px;
-	}
-
-	/* Schedule grid */
-	.gym-buddy-schedule-grid {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-	}
-
-	.gym-buddy-schedule-row {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-	}
-
-	.gym-buddy-schedule-day {
-		width: 100px;
-		font-size: 14px;
-		font-weight: 500;
-		color: var(--text-normal);
-	}
-
-	.gym-buddy-schedule-select-wrapper {
-		flex: 1;
-		position: relative;
-		overflow: visible;
-	}
-
-	.gym-buddy-schedule-select {
-		width: 100%;
-		height: 48px;
-		font-size: 12px;
-		font-weight: 500;
-		border: 2px solid var(--background-modifier-border);
-		border-radius: 6px;
-		background: var(--background-primary);
-		color: var(--text-normal);
-		cursor: pointer;
-		appearance: none;
-		-webkit-appearance: none;
-		-moz-appearance: none;
-		transition: border-color 0.2s ease;
-		box-sizing: border-box;
-		overflow: visible !important;
-		vertical-align: middle !important;
-		text-overflow: clip !important;
-	}
-
-	/* Force text color and spacing - use important to override Obsidian's theme styles */
-	/* .gym-buddy-schedule-select {
-		color: var(--text-normal) !important;
-		-webkit-text-fill-color: var(--text-normal) !important;
-		padding-top: 24px !important;
-		padding-bottom: 24px !important;
-		height: 68px !important;
-		line-height: 1.7 !important;
-		overflow: visible !important;
-		text-overflow: clip !important;
-		white-space: normal !important;
-	} */
-
-	.gym-buddy-schedule-select option {
-		color: var(--text-normal) !important;
-		background-color: var(--background-primary) !important;
-		-webkit-text-fill-color: var(--text-normal) !important;
-		padding: 12px;
-		font-size: 15px;
-		min-height: 40px;
-	}
-
-	.gym-buddy-schedule-select:hover {
-		border-color: var(--interactive-accent-hover);
-		color: var(--text-normal) !important;
-		-webkit-text-fill-color: var(--text-normal) !important;
-	}
-
-	.gym-buddy-schedule-select:focus {
-		outline: none;
-		border-color: var(--interactive-accent);
-		box-shadow: 0 0 0 2px var(--interactive-accent-rgb, rgba(var(--interactive-accent-rgb), 0.2));
-		color: var(--text-normal) !important;
-		-webkit-text-fill-color: var(--text-normal) !important;
-	}
-
-	/* Selected option styling */
-	.gym-buddy-schedule-select option:checked {
-		background: var(--interactive-accent) !important;
-		color: var(--text-on-accent) !important;
-		-webkit-text-fill-color: var(--text-on-accent) !important;
-	}
-
-	.gym-buddy-schedule-select-arrow {
-		position: absolute;
-		right: 14px;
-		top: 50%;
-		transform: translateY(-50%);
-		pointer-events: none;
-		font-size: 12px;
-		color: var(--text-muted);
-		line-height: 1;
-	}
-
-	/* Force text color for dropdown options */
-	.gym-buddy-schedule-select option {
-		background: var(--background-primary) !important;
-		color: var(--text-normal) !important;
-		padding: 8px;
-		font-weight: 500;
-	}
-
-	.gym-buddy-schedule-select option:checked,
-	.gym-buddy-schedule-select option:focus {
-		background: var(--interactive-accent) !important;
-		color: var(--text-on-accent) !important;
-	}
-
-	/* Ensure selected value is visible */
-	.gym-buddy-schedule-select:not([value=""]) {
-		color: var(--text-normal);
-		font-weight: 500;
-	}
-
-	/* Confirm summary */
-	.gym-buddy-confirm-summary {
-		display: flex;
-		flex-direction: column;
-		gap: 20px;
-		background: var(--background-secondary);
-		padding: 20px;
-		border-radius: 10px;
-	}
-
-	.gym-buddy-confirm-section h3 {
-		margin: 0 0 8px 0;
-		font-size: 12px;
-		font-weight: 600;
-		color: var(--text-muted);
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
-	}
-
-	.gym-buddy-confirm-value {
-		font-size: 18px;
-		font-weight: 600;
-		color: var(--text-normal);
-	}
-
-	.gym-buddy-confirm-value.gym-buddy-muted {
-		font-size: 14px;
-		font-weight: 400;
-		color: var(--text-muted);
-	}
-
-	.gym-buddy-confirm-splits {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px;
-		margin-top: 8px;
-	}
-
-	.gym-buddy-split-chip {
-		padding: 4px 10px;
-		font-size: 12px;
-		background: var(--background-modifier-border);
-		color: var(--text-normal);
-		border-radius: 12px;
-	}
-
-	.gym-buddy-confirm-schedule {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-	}
-
-	.gym-buddy-schedule-item {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		padding: 6px 10px;
-		background: var(--background-primary);
-		border-radius: 6px;
-	}
-
-	.gym-buddy-schedule-item-day {
-		font-size: 12px;
-		font-weight: 600;
-		color: var(--text-muted);
-	}
-
-	.gym-buddy-schedule-item-split {
-		font-size: 13px;
-		font-weight: 500;
-		color: var(--text-normal);
-	}
-
-	/* Actions */
-	.gym-buddy-setup-actions {
-		display: flex;
-		justify-content: center;
-		gap: 12px;
-		margin-top: 8px;
-	}
-
-	.gym-buddy-btn-primary {
-		padding: 12px 24px;
-		font-size: 15px;
-		font-weight: 600;
-		background: var(--interactive-accent);
-		color: var(--text-on-accent);
-		border: none;
-		border-radius: 8px;
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.gym-buddy-btn-primary:hover:not(:disabled) {
-		filter: brightness(1.1);
-	}
-
-	.gym-buddy-btn-primary:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-
-	.gym-buddy-btn-secondary {
-		padding: 12px 24px;
-		font-size: 15px;
-		font-weight: 600;
-		background: var(--background-modifier-border);
-		color: var(--text-normal);
-		border: none;
-		border-radius: 8px;
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.gym-buddy-btn-secondary:hover {
-		background: var(--background-modifier-hover);
-	}
-
-	.gym-buddy-btn-text {
-		padding: 12px 16px;
-		font-size: 14px;
-		font-weight: 500;
-		background: none;
-		color: var(--text-muted);
-		border: none;
-		cursor: pointer;
-		transition: color 0.2s ease;
-	}
-
-	.gym-buddy-btn-text:hover {
-		color: var(--text-normal);
-	}
-
-	/* Mobile adjustments */
-	@media (max-width: 500px) {
-		.gym-buddy-training-setup {
-			padding: 16px;
-			min-width: unset;
-		}
-
-		.gym-buddy-progress-line {
-			width: 24px;
-		}
-
-		.gym-buddy-schedule-day {
-			width: 80px;
-			font-size: 13px;
-		}
-
-		.gym-buddy-schedule-select {
-			padding: 8px 10px;
-			font-size: 13px;
-		}
-	}
-</style>
-

@@ -11,31 +11,17 @@ export const BUILT_IN_TEMPLATES: SplitTemplate[] = [
 			{
 				id: "ppl-push",
 				name: "Push",
-				muscleGroups: [
-					"Chest",
-					"Shoulders",
-					"Triceps",
-				],
+				muscleGroups: ["Chest", "Shoulders", "Triceps"],
 			},
 			{
 				id: "ppl-pull",
 				name: "Pull",
-				muscleGroups: [
-					"Back",
-					"Biceps",
-					"Traps",
-					"Rear Delts",
-				],
+				muscleGroups: ["Back", "Biceps", "Traps", "Rear Delts"],
 			},
 			{
 				id: "ppl-legs",
 				name: "Legs",
-				muscleGroups: [
-					"Quadriceps",
-					"Hamstrings",
-					"Glutes",
-					"Calves",
-				],
+				muscleGroups: ["Quadriceps", "Hamstrings", "Glutes", "Calves"],
 			},
 		],
 	},
@@ -95,12 +81,7 @@ export const BUILT_IN_TEMPLATES: SplitTemplate[] = [
 			{
 				id: "bro-legs",
 				name: "Legs",
-				muscleGroups: [
-					"Quadriceps",
-					"Hamstrings",
-					"Glutes",
-					"Calves",
-				],
+				muscleGroups: ["Quadriceps", "Hamstrings", "Glutes", "Calves"],
 			},
 		],
 	},
@@ -138,21 +119,12 @@ export const BUILT_IN_TEMPLATES: SplitTemplate[] = [
 			{
 				id: "arnold-shoulders-arms",
 				name: "Shoulders & Arms",
-				muscleGroups: [
-					"Shoulders",
-					"Biceps",
-					"Triceps",
-				],
+				muscleGroups: ["Shoulders", "Biceps", "Triceps"],
 			},
 			{
 				id: "arnold-legs",
 				name: "Legs",
-				muscleGroups: [
-					"Quadriceps",
-					"Hamstrings",
-					"Glutes",
-					"Calves",
-				],
+				muscleGroups: ["Quadriceps", "Hamstrings", "Glutes", "Calves"],
 			},
 		],
 	},
@@ -163,31 +135,17 @@ export const BUILT_IN_TEMPLATES: SplitTemplate[] = [
 			{
 				id: "hybrid-push",
 				name: "Push",
-				muscleGroups: [
-					"Chest",
-					"Shoulders",
-					"Triceps",
-				],
+				muscleGroups: ["Chest", "Shoulders", "Triceps"],
 			},
 			{
 				id: "hybrid-pull",
 				name: "Pull",
-				muscleGroups: [
-					"Back",
-					"Biceps",
-					"Traps",
-					"Rear Delts",
-				],
+				muscleGroups: ["Back", "Biceps", "Traps", "Rear Delts"],
 			},
 			{
 				id: "hybrid-legs",
 				name: "Legs",
-				muscleGroups: [
-					"Quadriceps",
-					"Hamstrings",
-					"Glutes",
-					"Calves",
-				],
+				muscleGroups: ["Quadriceps", "Hamstrings", "Glutes", "Calves"],
 			},
 			{
 				id: "hybrid-upper",
@@ -221,7 +179,9 @@ export const BUILT_IN_TEMPLATES: SplitTemplate[] = [
  * Note: This function only checks built-in templates. For custom templates,
  * use the plugin's settings.customSplitTemplates directly.
  */
-export function getSplitTemplate(templateId: string): SplitTemplate | undefined {
+export function getSplitTemplate(
+	templateId: string
+): SplitTemplate | undefined {
 	return BUILT_IN_TEMPLATES.find((t) => t.id === templateId);
 }
 
@@ -294,3 +254,83 @@ export function getTodaysSplit(
 	return template.splits.find((s) => s.id === splitId) || null;
 }
 
+/**
+ * Get all available splits from all templates (built-in + custom)
+ * Returns an array of objects with split, template info, and source template ID
+ */
+export interface AvailableSplit {
+	split: TrainingSplit;
+	templateName: string;
+	templateId: string;
+	isCustom: boolean;
+}
+
+export function getAllAvailableSplits(
+	customTemplates: SplitTemplate[] = []
+): AvailableSplit[] {
+	const allSplits: AvailableSplit[] = [];
+
+	// Add splits from built-in templates
+	for (const template of BUILT_IN_TEMPLATES) {
+		for (const split of template.splits) {
+			allSplits.push({
+				split: {
+					...split,
+					sourceTemplateId: template.id,
+				},
+				templateName: template.name,
+				templateId: template.id,
+				isCustom: false,
+			});
+		}
+	}
+
+	// Add splits from custom templates
+	for (const template of customTemplates) {
+		for (const split of template.splits) {
+			allSplits.push({
+				split: {
+					...split,
+					sourceTemplateId: template.id,
+				},
+				templateName: template.name,
+				templateId: template.id,
+				isCustom: true,
+			});
+		}
+	}
+
+	return allSplits;
+}
+
+/**
+ * Create a composite template from selected splits
+ * Ensures unique IDs by prefixing with source template ID if needed
+ */
+export function createCompositeTemplate(
+	name: string,
+	selectedSplits: AvailableSplit[],
+	templateId?: string
+): SplitTemplate {
+	const splits: TrainingSplit[] = selectedSplits.map(
+		(availableSplit, index) => {
+			// Create unique ID by combining source template ID and original split ID
+			// This prevents conflicts when the same split ID exists in multiple templates
+			const uniqueId = `${availableSplit.templateId}-${availableSplit.split.id}`;
+
+			return {
+				...availableSplit.split,
+				id: uniqueId,
+				sourceTemplateId: availableSplit.templateId,
+			};
+		}
+	);
+
+	return {
+		id: templateId || `custom-composite-${Date.now()}`,
+		name,
+		splits,
+		isCustom: true,
+		isComposite: true,
+	};
+}

@@ -4,6 +4,7 @@ import TrainingSetupModalComponent from "./TrainingSetupModal.svelte";
 import GymBuddyPlugin from "../main";
 import { BUILT_IN_TEMPLATES } from "../data/splitTemplates";
 import { WeeklySchedule } from "../settings";
+import { CustomSplitBuilderModal } from "./CustomSplitBuilderModal";
 
 interface SetupResult {
 	templateId: string;
@@ -46,14 +47,49 @@ export class TrainingSetupModal extends Modal {
 			},
 		});
 
+		// Listen for custom builder selection
+		const customBuilderHandler = async (event: CustomEvent) => {
+			const { templateId } = event.detail as { templateId: string };
+
+			if (templateId === "custom-builder") {
+				// Open custom split builder modal (on top of this one)
+				await new Promise<void>((resolve) => {
+					const builderModal = new CustomSplitBuilderModal(
+						this.plugin,
+						(result) => {
+							// User selected splits from builder
+							const compositeTemplate = result.template;
+
+							// Emit event to update component with new template
+							const updateEvent = new CustomEvent(
+								"custom-template-created",
+								{
+									detail: { template: compositeTemplate },
+								}
+							);
+							document.dispatchEvent(updateEvent);
+
+							resolve();
+						},
+						() => {
+							// User cancelled builder
+							resolve();
+						}
+					);
+					builderModal.open();
+				});
+			}
+		};
+
 		// Listen for setup confirmation
-		this.confirmHandler = async (event: CustomEvent) => {
+		this.confirmHandler = (event: CustomEvent) => {
 			const { templateId, schedule } = event.detail as SetupResult;
 
 			// Save settings
 			this.plugin.settings.activeSplitTemplateId = templateId;
 			this.plugin.settings.weeklySchedule = schedule;
-			await this.plugin.saveSettings();
+			// Fire and forget - saveSettings is async but we don't need to await it
+			void this.plugin.saveSettings();
 
 			// Call completion callback if provided
 			if (this.onComplete) {
@@ -64,6 +100,10 @@ export class TrainingSetupModal extends Modal {
 		};
 
 		document.addEventListener(
+			"select-custom-builder",
+			customBuilderHandler as EventListener
+		);
+		document.addEventListener(
 			"confirm-setup",
 			this.confirmHandler as EventListener
 		);
@@ -71,7 +111,7 @@ export class TrainingSetupModal extends Modal {
 
 	onClose() {
 		if (this.component) {
-			unmount(this.component);
+			void unmount(this.component);
 			this.component = null;
 		}
 
@@ -84,4 +124,3 @@ export class TrainingSetupModal extends Modal {
 		}
 	}
 }
-
