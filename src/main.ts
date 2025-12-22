@@ -19,6 +19,7 @@ export default class GymBuddyPlugin extends Plugin {
 	settings: GymBuddySettings;
 	storage: Storage;
 	activeWorkout: ActiveWorkout | null = null;
+	settingTab: GymBuddySettingTab | null = null;
 
 	async onload() {
 		await this.loadSettings();
@@ -80,7 +81,8 @@ export default class GymBuddyPlugin extends Plugin {
 		});
 
 		// Settings tab
-		this.addSettingTab(new GymBuddySettingTab(this.app, this));
+		this.settingTab = new GymBuddySettingTab(this.app, this);
+		this.addSettingTab(this.settingTab);
 	}
 
 	onunload() {

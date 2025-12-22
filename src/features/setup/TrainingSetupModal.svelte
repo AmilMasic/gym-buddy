@@ -173,27 +173,61 @@
 
 			<div class="gym-buddy-template-grid">
 				{#each templates as template}
-					<button
-						class="gym-buddy-template-card"
+					<div
+						class="gym-buddy-template-card-wrapper"
 						class:selected={selectedTemplateId === template.id}
-						onclick={() => selectTemplate(template.id)}
 					>
-						<div class="gym-buddy-template-header">
-							<div class="gym-buddy-template-name">{template.name}</div>
-							<div class="gym-buddy-template-info-wrapper">
-								<span class="gym-buddy-template-info-icon" title={template.splits.map(s => s.name).join(' • ')}>ℹ️</span>
-								<div class="gym-buddy-template-tooltip">
-									<div class="gym-buddy-tooltip-title">Splits:</div>
-									<div class="gym-buddy-tooltip-content">
-										{template.splits.map(s => s.name).join(' • ')}
+						<button
+							class="gym-buddy-template-card"
+							onclick={() => selectTemplate(template.id)}
+						>
+							<div class="gym-buddy-template-header">
+								<div class="gym-buddy-template-name">{template.name}</div>
+								<div class="gym-buddy-template-info-wrapper">
+									<span class="gym-buddy-template-info-icon" title={template.splits.map(s => s.name).join(' • ')}>ℹ️</span>
+									<div class="gym-buddy-template-tooltip">
+										<div class="gym-buddy-tooltip-title">Splits:</div>
+										<div class="gym-buddy-tooltip-content">
+											{template.splits.map(s => s.name).join(' • ')}
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
+							{#if template.isCustom}
+								<span class="gym-buddy-template-badge">Custom</span>
+							{/if}
+						</button>
 						{#if template.isCustom}
-							<span class="gym-buddy-template-badge">Custom</span>
+							<div class="gym-buddy-template-actions">
+								<button
+									class="gym-buddy-template-action-btn gym-buddy-template-rename-btn"
+									onclick={(e) => {
+										e.stopPropagation();
+										const event = new CustomEvent('rename-template', {
+											detail: { templateId: template.id, currentName: template.name }
+										});
+										document.dispatchEvent(event);
+									}}
+									title="Rename template"
+								>
+									✏️
+								</button>
+								<button
+									class="gym-buddy-template-action-btn gym-buddy-template-delete-btn"
+									onclick={(e) => {
+										e.stopPropagation();
+										const event = new CustomEvent('delete-template', {
+											detail: { templateId: template.id, templateName: template.name }
+										});
+										document.dispatchEvent(event);
+									}}
+									title="Delete template"
+								>
+									🗑️
+								</button>
+							</div>
 						{/if}
-					</button>
+					</div>
 				{/each}
 				<!-- Custom Split Builder Option -->
 				<button

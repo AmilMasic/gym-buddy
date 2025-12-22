@@ -258,7 +258,7 @@ export class MyModal extends Modal {
 
   onClose() {
     if (this.component) {
-      unmount(this.component);
+      void unmount(this.component); // unmount returns a Promise
       this.component = null;
     }
     this.contentEl.empty();

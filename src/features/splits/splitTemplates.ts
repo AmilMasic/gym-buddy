@@ -269,36 +269,37 @@ export function getAllAvailableSplits(
 	customTemplates: SplitTemplate[] = []
 ): AvailableSplit[] {
 	const allSplits: AvailableSplit[] = [];
+	// Deduplicate by split name + muscle groups (normalized)
+	// This ensures we only show unique splits, even if they appear in multiple templates
+	const seenSplits = new Set<string>();
 
-	// Add splits from built-in templates
+	// Add splits from built-in templates only (original unique splits)
+	// This ensures we only show unique splits from original templates, not duplicates from custom templates
 	for (const template of BUILT_IN_TEMPLATES) {
 		for (const split of template.splits) {
-			allSplits.push({
-				split: {
-					...split,
-					sourceTemplateId: template.id,
-				},
-				templateName: template.name,
-				templateId: template.id,
-				isCustom: false,
-			});
+			// Create a unique key from split name and muscle groups (sorted for consistency)
+			const muscleGroupsKey = [...split.muscleGroups].sort().join(",");
+			const uniqueKey = `${split.name}|${muscleGroupsKey}`;
+
+			// Only add if we haven't seen this exact split before
+			if (!seenSplits.has(uniqueKey)) {
+				seenSplits.add(uniqueKey);
+				allSplits.push({
+					split: {
+						...split,
+						sourceTemplateId: template.id,
+					},
+					templateName: template.name,
+					templateId: template.id,
+					isCustom: false,
+				});
+			}
 		}
 	}
 
-	// Add splits from custom templates
-	for (const template of customTemplates) {
-		for (const split of template.splits) {
-			allSplits.push({
-				split: {
-					...split,
-					sourceTemplateId: template.id,
-				},
-				templateName: template.name,
-				templateId: template.id,
-				isCustom: true,
-			});
-		}
-	}
+	// Note: We intentionally don't include splits from custom templates here
+	// because custom templates are composite templates that combine splits from built-in templates.
+	// Including them would cause duplicates. Users should select from the original unique splits only.
 
 	return allSplits;
 }

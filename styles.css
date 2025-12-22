@@ -933,24 +933,39 @@ Mobile-first design with touch-friendly targets
 	gap: 10px;
 }
 
+.gym-buddy-template-card-wrapper {
+	position: relative;
+	border: 2px solid var(--background-modifier-border);
+	border-radius: 10px;
+	transition: all 0.2s ease;
+}
+
+.gym-buddy-template-card-wrapper.selected {
+	border-color: var(--interactive-accent);
+	background: var(--background-secondary);
+}
+
+.gym-buddy-template-card-wrapper:hover {
+	border-color: var(--interactive-accent-hover);
+}
+
 .gym-buddy-template-card {
 	padding: 16px;
 	text-align: left;
-	border: 2px solid var(--background-modifier-border);
+	border: none;
 	border-radius: 10px;
-	background: var(--background-primary);
+	background: transparent;
 	cursor: pointer;
 	transition: all 0.2s ease;
 	position: relative;
+	width: 100%;
 }
 
 .gym-buddy-template-card:hover {
 	background: var(--background-modifier-hover);
-	border-color: var(--interactive-accent-hover);
 }
 
-.gym-buddy-template-card.selected {
-	border-color: var(--interactive-accent);
+.gym-buddy-template-card-wrapper.selected .gym-buddy-template-card {
 	background: var(--background-secondary);
 }
 
@@ -1044,6 +1059,68 @@ Mobile-first design with touch-friendly targets
 .gym-buddy-custom-builder-badge {
 	background: var(--interactive-accent);
 	color: var(--text-on-accent);
+}
+
+/* Template management actions */
+.gym-buddy-template-actions {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	display: flex;
+	gap: 4px;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	z-index: 10;
+}
+
+.gym-buddy-template-card-wrapper:hover .gym-buddy-template-actions {
+	opacity: 1;
+}
+
+.gym-buddy-template-action-btn {
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	background: var(--background-primary);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 16px;
+	transition: all 0.2s ease;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.gym-buddy-template-action-btn:hover {
+	background: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+	transform: scale(1.05);
+}
+
+.gym-buddy-template-rename-btn:hover {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+.gym-buddy-template-delete-btn:hover {
+	background: var(--text-error);
+	color: var(--text-on-accent);
+	border-color: var(--text-error);
+}
+
+/* Mobile adjustments for template actions */
+@media (max-width: 768px) {
+	.gym-buddy-template-actions {
+		opacity: 1; /* Always visible on mobile */
+	}
+
+	.gym-buddy-template-action-btn {
+		width: 40px;
+		height: 40px;
+		font-size: 18px;
+	}
 }
 
 /* Schedule grid */
@@ -1284,4 +1361,27 @@ Mobile-first design with touch-friendly targets
 		font-size: 12px;
 		min-height: 36px;
 	}
+}
+
+/* Modal button containers */
+.gym-buddy-modal-button-container {
+	display: flex;
+	gap: 10px;
+	justify-content: flex-end;
+	margin-top: 20px;
+}
+
+.gym-buddy-modal-button-container-compact {
+	margin-top: 10px;
+}
+
+/* Modal input containers */
+.gym-buddy-modal-input-container {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.gym-buddy-modal-input-full-width {
+	width: 100%;
 }

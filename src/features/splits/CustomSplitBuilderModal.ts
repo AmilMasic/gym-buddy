@@ -49,7 +49,49 @@ export class CustomSplitBuilderModal extends Modal {
 
 			// If user wants to save as template, add it to custom templates
 			if (saveAsTemplate) {
-				this.plugin.settings.customSplitTemplates.push(template);
+				// Check if a template with the same name already exists
+				const existingIndex =
+					this.plugin.settings.customSplitTemplates.findIndex(
+						(t) => t.name === template.name
+					);
+
+				if (existingIndex >= 0) {
+					// Update existing template (keep original ID and preserve isCustom flag)
+					const existingTemplate =
+						this.plugin.settings.customSplitTemplates[
+							existingIndex
+						];
+					if (existingTemplate) {
+						this.plugin.settings.customSplitTemplates[
+							existingIndex
+						] = {
+							...template,
+							id: existingTemplate.id,
+							isCustom: true,
+						};
+					}
+				} else {
+					// Check if template with same ID already exists (shouldn't happen, but safety check)
+					const existingByIdIndex =
+						this.plugin.settings.customSplitTemplates.findIndex(
+							(t) => t.id === template.id
+						);
+					if (existingByIdIndex >= 0) {
+						// Update by ID instead
+						this.plugin.settings.customSplitTemplates[
+							existingByIdIndex
+						] = {
+							...template,
+							isCustom: true,
+						};
+					} else {
+						// Add new template
+						this.plugin.settings.customSplitTemplates.push({
+							...template,
+							isCustom: true,
+						});
+					}
+				}
 				// Fire and forget - saveSettings is async but we don't need to await it
 				void this.plugin.saveSettings();
 			}
