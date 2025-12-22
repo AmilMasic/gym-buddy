@@ -1,10 +1,12 @@
 import { TFile, TAbstractFile, TFolder } from "obsidian";
-import { Workout, Exercise, PRRecord } from "../types";
+import { Workout, Exercise, PRRecord, SplitFavorites } from "../types";
 import GymBuddyPlugin from "../main";
+import { getExerciseDatabase } from "./exerciseDatabase";
 
 interface PluginData {
-	exercises?: Exercise[];
+	exercises?: Exercise[]; // Custom exercises only
 	prs?: PRRecord[];
+	splitFavorites?: SplitFavorites[];
 }
 
 /**
@@ -19,21 +21,166 @@ export class Storage {
 	}
 
 	/**
-	 * Load exercise library from plugin data
+	 * Get default exercise library
+	 */
+	private getDefaultExercises(): Exercise[] {
+		return [
+			{
+				id: "bench-press",
+				name: "Bench Press",
+				muscles: ["Chest", "Triceps", "Shoulders"],
+				type: "weight",
+				trackWeight: true,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+			{
+				id: "squat",
+				name: "Squat",
+				muscles: ["Quadriceps", "Glutes", "Hamstrings"],
+				type: "weight",
+				trackWeight: true,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+			{
+				id: "deadlift",
+				name: "Deadlift",
+				muscles: ["Back", "Hamstrings", "Glutes"],
+				type: "weight",
+				trackWeight: true,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+			{
+				id: "overhead-press",
+				name: "Overhead Press",
+				muscles: ["Shoulders", "Triceps"],
+				type: "weight",
+				trackWeight: true,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+			{
+				id: "barbell-row",
+				name: "Barbell Row",
+				muscles: ["Back", "Biceps"],
+				type: "weight",
+				trackWeight: true,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+			{
+				id: "pull-ups",
+				name: "Pull-ups",
+				muscles: ["Back", "Biceps"],
+				type: "bodyweight",
+				trackWeight: false,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+			{
+				id: "push-ups",
+				name: "Push-ups",
+				muscles: ["Chest", "Triceps", "Shoulders"],
+				type: "bodyweight",
+				trackWeight: false,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+			{
+				id: "dips",
+				name: "Dips",
+				muscles: ["Triceps", "Chest", "Shoulders"],
+				type: "bodyweight",
+				trackWeight: false,
+				trackReps: true,
+				trackTime: false,
+				trackDistance: false,
+				unit: "lbs",
+			},
+		];
+	}
+
+	/**
+	 * Load exercise library from plugin data, merging database + custom exercises
 	 */
 	async loadExerciseLibrary(): Promise<Exercise[]> {
+		// Initialize database
+		const database = getExerciseDatabase();
+		await database.initialize();
+		
+		// Get all exercises from database
+		const databaseExercises = database.getAllExercises();
+		
+		// Load custom exercises from plugin data
 		const data = (await this.plugin.loadData()) as PluginData | null;
-		return data?.exercises || [];
+		const customExercises = data?.exercises || [];
+		
+		// Create a map of custom exercises by ID for quick lookup
+		const customMap = new Map<string, Exercise>();
+		for (const ex of customExercises) {
+			customMap.set(ex.id, ex);
+		}
+		
+		// Merge: database exercises take precedence, but custom exercises override
+		// Custom exercises are marked with source: 'custom'
+		const merged: Exercise[] = [];
+		
+		// Add all database exercises
+		for (const dbEx of databaseExercises) {
+			// If custom exercise exists with same ID, use custom (user override)
+			const customEx = customMap.get(dbEx.id);
+			if (customEx) {
+				merged.push({ ...customEx, source: "custom" });
+				customMap.delete(dbEx.id); // Remove from map so we don't add it twice
+			} else {
+				merged.push(dbEx);
+			}
+		}
+		
+		// Add remaining custom exercises (new IDs not in database)
+		for (const customEx of customMap.values()) {
+			merged.push({ ...customEx, source: "custom" });
+		}
+		
+		// If no custom exercises exist and database is empty, initialize with defaults
+		if (merged.length === 0) {
+			const defaultExercises = this.getDefaultExercises();
+			await this.saveExerciseLibrary(defaultExercises);
+			return defaultExercises;
+		}
+		
+		return merged;
 	}
 
 	/**
 	 * Save exercise library to plugin data
+	 * Only saves custom exercises (source: 'custom' or no source)
 	 */
 	async saveExerciseLibrary(exercises: Exercise[]): Promise<void> {
 		const data =
 			((await this.plugin.loadData()) as PluginData | null) ||
 			({} as PluginData);
-		data.exercises = exercises;
+		// Only save custom exercises, not database exercises
+		const customExercises = exercises.filter(
+			(ex) => ex.source === "custom" || !ex.source
+		);
+		data.exercises = customExercises;
 		await this.plugin.saveData(data);
 	}
 
@@ -135,5 +282,67 @@ export class Storage {
 
 		collectFiles(folder);
 		return files;
+	}
+
+	/**
+	 * Load favorites for a specific split
+	 */
+	async loadSplitFavorites(splitId: string): Promise<string[]> {
+		const data = (await this.plugin.loadData()) as PluginData | null;
+		const favorites = data?.splitFavorites || [];
+		const splitFav = favorites.find((f) => f.splitId === splitId);
+		return splitFav?.exerciseIds || [];
+	}
+
+	/**
+	 * Toggle favorite status for an exercise in a split
+	 * Returns true if exercise is now favorited, false if unfavorited
+	 */
+	async toggleFavorite(
+		splitId: string,
+		exerciseId: string
+	): Promise<boolean> {
+		const data =
+			((await this.plugin.loadData()) as PluginData | null) ||
+			({} as PluginData);
+		
+		if (!data.splitFavorites) {
+			data.splitFavorites = [];
+		}
+
+		const favorites = data.splitFavorites;
+		let splitFav = favorites.find((f) => f.splitId === splitId);
+
+		if (!splitFav) {
+			splitFav = { splitId, exerciseIds: [] };
+			favorites.push(splitFav);
+		}
+
+		const index = splitFav.exerciseIds.indexOf(exerciseId);
+		if (index >= 0) {
+			// Remove favorite
+			splitFav.exerciseIds.splice(index, 1);
+			await this.plugin.saveData(data);
+			return false;
+		} else {
+			// Add favorite
+			splitFav.exerciseIds.push(exerciseId);
+			await this.plugin.saveData(data);
+			return true;
+		}
+	}
+
+	/**
+	 * Get favorite exercises for a split
+	 */
+	async getFavoriteExercises(splitId: string): Promise<Exercise[]> {
+		const favoriteIds = await this.loadSplitFavorites(splitId);
+		if (favoriteIds.length === 0) {
+			return [];
+		}
+
+		const allExercises = await this.loadExerciseLibrary();
+		const favoriteMap = new Set(favoriteIds);
+		return allExercises.filter((ex) => favoriteMap.has(ex.id));
 	}
 }

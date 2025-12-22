@@ -7,7 +7,10 @@ import {
 import { ActiveWorkoutView } from "./ui/ActiveWorkoutView";
 import { VIEW_TYPE_WORKOUT } from "./constants";
 import { Storage } from "./data/storage";
-import { ActiveWorkout } from "./types";
+import { ActiveWorkout, TrainingSplit } from "./types";
+import { SplitPickerModal } from "./ui/SplitPickerModal";
+import { TrainingSetupModal } from "./ui/TrainingSetupModal";
+import { getSplitTemplate, getTodaysSplit, BUILT_IN_TEMPLATES } from "./data/splitTemplates";
 
 export default class GymBuddyPlugin extends Plugin {
 	settings: GymBuddySettings;
@@ -60,6 +63,14 @@ export default class GymBuddyPlugin extends Plugin {
 			},
 		});
 
+		this.addCommand({
+			id: "configure-training",
+			name: "Configure training",
+			callback: () => {
+				this.openTrainingSetup();
+			},
+		});
+
 		// Ribbon icon (dumbbell)
 		this.addRibbonIcon("dumbbell", "Start workout", () => {
 			void this.startWorkout();
@@ -86,11 +97,78 @@ export default class GymBuddyPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
+	/**
+	 * Open the training setup wizard
+	 */
+	openTrainingSetup(): void {
+		const modal = new TrainingSetupModal(this, (result) => {
+			new Notice(`Training configured: ${this.getTemplateName(result.templateId)}`);
+		});
+		modal.open();
+	}
+
+	/**
+	 * Get template name by ID
+	 */
+	private getTemplateName(templateId: string): string {
+		const allTemplates = [
+			...BUILT_IN_TEMPLATES,
+			...this.settings.customSplitTemplates,
+		];
+		return allTemplates.find((t) => t.id === templateId)?.name || templateId;
+	}
+
+	/**
+	 * Get the active template (built-in or custom)
+	 */
+	private getActiveTemplate() {
+		const templateId = this.settings.activeSplitTemplateId;
+		return (
+			this.settings.customSplitTemplates.find((t) => t.id === templateId) ||
+			BUILT_IN_TEMPLATES.find((t) => t.id === templateId)
+		);
+	}
+
 	async startWorkout() {
+		// Check if we should prompt for split selection
+		let selectedSplit: TrainingSplit | null = null;
+		const template = this.getActiveTemplate();
+
+		if (this.settings.promptForSplitOnStart) {
+			// User wants to be prompted - show split picker
+			if (template && template.splits.length > 1) {
+				// Show split picker modal
+				await new Promise<void>((resolve) => {
+					const modal = new SplitPickerModal(this, (split) => {
+						selectedSplit = split;
+						resolve();
+					});
+					modal.open();
+				});
+			} else if (template && template.splits.length === 1) {
+				// Only one split, use it automatically
+				selectedSplit = template.splits[0] || null;
+			}
+		} else {
+			// Auto-detect today's split from weekly schedule
+			if (template) {
+				const todaysSplit = getTodaysSplit(this.settings.weeklySchedule, template);
+				if (todaysSplit) {
+					selectedSplit = todaysSplit;
+					new Notice(`Starting ${todaysSplit.name} workout`);
+				} else if (template.splits.length === 1) {
+					// No schedule but only one split - use it
+					selectedSplit = template.splits[0] || null;
+				}
+				// If no schedule and multiple splits, start without a split selection
+			}
+		}
+
 		// Create new active workout
 		this.activeWorkout = {
 			startTime: new Date(),
 			exercises: [],
+			splitId: selectedSplit?.id,
 		};
 
 		// Open workout view

@@ -82,7 +82,7 @@ const context = await esbuild.context({
 	format: "cjs",
 	target: "es2018",
 	logLevel: "info",
-	sourcemap: prod ? false : "inline",
+	sourcemap: false,
 	treeShaking: true,
 	outfile: resolve(outdir, "main.js"),
 	minify: prod,
@@ -124,6 +124,8 @@ if (prod) {
 				});
 			}
 		}
-		console.log(`\nWatching for changes... (outputting to ${VAULT_PLUGIN_DIR})`);
+		console.log(
+			`\nWatching for changes... (outputting to ${VAULT_PLUGIN_DIR})`
+		);
 	}
 }
