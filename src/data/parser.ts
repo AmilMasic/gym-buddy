@@ -42,6 +42,9 @@ export class WorkoutParser {
 		if (workout.prs !== undefined) {
 			lines.push(`prs: ${workout.prs}`);
 		}
+		if (workout.split) {
+			lines.push(`split: ${workout.split}`);
+		}
 		lines.push("---");
 		lines.push("");
 
@@ -212,6 +215,9 @@ export class WorkoutParser {
 						break;
 					case "prs":
 						workout.prs = parseInt(value, 10);
+						break;
+					case "split":
+						workout.split = value.trim();
 						break;
 				}
 			}

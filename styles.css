@@ -152,6 +152,64 @@ Mobile-first design with touch-friendly targets
 	cursor: not-allowed;
 }
 
+/* Desktop: More compact UI */
+@media (min-width: 769px) {
+	.gym-buddy-workout-view {
+		padding: 12px;
+		gap: 12px;
+	}
+
+	.gym-buddy-add-exercise-btn {
+		min-height: 40px;
+		padding: 10px 14px;
+		font-size: 14px;
+	}
+
+	.gym-buddy-exercises {
+		gap: 10px;
+	}
+
+	.gym-buddy-exercise {
+		padding: 10px 12px;
+	}
+
+	.gym-buddy-exercise h3 {
+		font-size: 14px;
+		margin-bottom: 8px;
+	}
+
+	.gym-buddy-sets {
+		gap: 6px;
+	}
+
+	.gym-buddy-set {
+		padding: 6px 10px;
+		font-size: 12px;
+	}
+
+	.gym-buddy-stepper-btn {
+		min-width: 36px;
+		min-height: 36px;
+		font-size: 18px;
+	}
+
+	.gym-buddy-stepper-value {
+		font-size: 16px;
+		min-width: 60px;
+	}
+
+	.gym-buddy-log-btn {
+		min-height: 40px;
+		font-size: 14px;
+		padding: 10px 14px;
+	}
+
+	.gym-buddy-rest-timer {
+		padding: 8px;
+		font-size: 18px;
+	}
+}
+
 /* Mobile-specific enhancements */
 @media (max-width: 768px) {
 	.gym-buddy-workout-view {
@@ -326,6 +384,44 @@ Mobile-first design with touch-friendly targets
 .gym-buddy-exercise-muscles {
 	font-size: 12px;
 	color: var(--text-muted);
+}
+
+/* Desktop: More compact exercise picker */
+@media (min-width: 769px) {
+	.gym-buddy-exercise-picker {
+		padding: 12px;
+		gap: 16px;
+	}
+
+	.gym-buddy-search-input {
+		padding: 8px 12px;
+		font-size: 14px;
+		min-height: 36px;
+	}
+
+	.gym-buddy-muscle-chip {
+		padding: 6px 12px;
+		font-size: 12px;
+		min-height: 32px;
+	}
+
+	.gym-buddy-exercise-list {
+		gap: 6px;
+	}
+
+	.gym-buddy-exercise-item {
+		padding: 10px 12px;
+		min-height: 40px;
+		gap: 3px;
+	}
+
+	.gym-buddy-exercise-name {
+		font-size: 14px;
+	}
+
+	.gym-buddy-exercise-muscles {
+		font-size: 11px;
+	}
 }
 
 /* Touch-friendly spacing */

@@ -7,7 +7,9 @@ import {
 import { ActiveWorkoutView } from "./ui/ActiveWorkoutView";
 import { VIEW_TYPE_WORKOUT } from "./constants";
 import { Storage } from "./data/storage";
-import { ActiveWorkout } from "./types";
+import { ActiveWorkout, TrainingSplit } from "./types";
+import { SplitPickerModal } from "./ui/SplitPickerModal";
+import { getSplitTemplate } from "./data/splitTemplates";
 
 export default class GymBuddyPlugin extends Plugin {
 	settings: GymBuddySettings;
@@ -87,10 +89,31 @@ export default class GymBuddyPlugin extends Plugin {
 	}
 
 	async startWorkout() {
+		// Check if we should prompt for split selection
+		let selectedSplit: TrainingSplit | null = null;
+		
+		if (this.settings.promptForSplitOnStart) {
+			const template = getSplitTemplate(this.settings.activeSplitTemplateId);
+			if (template && template.splits.length > 1) {
+				// Show split picker modal
+				await new Promise<void>((resolve) => {
+					const modal = new SplitPickerModal(this, (split) => {
+						selectedSplit = split;
+						resolve();
+					});
+					modal.open();
+				});
+			} else if (template && template.splits.length === 1) {
+				// Only one split, use it automatically
+				selectedSplit = template.splits[0] || null;
+			}
+		}
+
 		// Create new active workout
 		this.activeWorkout = {
 			startTime: new Date(),
 			exercises: [],
+			splitId: selectedSplit?.id,
 		};
 
 		// Open workout view
