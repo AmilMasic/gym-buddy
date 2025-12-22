@@ -10,43 +10,12 @@
 
 	let { builtInTemplates = [], customTemplates = [] }: Props = $props();
 
-	// Get all available splits grouped by template
-	const allSplits = $derived(getAllAvailableSplits(customTemplates));
-	
-	// Group splits by template for display
-	const splitsByTemplate = $derived.by(() => {
-		const grouped = new Map<string, {
-			template: SplitTemplate;
-			splits: AvailableSplit[];
-			isCustom: boolean;
-		}>();
-
-		// Add built-in templates
-		for (const template of builtInTemplates) {
-			const templateSplits = allSplits.filter(s => s.templateId === template.id);
-			if (templateSplits.length > 0) {
-				grouped.set(template.id, {
-					template,
-					splits: templateSplits,
-					isCustom: false,
-				});
-			}
-		}
-
-		// Add custom templates
-		for (const template of customTemplates) {
-			const templateSplits = allSplits.filter(s => s.templateId === template.id);
-			if (templateSplits.length > 0) {
-				grouped.set(template.id, {
-					template,
-					splits: templateSplits,
-					isCustom: true,
-				});
-			}
-		}
-
-		return Array.from(grouped.values());
-	});
+	// Get all available splits (exclude hybrid template splits)
+	const allSplits = $derived(
+		getAllAvailableSplits(customTemplates).filter(
+			split => split.templateId !== 'hybrid'
+		)
+	);
 
 	// Selected splits (using unique IDs)
 	let selectedSplitIds = $state<Set<string>>(new Set());
@@ -55,18 +24,8 @@
 	let templateName = $state('');
 	let showSaveOption = $state(false);
 
-	// Track expanded templates
-	let expandedTemplates = $state<Set<string>>(new Set());
-
-	function toggleTemplate(templateId: string) {
-		const newExpanded = new Set(expandedTemplates);
-		if (newExpanded.has(templateId)) {
-			newExpanded.delete(templateId);
-		} else {
-			newExpanded.add(templateId);
-		}
-		expandedTemplates = newExpanded;
-	}
+	// Track expanded state for splits section
+	let splitsExpanded = $state(true);
 
 	function toggleSplit(availableSplit: AvailableSplit) {
 		const uniqueId = `${availableSplit.templateId}-${availableSplit.split.id}`;
@@ -126,87 +85,54 @@
 	</div>
 
 	<div class="gym-buddy-builder-content">
-		<!-- Templates List -->
-		<div class="gym-buddy-templates-section">
+		<!-- Splits Grid -->
+		<div class="gym-buddy-section">
 			<div class="gym-buddy-section-header">
-				<h3>Available Splits</h3>
-				<span class="gym-buddy-selected-count">
-					{selectedSplits.length} selected
-				</span>
+				<div class="gym-buddy-section-header-content">
+					<h3>Available Splits</h3>
+					<span class="gym-buddy-selected-count">
+						{selectedSplits.length} selected
+					</span>
+				</div>
+				<button
+					class="gym-buddy-collapse-toggle"
+					onclick={() => splitsExpanded = !splitsExpanded}
+					title={splitsExpanded ? "Collapse" : "Expand"}
+				>
+					{splitsExpanded ? '▼' : '▶'}
+				</button>
 			</div>
-
-			<div class="gym-buddy-templates-list">
-				{#each splitsByTemplate as { template, splits, isCustom }}
-					<div class="gym-buddy-template-group">
-						<button
-							class="gym-buddy-template-group-header"
-							onclick={() => toggleTemplate(template.id)}
-						>
-							<span class="gym-buddy-template-group-name">
-								{template.name}
-								{#if isCustom}
-									<span class="gym-buddy-template-badge">Custom</span>
-								{/if}
-							</span>
-							<span class="gym-buddy-template-group-toggle">
-								{expandedTemplates.has(template.id) ? '▼' : '▶'}
-							</span>
-						</button>
-
-						{#if expandedTemplates.has(template.id)}
-							<div class="gym-buddy-template-splits">
-								{#each splits as availableSplit}
-									<button
-										class="gym-buddy-split-option"
-										class:selected={isSplitSelected(availableSplit)}
-										onclick={() => toggleSplit(availableSplit)}
-									>
-										<div class="gym-buddy-split-option-content">
-											<div class="gym-buddy-split-option-name">
-												{availableSplit.split.name}
-											</div>
-											<div class="gym-buddy-split-option-muscles">
-												{availableSplit.split.muscleGroups.join(', ')}
-											</div>
-										</div>
-										<div class="gym-buddy-split-option-check">
-											{#if isSplitSelected(availableSplit)}
-												✓
-											{/if}
-										</div>
-									</button>
-								{/each}
-							</div>
-						{/if}
-					</div>
+			{#if splitsExpanded}
+			<div class="gym-buddy-split-chips">
+				{#each allSplits as availableSplit}
+					<button
+						class="gym-buddy-split-chip"
+						class:active={isSplitSelected(availableSplit)}
+						onclick={() => toggleSplit(availableSplit)}
+						title={availableSplit.split.muscleGroups.join(', ')}
+					>
+						{availableSplit.split.name}
+					</button>
 				{/each}
 			</div>
+			{/if}
 		</div>
 
 		<!-- Selected Splits Preview -->
 		{#if selectedSplits.length > 0}
-			<div class="gym-buddy-selected-section">
+			<div class="gym-buddy-section">
 				<div class="gym-buddy-section-header">
-					<h3>Selected Splits</h3>
+					<h3>Selected Splits ({selectedSplits.length})</h3>
 				</div>
-				<div class="gym-buddy-selected-splits">
+				<div class="gym-buddy-selected-splits-chips">
 					{#each selectedSplits as availableSplit}
-						<div class="gym-buddy-selected-split">
-							<div class="gym-buddy-selected-split-info">
-								<div class="gym-buddy-selected-split-name">
-									{availableSplit.split.name}
-								</div>
-								<div class="gym-buddy-selected-split-source">
-									from {availableSplit.templateName}
-								</div>
-							</div>
-							<button
-								class="gym-buddy-remove-split"
-								onclick={() => toggleSplit(availableSplit)}
-							>
-								×
-							</button>
-						</div>
+						<button
+							class="gym-buddy-split-chip active"
+							onclick={() => toggleSplit(availableSplit)}
+							title={availableSplit.split.muscleGroups.join(', ')}
+						>
+							{availableSplit.split.name}
+						</button>
 					{/each}
 				</div>
 			</div>

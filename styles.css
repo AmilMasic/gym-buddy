@@ -474,24 +474,106 @@ Mobile-first design with touch-friendly targets
 	overflow-y: auto;
 }
 
+.gym-buddy-section {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
 .gym-buddy-section-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 12px;
+	gap: 8px;
+}
+
+.gym-buddy-section-header-content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
 }
 
 .gym-buddy-section-header h3 {
 	margin: 0;
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: 600;
-	color: var(--text-normal);
+	color: var(--text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
 }
 
 .gym-buddy-selected-count {
 	font-size: 12px;
 	color: var(--text-muted);
 	font-weight: 500;
+}
+
+.gym-buddy-collapse-toggle {
+	padding: 4px 8px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	background: var(--background-primary);
+	color: var(--text-muted);
+	cursor: pointer;
+	font-size: 12px;
+	transition: all 0.2s ease;
+	flex-shrink: 0;
+}
+
+.gym-buddy-collapse-toggle:hover {
+	background: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+}
+
+.gym-buddy-split-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.gym-buddy-split-chips .gym-buddy-split-chip {
+	padding: 8px 16px;
+	font-size: 14px;
+	border-radius: 20px;
+	border: 2px solid var(--background-modifier-border);
+	background: var(--background-primary);
+	color: var(--text-normal);
+	cursor: pointer;
+	transition: all 0.2s ease;
+	min-height: 40px;
+}
+
+.gym-buddy-split-chips .gym-buddy-split-chip:hover {
+	background: var(--background-modifier-hover);
+}
+
+.gym-buddy-split-chips .gym-buddy-split-chip.active {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-color: var(--interactive-accent);
+}
+
+.gym-buddy-selected-splits-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.gym-buddy-selected-splits-chips .gym-buddy-split-chip {
+	padding: 8px 16px;
+	font-size: 14px;
+	border-radius: 20px;
+	border: 2px solid var(--interactive-accent);
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	cursor: pointer;
+	transition: all 0.2s ease;
+	min-height: 40px;
+}
+
+.gym-buddy-selected-splits-chips .gym-buddy-split-chip:hover {
+	opacity: 0.9;
 }
 
 .gym-buddy-templates-list {
@@ -968,12 +1050,12 @@ Mobile-first design with touch-friendly targets
 .gym-buddy-schedule-grid {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 12px;
 }
 
 .gym-buddy-schedule-row {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: 12px;
 }
 
@@ -982,12 +1064,15 @@ Mobile-first design with touch-friendly targets
 	font-size: 14px;
 	font-weight: 500;
 	color: var(--text-normal);
+	flex-shrink: 0;
+	padding-top: 8px;
 }
 
-.gym-buddy-schedule-select-wrapper {
+.gym-buddy-schedule-splits {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
 	flex: 1;
-	position: relative;
-	overflow: visible;
 }
 
 .gym-buddy-schedule-select {
@@ -1102,12 +1187,41 @@ Mobile-first design with touch-friendly targets
 	margin-top: 8px;
 }
 
-.gym-buddy-split-chip {
+.gym-buddy-confirm-splits .gym-buddy-split-chip {
 	padding: 4px 10px;
 	font-size: 12px;
 	background: var(--background-modifier-border);
 	color: var(--text-normal);
 	border-radius: 12px;
+	border: none;
+	min-height: unset;
+	cursor: default;
+}
+
+.gym-buddy-confirm-splits .gym-buddy-split-chip:hover {
+	background: var(--background-modifier-border);
+}
+
+.gym-buddy-split-chip {
+	padding: 8px 16px;
+	font-size: 14px;
+	border-radius: 20px;
+	border: 2px solid var(--background-modifier-border);
+	background: var(--background-primary);
+	color: var(--text-normal);
+	cursor: pointer;
+	transition: all 0.2s ease;
+	min-height: 40px;
+}
+
+.gym-buddy-split-chip:hover {
+	background: var(--background-modifier-hover);
+}
+
+.gym-buddy-split-chip.active {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-color: var(--interactive-accent);
 }
 
 .gym-buddy-confirm-schedule {
@@ -1161,8 +1275,13 @@ Mobile-first design with touch-friendly targets
 		font-size: 13px;
 	}
 
-	.gym-buddy-schedule-select {
-		padding: 8px 10px;
-		font-size: 13px;
+	.gym-buddy-schedule-splits {
+		gap: 6px;
+	}
+
+	.gym-buddy-split-chip {
+		padding: 6px 12px;
+		font-size: 12px;
+		min-height: 36px;
 	}
 }

@@ -240,18 +240,23 @@
 					{#each days as day}
 						<div class="gym-buddy-schedule-row">
 							<span class="gym-buddy-schedule-day">{day.label}</span>
-							<div class="gym-buddy-schedule-select-wrapper">
-								<select 
-									class="gym-buddy-schedule-select"
-									bind:value={schedule[day.key as keyof WeeklySchedule]}
-									onchange={(e) => setDaySplit(day.key, e.currentTarget.value || null)}
+							<div class="gym-buddy-schedule-splits">
+								<button
+									class="gym-buddy-split-chip"
+									class:active={!schedule[day.key as keyof WeeklySchedule]}
+									onclick={() => setDaySplit(day.key, null)}
 								>
-									<option value="">Rest / Off</option>
-									{#each selectedTemplate.splits as split}
-										<option value={split.id}>{split.name}</option>
-									{/each}
-								</select>
-								<span class="gym-buddy-schedule-select-arrow">▼</span>
+									Rest / Off
+								</button>
+								{#each selectedTemplate.splits as split}
+									<button
+										class="gym-buddy-split-chip"
+										class:active={schedule[day.key as keyof WeeklySchedule] === split.id}
+										onclick={() => setDaySplit(day.key, split.id)}
+									>
+										{split.name}
+									</button>
+								{/each}
 							</div>
 						</div>
 					{/each}
