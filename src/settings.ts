@@ -2,7 +2,18 @@ import { App, PluginSettingTab, Setting } from "obsidian";
 import GymBuddyPlugin from "./main";
 import { WeightUnit, SplitTemplate } from "./types";
 import { BUILT_IN_TEMPLATES } from "./data/splitTemplates";
-import { CustomSplitEditorModal } from "./ui/CustomSplitEditorModal";
+
+// Weekly schedule maps day of week to split ID
+export interface WeeklySchedule {
+	[key: string]: string | undefined;
+	monday?: string;
+	tuesday?: string;
+	wednesday?: string;
+	thursday?: string;
+	friday?: string;
+	saturday?: string;
+	sunday?: string;
+}
 
 export interface GymBuddySettings {
 	workoutFolder: string; // Default: "Workouts"
@@ -14,6 +25,7 @@ export interface GymBuddySettings {
 	dailyNoteHeading: string; // "## Workout"
 	activeSplitTemplateId: string; // ID of active split template
 	customSplitTemplates: SplitTemplate[]; // User-created custom splits
+	weeklySchedule: WeeklySchedule; // Maps days to splits for auto-detection
 	promptForSplitOnStart: boolean; // Ask for split when starting workout
 	showSplitFilterInPicker: boolean; // Auto-filter exercises by split in picker
 	recentExercisesExpanded: boolean; // Recent exercises section expanded state
@@ -33,13 +45,14 @@ export const DEFAULT_SETTINGS: GymBuddySettings = {
 	dailyNoteHeading: "## Workout",
 	activeSplitTemplateId: "ppl", // Default to PPL
 	customSplitTemplates: [],
+	weeklySchedule: {}, // Empty by default - user sets up via training setup
 	promptForSplitOnStart: true,
-	showSplitFilterInPicker: true,
-	recentExercisesExpanded: true, // Expanded by default
-	muscleGroupsExpanded: true, // Expanded by default
-	defaultRecentExercisesExpanded: true, // Default to expanded
-	defaultMuscleGroupsExpanded: true, // Default to expanded
-	selectedMuscleGroups: [], // No muscle groups selected by default
+	showSplitFilterInPicker: false, // Disabled - removed the split filter UI
+	recentExercisesExpanded: true,
+	muscleGroupsExpanded: true,
+	defaultRecentExercisesExpanded: true,
+	defaultMuscleGroupsExpanded: true,
+	selectedMuscleGroups: [],
 };
 
 export class GymBuddySettingTab extends PluginSettingTab {
@@ -158,103 +171,75 @@ export class GymBuddySettingTab extends PluginSettingTab {
 		// Training Split Settings Section
 		new Setting(containerEl).setName("Training splits").setHeading();
 
-		// Split template selector
+		// Show current template info
 		const allTemplates = [
 			...BUILT_IN_TEMPLATES,
 			...this.plugin.settings.customSplitTemplates,
 		];
+		const activeTemplate = allTemplates.find(
+			(t) => t.id === this.plugin.settings.activeSplitTemplateId
+		);
+
+		// Show weekly schedule if set
+		const schedule = this.plugin.settings.weeklySchedule;
+		const hasSchedule = Object.values(schedule).some((v) => v);
+
+		let scheduleText = "";
+		if (hasSchedule && activeTemplate) {
+			const days = [
+				"monday",
+				"tuesday",
+				"wednesday",
+				"thursday",
+				"friday",
+				"saturday",
+				"sunday",
+			] as const;
+			scheduleText = days
+				.filter((d) => schedule[d])
+				.map((d) => {
+					const split = activeTemplate.splits.find(
+						(s) => s.id === schedule[d]
+					);
+					return `${d.charAt(0).toUpperCase() + d.slice(1, 3)}: ${
+						split?.name || "?"
+					}`;
+				})
+				.join(", ");
+		}
+
+		// Current configuration summary with reconfigure button
+		const configDesc = activeTemplate
+			? `${activeTemplate.name}${
+					scheduleText ? ` • ${scheduleText}` : ""
+			  }`
+			: "Not configured";
+
 		new Setting(containerEl)
-			.setName("Active split template")
-			.setDesc("Select your training split template")
-			.addDropdown((dropdown) => {
-				for (const template of allTemplates) {
-					dropdown.addOption(template.id, template.name);
-				}
-				dropdown.setValue(this.plugin.settings.activeSplitTemplateId);
-				dropdown.onChange(async (value) => {
-					this.plugin.settings.activeSplitTemplateId = value;
-					await this.plugin.saveSettings();
-				});
-			});
+			.setName("Training configuration")
+			.setDesc(configDesc)
+			.addButton((button) =>
+				button
+					.setButtonText("Configure")
+					.setCta()
+					.onClick(() => {
+						this.plugin.openTrainingSetup();
+						// Close settings and let the modal take over
+					})
+			);
 
 		// Prompt for split on start
 		new Setting(containerEl)
-			.setName("Prompt for split when starting workout")
-			.setDesc("Ask which split to use when starting a new workout")
+			.setName("Ask for split when starting workout")
+			.setDesc(
+				"If disabled, will auto-start with today's scheduled split (if set)"
+			)
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.promptForSplitOnStart)
 					.onChange(async (value) => {
 						this.plugin.settings.promptForSplitOnStart = value;
 						await this.plugin.saveSettings();
-					})
-			);
-
-		// Auto-filter exercises by split
-		new Setting(containerEl)
-			.setName("Auto-filter exercises by split")
-			.setDesc(
-				"Automatically filter exercises to match the selected split's muscle groups"
-			)
-			.addToggle((toggle) =>
-				toggle
-					.setValue(this.plugin.settings.showSplitFilterInPicker)
-					.onChange(async (value) => {
-						this.plugin.settings.showSplitFilterInPicker = value;
-						await this.plugin.saveSettings();
-					})
-			);
-
-		// Manage custom splits button
-		new Setting(containerEl)
-			.setName("Manage custom splits")
-			.setDesc("Create and edit custom training split templates")
-			.addButton((button) =>
-				button
-					.setButtonText("Open split editor")
-					.setCta()
-					.onClick(() => {
-						const modal = new CustomSplitEditorModal(
-							this.plugin,
-							(template: SplitTemplate) => {
-								// Save custom template
-								const existingIndex =
-									this.plugin.settings.customSplitTemplates.findIndex(
-										(t) => t.id === template.id
-									);
-								if (existingIndex >= 0) {
-									this.plugin.settings.customSplitTemplates[
-										existingIndex
-									] = template;
-								} else {
-									this.plugin.settings.customSplitTemplates.push(
-										template
-									);
-								}
-								void this.plugin.saveSettings();
-								// Refresh settings UI
-								this.display();
-							},
-							(templateId: string) => {
-								// Delete custom template
-								this.plugin.settings.customSplitTemplates =
-									this.plugin.settings.customSplitTemplates.filter(
-										(t) => t.id !== templateId
-									);
-								// If deleted template was active, reset to default
-								if (
-									this.plugin.settings
-										.activeSplitTemplateId === templateId
-								) {
-									this.plugin.settings.activeSplitTemplateId =
-										"ppl";
-								}
-								void this.plugin.saveSettings();
-								// Refresh settings UI
-								this.display();
-							}
-						);
-						modal.open();
 					})
 			);
 

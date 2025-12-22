@@ -3,20 +3,22 @@ import { mount, unmount } from "svelte";
 import ExercisePickerModalComponent from "./ExercisePickerModal.svelte";
 import { Exercise, TrainingSplit } from "../types";
 import GymBuddyPlugin from "../main";
-import {
-	getMuscleGroupsForSplit,
-	BUILT_IN_TEMPLATES,
-} from "../data/splitTemplates";
+import { BUILT_IN_TEMPLATES } from "../data/splitTemplates";
 
 export class ExercisePickerModal extends Modal {
-	private component: any = null;
+	private component: ReturnType<typeof mount> | null = null;
 	private plugin: GymBuddyPlugin;
 	private onSelect: (exercise: Exercise) => void;
 	private selectHandler: ((event: CustomEvent) => void) | null = null;
+	private toggleFavoriteHandler: ((event: CustomEvent) => void) | null = null;
 	private collapseHandler: ((event: CustomEvent) => void) | null = null;
-	private muscleSelectionHandler: ((event: CustomEvent) => void) | null =
-		null;
-	private splitChangeHandler: ((event: CustomEvent) => void) | null = null;
+	private muscleSelectionHandler: ((event: CustomEvent) => void) | null = null;
+
+	// Store current state for remounting
+	private exercises: Exercise[] = [];
+	private favoriteExercises: Exercise[] = [];
+	private favoriteIds: Set<string> = new Set();
+	private currentSplit: TrainingSplit | null = null;
 
 	constructor(
 		plugin: GymBuddyPlugin,
@@ -33,33 +35,7 @@ export class ExercisePickerModal extends Modal {
 		contentEl.addClass("gym-buddy-modal");
 
 		// Load exercises from storage
-		const exercises = await this.plugin.storage.loadExerciseLibrary();
-		// #region agent log
-		fetch(
-			"http://127.0.0.1:7242/ingest/344acf04-5640-444a-9df3-a382b3708a2b",
-			{
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					location: "ExercisePickerModal.ts:25",
-					message: "Exercises loaded",
-					data: {
-						exerciseCount: exercises.length,
-						exerciseNames: exercises.slice(0, 5).map((e) => e.name),
-					},
-					timestamp: Date.now(),
-					sessionId: "debug-session",
-					runId: "search-debug",
-					hypothesisId: "C",
-				}),
-			}
-		).catch(() => {});
-		// #endregion
-		console.log(
-			"ExercisePickerModal: Loaded exercises",
-			exercises.length,
-			exercises
-		);
+		this.exercises = await this.plugin.storage.loadExerciseLibrary();
 
 		// Get recent exercises (last 5 unique exercises from active workout)
 		const recentExercises: Exercise[] = [];
@@ -72,7 +48,7 @@ export class ExercisePickerModal extends Modal {
 					workoutEx.exerciseId &&
 					!recentIds.has(workoutEx.exerciseId)
 				) {
-					const ex = exercises.find(
+					const ex = this.exercises.find(
 						(e) => e.id === workoutEx.exerciseId
 					);
 					if (ex) {
@@ -83,46 +59,27 @@ export class ExercisePickerModal extends Modal {
 			}
 		}
 
-		// Get active template and splits (always available)
+		// Get current split from active workout
 		const templateId = this.plugin.settings.activeSplitTemplateId;
 		const template =
 			this.plugin.settings.customSplitTemplates.find(
 				(t) => t.id === templateId
 			) || BUILT_IN_TEMPLATES.find((t) => t.id === templateId);
 
-		let currentSplit: TrainingSplit | null = null;
-		let favoriteExercises: Exercise[] = [];
-		let favoriteIds = new Set<string>();
-		let showSplitFilter = false;
-		let templateName = "";
-		let availableSplits: TrainingSplit[] = [];
-
-		if (template) {
-			templateName = template.name;
-			availableSplits = template.splits;
-
-			// Get current split from active workout if exists
-			if (this.plugin.activeWorkout?.splitId) {
-				currentSplit =
-					template.splits.find(
-						(s) => s.id === this.plugin.activeWorkout?.splitId
-					) || null;
-
-				// Load favorites for this split
-				if (currentSplit) {
-					favoriteExercises =
-						await this.plugin.storage.getFavoriteExercises(
-							currentSplit.id
-						);
-					favoriteIds = new Set(favoriteExercises.map((e) => e.id));
-				}
-
-				// Show split filter if enabled in settings
-				showSplitFilter = this.plugin.settings.showSplitFilterInPicker;
-			}
+		if (template && this.plugin.activeWorkout?.splitId) {
+			this.currentSplit =
+				template.splits.find(
+					(s) => s.id === this.plugin.activeWorkout?.splitId
+				) || null;
 		}
 
-		// Get collapse state from settings (use current state, fallback to defaults)
+		// Load favorites - use current split or a global fallback
+		const splitIdForFavorites = this.currentSplit?.id || "global";
+		this.favoriteExercises =
+			await this.plugin.storage.getFavoriteExercises(splitIdForFavorites);
+		this.favoriteIds = new Set(this.favoriteExercises.map((e) => e.id));
+
+		// Get collapse state from settings
 		const recentExpanded =
 			this.plugin.settings.recentExercisesExpanded ??
 			this.plugin.settings.defaultRecentExercisesExpanded;
@@ -134,91 +91,124 @@ export class ExercisePickerModal extends Modal {
 		const selectedMuscles = this.plugin.settings.selectedMuscleGroups || [];
 
 		// Mount Svelte component
+		this.mountComponent({
+			exercises: this.exercises,
+			recentExercises,
+			favoriteExercises: this.favoriteExercises,
+			favoriteIds: this.favoriteIds,
+			currentSplit: this.currentSplit,
+			selectedMuscles,
+			recentExpanded,
+			muscleGroupsExpanded,
+		});
+
+		// Set up event listeners
+		this.setupEventListeners();
+	}
+
+	private mountComponent(props: {
+		exercises: Exercise[];
+		recentExercises: Exercise[];
+		favoriteExercises: Exercise[];
+		favoriteIds: Set<string>;
+		currentSplit: TrainingSplit | null;
+		selectedMuscles: string[];
+		recentExpanded: boolean;
+		muscleGroupsExpanded: boolean;
+	}) {
+		const { contentEl } = this;
+
+		// Unmount existing component if any
+		if (this.component) {
+			unmount(this.component);
+		}
+
+		// Clear and remount
+		contentEl.empty();
+		contentEl.addClass("gym-buddy-modal");
+
 		this.component = mount(ExercisePickerModalComponent, {
 			target: contentEl,
-			props: {
-				exercises,
-				recentExercises,
-				favoriteExercises,
-				favoriteIds,
-				currentSplit,
-				templateName,
-				availableSplits,
-				showSplitFilter,
-				selectedMuscles,
-				recentExpanded,
-				muscleGroupsExpanded,
-			},
+			props,
 		});
-		// #region agent log
-		fetch(
-			"http://127.0.0.1:7242/ingest/344acf04-5640-444a-9df3-a382b3708a2b",
-			{
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					location: "ExercisePickerModal.ts:50",
-					message: "Svelte component mounted",
-					data: {
-						hasComponent: !!this.component,
-						exerciseCount: exercises.length,
-					},
-					timestamp: Date.now(),
-					sessionId: "debug-session",
-					runId: "search-debug",
-					hypothesisId: "E",
-				}),
-			}
-		).catch(() => {});
-		// #endregion
-		console.log("ExercisePickerModal: Component mounted", this.component);
+	}
 
+	private setupEventListeners() {
 		// Listen for exercise selection
-		const handleSelect = (event: CustomEvent) => {
+		this.selectHandler = (event: CustomEvent) => {
 			const exercise = event.detail.exercise as Exercise;
 			this.onSelect(exercise);
 			this.close();
 		};
-
-		this.selectHandler = handleSelect;
 		document.addEventListener(
 			"select-exercise",
-			handleSelect as EventListener
+			this.selectHandler as EventListener
 		);
 
-		// Listen for favorite toggle
-		const handleToggleFavorite = async (event: CustomEvent) => {
+		// Listen for favorite toggle - remount component to update UI
+		this.toggleFavoriteHandler = async (event: CustomEvent) => {
 			const { exerciseId } = event.detail;
-			if (currentSplit) {
-				const isFavorite = await this.plugin.storage.toggleFavorite(
-					currentSplit.id,
-					exerciseId
+			const splitIdForFavorites = this.currentSplit?.id || "global";
+
+			const isFavorite = await this.plugin.storage.toggleFavorite(
+				splitIdForFavorites,
+				exerciseId
+			);
+
+			// Update local state
+			if (isFavorite) {
+				this.favoriteIds.add(exerciseId);
+				const ex = this.exercises.find((e) => e.id === exerciseId);
+				if (ex) {
+					this.favoriteExercises.push(ex);
+				}
+			} else {
+				this.favoriteIds.delete(exerciseId);
+				this.favoriteExercises = this.favoriteExercises.filter(
+					(e) => e.id !== exerciseId
 				);
-				// Update component props
-				if (this.component) {
-					if (isFavorite) {
-						favoriteIds.add(exerciseId);
-						const ex = exercises.find((e) => e.id === exerciseId);
-						if (ex) {
-							favoriteExercises.push(ex);
-						}
-					} else {
-						favoriteIds.delete(exerciseId);
-						favoriteExercises = favoriteExercises.filter(
-							(e) => e.id !== exerciseId
+			}
+
+			// Get current state for remount
+			const recentExercises: Exercise[] = [];
+			if (this.plugin.activeWorkout) {
+				const recentIds = new Set<string>();
+				for (const workoutEx of this.plugin.activeWorkout.exercises
+					.slice(-5)
+					.reverse()) {
+					if (
+						workoutEx.exerciseId &&
+						!recentIds.has(workoutEx.exerciseId)
+					) {
+						const ex = this.exercises.find(
+							(e) => e.id === workoutEx.exerciseId
 						);
+						if (ex) {
+							recentExercises.push(ex);
+							recentIds.add(workoutEx.exerciseId);
+						}
 					}
-					this.component.$set({
-						favoriteIds,
-						favoriteExercises,
-					});
 				}
 			}
-		};
 
+			// Remount with updated favorites
+			this.mountComponent({
+				exercises: this.exercises,
+				recentExercises,
+				favoriteExercises: this.favoriteExercises,
+				favoriteIds: new Set(this.favoriteIds),
+				currentSplit: this.currentSplit,
+				selectedMuscles:
+					this.plugin.settings.selectedMuscleGroups || [],
+				recentExpanded:
+					this.plugin.settings.recentExercisesExpanded ?? true,
+				muscleGroupsExpanded:
+					this.plugin.settings.muscleGroupsExpanded ?? true,
+			});
+		};
 		document.addEventListener(
 			"toggle-favorite",
-			handleToggleFavorite as EventListener
+			this.toggleFavoriteHandler as EventListener
 		);
 
 		// Listen for collapse state changes
@@ -234,7 +224,6 @@ export class ExercisePickerModal extends Modal {
 			}
 			void this.plugin.saveSettings();
 		};
-
 		document.addEventListener(
 			"collapse-change",
 			this.collapseHandler as EventListener
@@ -248,49 +237,9 @@ export class ExercisePickerModal extends Modal {
 			this.plugin.settings.selectedMuscleGroups = selectedMuscles;
 			void this.plugin.saveSettings();
 		};
-
 		document.addEventListener(
 			"muscle-selection-change",
 			this.muscleSelectionHandler as EventListener
-		);
-
-		// Listen for split selection changes
-		this.splitChangeHandler = (event: CustomEvent) => {
-			const { split } = event.detail as { split: TrainingSplit };
-
-			// Ensure active workout exists
-			if (!this.plugin.activeWorkout) {
-				this.plugin.activeWorkout = {
-					startTime: new Date(),
-					exercises: [],
-					splitId: split.id,
-				};
-			} else {
-				this.plugin.activeWorkout.splitId = split.id;
-			}
-
-			// Reload favorites for the new split (async, fire and forget)
-			void this.plugin.storage
-				.getFavoriteExercises(split.id)
-				.then((newFavorites) => {
-					const newFavoriteIds = new Set(
-						newFavorites.map((e) => e.id)
-					);
-
-					// Update component with new split and favorites
-					if (this.component) {
-						this.component.$set({
-							currentSplit: split,
-							favoriteExercises: newFavorites,
-							favoriteIds: newFavoriteIds,
-						});
-					}
-				});
-		};
-
-		document.addEventListener(
-			"split-change",
-			this.splitChangeHandler as EventListener
 		);
 	}
 
@@ -299,6 +248,7 @@ export class ExercisePickerModal extends Modal {
 			unmount(this.component);
 			this.component = null;
 		}
+
 		// Clean up event listeners
 		if (this.selectHandler) {
 			document.removeEventListener(
@@ -306,6 +256,13 @@ export class ExercisePickerModal extends Modal {
 				this.selectHandler as EventListener
 			);
 			this.selectHandler = null;
+		}
+		if (this.toggleFavoriteHandler) {
+			document.removeEventListener(
+				"toggle-favorite",
+				this.toggleFavoriteHandler as EventListener
+			);
+			this.toggleFavoriteHandler = null;
 		}
 		if (this.collapseHandler) {
 			document.removeEventListener(
@@ -320,13 +277,6 @@ export class ExercisePickerModal extends Modal {
 				this.muscleSelectionHandler as EventListener
 			);
 			this.muscleSelectionHandler = null;
-		}
-		if (this.splitChangeHandler) {
-			document.removeEventListener(
-				"split-change",
-				this.splitChangeHandler as EventListener
-			);
-			this.splitChangeHandler = null;
 		}
 	}
 }

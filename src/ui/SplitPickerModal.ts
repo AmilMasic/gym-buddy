@@ -1,12 +1,17 @@
 import { Modal } from "obsidian";
 import { mount, unmount } from "svelte";
 import SplitPickerModalComponent from "./SplitPickerModal.svelte";
-import { TrainingSplit } from "../types";
+import { TrainingSplit, SplitTemplate } from "../types";
 import GymBuddyPlugin from "../main";
-import { getSplitTemplate } from "../data/splitTemplates";
+import {
+	getSplitTemplate,
+	getTodaysSplit,
+	getTodayDayOfWeek,
+	BUILT_IN_TEMPLATES,
+} from "../data/splitTemplates";
 
 export class SplitPickerModal extends Modal {
-	private component: any = null;
+	private component: ReturnType<typeof mount> | null = null;
 	private plugin: GymBuddyPlugin;
 	private onSelect: (split: TrainingSplit) => void;
 	private selectHandler: ((event: CustomEvent) => void) | null = null;
@@ -25,10 +30,13 @@ export class SplitPickerModal extends Modal {
 		contentEl.empty();
 		contentEl.addClass("gym-buddy-modal");
 
-		// Get active template
+		// Get active template (built-in or custom)
 		const templateId = this.plugin.settings.activeSplitTemplateId;
-		const template = getSplitTemplate(templateId);
-		
+		const template =
+			this.plugin.settings.customSplitTemplates.find(
+				(t) => t.id === templateId
+			) || BUILT_IN_TEMPLATES.find((t) => t.id === templateId);
+
 		if (!template) {
 			contentEl.createEl("p", {
 				text: "No split template selected. Please configure a template in settings.",
@@ -36,11 +44,24 @@ export class SplitPickerModal extends Modal {
 			return;
 		}
 
+		// Check for today's scheduled split
+		const suggestedSplit = getTodaysSplit(
+			this.plugin.settings.weeklySchedule,
+			template
+		);
+
+		// Get today's day name for display
+		const today = getTodayDayOfWeek();
+		const todayName =
+			today.charAt(0).toUpperCase() + today.slice(1) + "'s Workout";
+
 		// Mount Svelte component
 		this.component = mount(SplitPickerModalComponent, {
 			target: contentEl,
 			props: {
 				template,
+				suggestedSplit,
+				todayName,
 			},
 		});
 
@@ -70,4 +91,3 @@ export class SplitPickerModal extends Modal {
 		}
 	}
 }
-

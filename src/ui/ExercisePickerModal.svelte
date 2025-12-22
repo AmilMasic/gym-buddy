@@ -7,23 +7,17 @@
 		favoriteExercises?: Exercise[];
 		favoriteIds?: Set<string>;
 		currentSplit?: TrainingSplit | null;
-		templateName?: string;
-		availableSplits?: TrainingSplit[];
-		showSplitFilter?: boolean;
 		selectedMuscles?: string[];
 		recentExpanded?: boolean;
 		muscleGroupsExpanded?: boolean;
 	}
 
-	let { 
-		exercises = [], 
-		recentExercises = [], 
+	let {
+		exercises = [],
+		recentExercises = [],
 		favoriteExercises = [],
 		favoriteIds = new Set<string>(),
 		currentSplit = null,
-		templateName = "",
-		availableSplits = [],
-		showSplitFilter = false,
 		selectedMuscles = $bindable([]),
 		recentExpanded = true,
 		muscleGroupsExpanded = true
@@ -39,24 +33,9 @@
 	});
 
 	let searchQuery = $state('');
-	let splitFilterEnabled = $state(false);
-	
-	// Initialize split filter based on props
-	$effect(() => {
-		splitFilterEnabled = showSplitFilter && currentSplit !== null;
-	});
-	
+
 	let filteredExercises: Exercise[] = $derived.by(() => {
 		let result = exercises;
-
-		// Filter by split muscle groups if enabled
-		if (splitFilterEnabled && currentSplit) {
-			const splitMuscles = new Set(currentSplit.muscleGroups);
-			result = result.filter(ex =>
-				ex.muscles.some(m => splitMuscles.has(m)) ||
-				(ex.secondaryMuscles && ex.secondaryMuscles.some(m => splitMuscles.has(m)))
-			);
-		}
 
 		// Filter by muscle groups
 		if (selectedMuscles.length > 0) {
@@ -129,46 +108,13 @@
 		});
 		document.dispatchEvent(event);
 	}
-
-	function selectSplit(split: TrainingSplit) {
-		const event = new CustomEvent('split-change', {
-			detail: { split },
-		});
-		document.dispatchEvent(event);
-	}
 </script>
 
 <div class="gym-buddy-exercise-picker">
-	{#if templateName && availableSplits.length > 0}
-		<div class="gym-buddy-split-selector">
-			<div class="gym-buddy-split-selector-header">
-				<span class="gym-buddy-split-selector-label">{templateName}</span>
-				{#if currentSplit}
-					<span class="gym-buddy-current-split-indicator">Current: {currentSplit.name}</span>
-				{/if}
-			</div>
-			<div class="gym-buddy-split-buttons">
-				{#each availableSplits as split}
-					<button
-						class="gym-buddy-split-button"
-						class:active={currentSplit?.id === split.id}
-						onclick={() => selectSplit(split)}
-						title={split.muscleGroups.join(', ')}
-					>
-						<span class="gym-buddy-split-button-name">{split.name}</span>
-						<span class="gym-buddy-split-button-muscles">{split.muscleGroups.join(', ')}</span>
-					</button>
-				{/each}
-			</div>
-			{#if currentSplit && showSplitFilter}
-				<label class="gym-buddy-checkbox-label">
-					<input
-						type="checkbox"
-						bind:checked={splitFilterEnabled}
-					/>
-					<span>Filter exercises by split muscle groups</span>
-				</label>
-			{/if}
+	<!-- Current split indicator (if set) -->
+	{#if currentSplit}
+		<div class="gym-buddy-current-split-badge">
+			Training: {currentSplit.name}
 		</div>
 	{/if}
 
@@ -248,16 +194,14 @@
 								{exercise.muscles.join(', ')}
 							</div>
 						</div>
-						{#if currentSplit}
-							<button
-								class="gym-buddy-favorite-button"
-								class:active={isFavorite(exercise.id)}
-								onclick={(e) => toggleFavorite(exercise.id, e)}
-								title={isFavorite(exercise.id) ? "Remove from favorites" : "Add to favorites"}
-							>
-								{isFavorite(exercise.id) ? '❤️' : '🤍'}
-							</button>
-						{/if}
+						<button
+							class="gym-buddy-favorite-button"
+							class:active={isFavorite(exercise.id)}
+							onclick={(e) => toggleFavorite(exercise.id, e)}
+							title={isFavorite(exercise.id) ? "Remove from favorites" : "Add to favorites"}
+						>
+							{isFavorite(exercise.id) ? '❤️' : '🤍'}
+						</button>
 					</div>
 				{/each}
 			</div>
@@ -325,16 +269,14 @@
 							{exercise.muscles.join(', ')}
 						</div>
 					</div>
-					{#if currentSplit}
-						<button
-							class="gym-buddy-favorite-button"
-							class:active={isFavorite(exercise.id)}
-							onclick={(e) => toggleFavorite(exercise.id, e)}
-							title={isFavorite(exercise.id) ? "Remove from favorites" : "Add to favorites"}
-						>
-							{isFavorite(exercise.id) ? '❤️' : '🤍'}
-						</button>
-					{/if}
+					<button
+						class="gym-buddy-favorite-button"
+						class:active={isFavorite(exercise.id)}
+						onclick={(e) => toggleFavorite(exercise.id, e)}
+						title={isFavorite(exercise.id) ? "Remove from favorites" : "Add to favorites"}
+					>
+						{isFavorite(exercise.id) ? '❤️' : '🤍'}
+					</button>
 				</div>
 			{/each}
 		</div>
@@ -346,9 +288,19 @@
 		padding: 16px;
 		display: flex;
 		flex-direction: column;
-		gap: 24px;
+		gap: 20px;
 		max-height: 80vh;
 		overflow-y: auto;
+	}
+
+	.gym-buddy-current-split-badge {
+		padding: 8px 12px;
+		background: var(--interactive-accent);
+		color: var(--text-on-accent);
+		border-radius: 6px;
+		font-size: 13px;
+		font-weight: 600;
+		text-align: center;
 	}
 
 	.gym-buddy-search-input {
@@ -388,9 +340,11 @@
 
 	.gym-buddy-section h3 {
 		margin: 0;
-		font-size: 16px;
+		font-size: 14px;
 		font-weight: 600;
-		color: var(--text-normal);
+		color: var(--text-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
 	}
 
 	.gym-buddy-selected-muscles-preview {
@@ -472,94 +426,8 @@
 		gap: 8px;
 	}
 
-	.gym-buddy-split-selector {
-		padding: 12px;
-		background: var(--background-secondary);
-		border-radius: 8px;
-		border: 1px solid var(--background-modifier-border);
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-	}
-
-	.gym-buddy-split-selector-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 8px;
-		flex-wrap: wrap;
-	}
-
-	.gym-buddy-split-selector-label {
-		font-size: 14px;
-		color: var(--text-normal);
-		font-weight: 600;
-	}
-
-	.gym-buddy-current-split-indicator {
-		font-size: 12px;
-		color: var(--text-muted);
-		font-weight: 500;
-	}
-
-	.gym-buddy-split-buttons {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-	}
-
-	.gym-buddy-split-button {
-		flex: 1;
-		min-width: 120px;
-		padding: 10px 12px;
-		border: 2px solid var(--background-modifier-border);
-		border-radius: 8px;
-		background: var(--background-primary);
-		color: var(--text-normal);
-		cursor: pointer;
-		transition: all 0.2s ease;
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-		text-align: left;
-	}
-
-	.gym-buddy-split-button:hover {
-		background: var(--background-modifier-hover);
-		border-color: var(--interactive-accent);
-	}
-
-	.gym-buddy-split-button.active {
-		background: var(--interactive-accent);
-		color: var(--text-on-accent);
-		border-color: var(--interactive-accent);
-	}
-
-	.gym-buddy-split-button-name {
-		font-size: 14px;
-		font-weight: 600;
-	}
-
-	.gym-buddy-split-button-muscles {
-		font-size: 11px;
-		opacity: 0.8;
-	}
-
-	.gym-buddy-checkbox-label {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		cursor: pointer;
-		font-size: 13px;
-		color: var(--text-normal);
-	}
-
-	.gym-buddy-checkbox-label input[type="checkbox"] {
-		cursor: pointer;
-	}
-
 	.gym-buddy-exercise-item {
-		padding: 16px;
+		padding: 14px 16px;
 		text-align: left;
 		border: 2px solid var(--background-modifier-border);
 		border-radius: 8px;
@@ -587,7 +455,7 @@
 	}
 
 	.gym-buddy-exercise-name {
-		font-size: 16px;
+		font-size: 15px;
 		font-weight: 600;
 		color: var(--text-normal);
 	}
@@ -605,10 +473,12 @@
 		padding: 4px 8px;
 		transition: transform 0.2s ease;
 		flex-shrink: 0;
+		opacity: 0.6;
 	}
 
 	.gym-buddy-favorite-button:hover {
 		transform: scale(1.2);
+		opacity: 1;
 	}
 
 	.gym-buddy-favorite-button.active {
@@ -619,7 +489,12 @@
 	@media (min-width: 769px) {
 		.gym-buddy-exercise-picker {
 			padding: 12px;
-			gap: 16px;
+			gap: 14px;
+		}
+
+		.gym-buddy-current-split-badge {
+			padding: 6px 10px;
+			font-size: 12px;
 		}
 
 		.gym-buddy-search-input {
@@ -632,7 +507,7 @@
 		}
 
 		.gym-buddy-section h3 {
-			font-size: 14px;
+			font-size: 12px;
 		}
 
 		.gym-buddy-muscle-chip {
@@ -663,58 +538,5 @@
 			font-size: 16px;
 			padding: 2px 6px;
 		}
-
-		.gym-buddy-split-selector {
-			padding: 8px;
-			gap: 8px;
-		}
-
-		.gym-buddy-split-selector-label {
-			font-size: 12px;
-		}
-
-		.gym-buddy-current-split-indicator {
-			font-size: 11px;
-		}
-
-		.gym-buddy-split-buttons {
-			gap: 6px;
-		}
-
-		.gym-buddy-split-button {
-			min-width: 100px;
-			padding: 6px 10px;
-		}
-
-		.gym-buddy-split-button-name {
-			font-size: 12px;
-		}
-
-		.gym-buddy-split-button-muscles {
-			font-size: 10px;
-		}
-
-		.gym-buddy-checkbox-label {
-			font-size: 12px;
-		}
-
-		.gym-buddy-section-header h3 {
-			font-size: 14px;
-		}
-
-		.gym-buddy-collapse-button {
-			font-size: 10px;
-			padding: 2px 6px;
-		}
-
-		.gym-buddy-selected-muscles-label {
-			font-size: 11px;
-		}
-
-		.gym-buddy-selected-muscle-chip {
-			padding: 3px 8px;
-			font-size: 10px;
-		}
 	}
 </style>
-

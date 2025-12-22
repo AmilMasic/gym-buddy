@@ -187,3 +187,50 @@ export function getMuscleGroupsForSplit(
 	return split?.muscleGroups || [];
 }
 
+/**
+ * Get today's day of week as a lowercase string
+ */
+export function getTodayDayOfWeek():
+	| "monday"
+	| "tuesday"
+	| "wednesday"
+	| "thursday"
+	| "friday"
+	| "saturday"
+	| "sunday" {
+	const days = [
+		"sunday",
+		"monday",
+		"tuesday",
+		"wednesday",
+		"thursday",
+		"friday",
+		"saturday",
+	] as const;
+	return days[new Date().getDay()] as
+		| "monday"
+		| "tuesday"
+		| "wednesday"
+		| "thursday"
+		| "friday"
+		| "saturday"
+		| "sunday";
+}
+
+/**
+ * Get today's scheduled split from the weekly schedule
+ */
+export function getTodaysSplit(
+	weeklySchedule: Record<string, string | undefined>,
+	template: SplitTemplate | undefined
+): TrainingSplit | null {
+	if (!template) return null;
+
+	const today = getTodayDayOfWeek();
+	const splitId = weeklySchedule[today];
+
+	if (!splitId) return null;
+
+	return template.splits.find((s) => s.id === splitId) || null;
+}
+
