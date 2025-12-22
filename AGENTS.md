@@ -138,6 +138,137 @@ Follow Obsidian's **Developer Policies** and **Plugin Guidelines**. In particula
 - Avoid Node/Electron APIs if you want mobile compatibility; set `isDesktopOnly` accordingly.
 - Prefer `async/await` over promise chains; handle errors gracefully.
 
+## CSS Guidelines
+
+- **All CSS lives in `styles.css`** - No inline styles, no CSS-in-JS, no component-scoped styles
+- Use Obsidian CSS variables for theming:
+  - Colors: `var(--text-normal)`, `var(--background-secondary)`, `var(--interactive-accent)`
+  - Spacing: Use consistent values (4px, 8px, 16px scale)
+- Never use `el.style.property = value` - use CSS classes with `{cls: 'class-name'}`
+- Mobile-first: Design for touch first, enhance for desktop
+- **Touch targets**: Minimum 48px height for buttons and interactive elements
+- Use `-webkit-tap-highlight-color: transparent` for touch optimization
+
+## Async/Await Patterns
+
+**Required patterns:**
+- Always use `async/await` over `.then()/.catch()` chains
+- Wrap async operations in `try/catch` blocks
+- Never use fire-and-forget patterns (`void asyncFn()`) without error handling
+
+**Bad:**
+```ts
+void this.plugin.saveSettings(); // Silent failure
+```
+
+**Good:**
+```ts
+try {
+  await this.plugin.saveSettings();
+} catch (e) {
+  console.error('Failed to save settings:', e);
+}
+```
+
+**For non-critical operations** where you intentionally don't await:
+```ts
+this.plugin.saveSettings().catch(e => console.error('Settings save failed:', e));
+```
+
+## Svelte Component Patterns (Obsidian Integration)
+
+This project uses Svelte 5 for complex UI. Follow these patterns:
+
+### Modal Wrapper Structure
+Each Svelte modal has TWO files:
+- `ModalName.ts` - Obsidian Modal subclass, handles Svelte lifecycle
+- `ModalName.svelte` - UI implementation
+
+### Mounting Pattern
+```ts
+import { mount, unmount } from 'svelte';
+import Component from './Component.svelte';
+
+export class MyModal extends Modal {
+  private component: ReturnType<typeof mount> | null = null;
+
+  onOpen() {
+    this.component = mount(Component, {
+      target: this.contentEl,
+      props: { /* ... */ }
+    });
+  }
+
+  onClose() {
+    if (this.component) {
+      unmount(this.component);
+      this.component = null;
+    }
+    this.contentEl.empty();
+  }
+}
+```
+
+### Event Communication
+- Svelte components dispatch events via `document.dispatchEvent(new CustomEvent(...))`
+- TypeScript wrappers listen with `document.addEventListener(...)`
+- **Always remove listeners on close** to prevent memory leaks
+
+### State Updates
+- Prefer reactive state updates over component remounting
+- Use `$state` and `$derived` runes (Svelte 5)
+- Avoid full component remount for simple state changes
+
+## Event Listener & Resource Cleanup
+
+**Always use Obsidian's register helpers:**
+```ts
+// DOM events - auto-cleaned on unload
+this.registerDomEvent(window, 'resize', () => { /* ... */ });
+
+// App events - auto-cleaned on unload
+this.registerEvent(this.app.workspace.on('file-open', f => { /* ... */ }));
+
+// Intervals - auto-cleaned on unload
+this.registerInterval(window.setInterval(() => { /* ... */ }, 1000));
+```
+
+**For document-level event listeners in modals:**
+```ts
+onOpen() {
+  this.boundHandler = this.handleEvent.bind(this);
+  document.addEventListener('custom-event', this.boundHandler);
+}
+
+onClose() {
+  document.removeEventListener('custom-event', this.boundHandler);
+}
+```
+
+**Never:**
+- Add listeners without corresponding removal
+- Use anonymous functions for listeners you need to remove
+
+## Error Handling
+
+- **No silent failures** - Every promise rejection must be handled
+- Log errors with context: `console.error('Context:', error)`
+- For user-facing errors, use `new Notice('User-friendly message')`
+- Validate inputs at boundaries (user input, file reads, API responses)
+
+**Pattern for async operations:**
+```ts
+async doSomething(): Promise<void> {
+  try {
+    const result = await this.riskyOperation();
+    // handle success
+  } catch (error) {
+    console.error('doSomething failed:', error);
+    new Notice('Operation failed. Check console for details.');
+  }
+}
+```
+
 ## Mobile
 
 - Where feasible, test on iOS and Android.
@@ -156,6 +287,9 @@ Follow Obsidian's **Developer Policies** and **Plugin Guidelines**. In particula
 - Introduce network calls without an obvious user-facing reason and documentation.
 - Ship features that require cloud services without clear disclosure and explicit opt-in.
 - Store or transmit vault contents unless essential and consented.
+- **Add debug logging that won't be removed** - No `console.log` spam, no debug fetch calls.
+- Add network requests (fetch/XMLHttpRequest) without explicit user-facing purpose.
+- Use fire-and-forget async patterns without error handling.
 
 ## Common tasks
 
