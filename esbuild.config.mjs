@@ -1,7 +1,13 @@
 import esbuild from "esbuild";
 import process from "process";
 import { builtinModules, createRequire } from "node:module";
-import { copyFileSync, mkdirSync, existsSync, readFileSync } from "node:fs";
+import {
+	copyFileSync,
+	mkdirSync,
+	existsSync,
+	readFileSync,
+	writeFileSync,
+} from "node:fs";
 import { resolve } from "node:path";
 
 const require = createRequire(import.meta.url);
@@ -95,6 +101,30 @@ function copyToVault() {
 	// Ensure plugin directory exists
 	if (!existsSync(VAULT_PLUGIN_DIR)) {
 		mkdirSync(VAULT_PLUGIN_DIR, { recursive: true });
+	}
+
+	// Create .hotreload file so Hot-Reload plugin detects this directory
+	const hotreloadFile = resolve(VAULT_PLUGIN_DIR, ".hotreload");
+	if (!existsSync(hotreloadFile)) {
+		writeFileSync(hotreloadFile, "");
+		// #region agent log
+		fetch(
+			"http://127.0.0.1:7242/ingest/344acf04-5640-444a-9df3-a382b3708a2b",
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					location: "esbuild.config.mjs:92",
+					message: ".hotreload file created",
+					data: { hotreloadFile },
+					timestamp: Date.now(),
+					sessionId: "debug-session",
+					runId: "run1",
+					hypothesisId: "hotreload-marker",
+				}),
+			}
+		).catch(() => {});
+		// #endregion
 	}
 
 	copyFileSync("manifest.json", resolve(VAULT_PLUGIN_DIR, "manifest.json"));

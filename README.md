@@ -61,16 +61,25 @@ npm install
 
 ### Development with hot-reload
 
-```bash
-# Copy and configure your vault path
-cp .env.example .env
-# Edit .env: VAULT_PLUGIN_DIR=/path/to/vault/.obsidian/plugins/gym-buddy
+1. **Install Hot-Reload plugin in Obsidian** (not via npm - it's an Obsidian plugin):
+   - Open Obsidian → Settings → Community plugins
+   - Click "Browse" and search for "Hot-Reload"
+   - Install and enable it
+   - Or manually: Download from [Hot-Reload GitHub](https://github.com/pjeby/hot-reload) and place in `<vault>/.obsidian/plugins/hot-reload/`
 
-# Start dev server (outputs directly to vault)
-npm run dev:vault
-```
+2. **Configure your vault path**:
+   ```bash
+   # Copy and configure your vault path
+   cp .env.example .env
+   # Edit .env: VAULT_PLUGIN_DIR=/path/to/vault/.obsidian/plugins/gym-buddy
+   ```
 
-Requires the [Hot-Reload](https://github.com/pjeby/hot-reload) plugin for automatic reloading.
+3. **Start dev server** (outputs directly to vault):
+   ```bash
+   npm run dev:vault
+   ```
+
+The build system will automatically create a `.hotreload` marker file in your plugin directory, which tells the Hot-Reload plugin to watch for changes. When you edit source files, esbuild rebuilds and Hot-Reload automatically reloads the plugin in Obsidian.
 
 ### Build
 
