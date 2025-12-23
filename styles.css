@@ -772,6 +772,11 @@ Mobile-first design with touch-friendly targets
 	color: var(--text-on-accent);
 }
 
+/* Exercise Card Content */
+.gb-exercise-card-content {
+	padding-top: var(--gb-space-md);
+}
+
 /* Tooltips & Info */
 .gb-template-info-wrapper {
 	position: relative;
