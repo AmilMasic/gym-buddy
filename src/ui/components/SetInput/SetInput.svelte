@@ -23,7 +23,7 @@
 	let time = $state(initialTime);
 
 	$effect(() => {
-		set.weight = weight > 0 ? weight : undefined;
+		set.weight = weight >= 0 ? weight : undefined;
 		set.reps = reps > 0 ? reps : undefined;
 		set.rpe = rpe > 0 ? rpe : undefined;
 		set.time = time && time > 0 ? time : undefined;
@@ -53,6 +53,9 @@
 			step={5}
 			label="Weight"
 			unit={unit}
+			quickIncrements={[10, 25, 45]}
+			quickDecrements={[10, 25, 45]}
+			allowDirectInput={true}
 		/>
 		<NumberStepper
 			bind:value={reps}
@@ -80,7 +83,7 @@
 		size="lg"
 		fullWidth
 		onclick={logSet}
-		disabled={weight <= 0 || reps <= 0}
+		disabled={reps <= 0}
 		icon={Check}
 	>
 		LOG SET

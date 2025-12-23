@@ -17,6 +17,7 @@
 
 	let recentExpandedState = $state(true);
 	let muscleGroupsExpandedState = $state(true);
+	let favoritesExpandedState = $state(true);
 
 	// Initialize collapse state from props
 	$effect(() => {
@@ -100,6 +101,14 @@
 		});
 		document.dispatchEvent(event);
 	}
+
+	function toggleFavoritesExpanded() {
+		favoritesExpandedState = !favoritesExpandedState;
+		const event = new CustomEvent('collapse-change', {
+			detail: { section: 'favorites', expanded: favoritesExpandedState },
+		});
+		document.dispatchEvent(event);
+	}
 </script>
 
 <div class="gb-exercise-picker">
@@ -118,7 +127,17 @@
 
 	{#if favoriteExercises.length > 0}
 		<div class="gb-section">
-			<h3>Favorites</h3>
+			<div class="gb-section-header">
+				<h3>Favorites</h3>
+				<IconButton
+					icon={favoritesExpandedState ? ChevronDown : ChevronRight}
+					variant="ghost"
+					size="sm"
+					ariaLabel={favoritesExpandedState ? "Collapse" : "Expand"}
+					onclick={toggleFavoritesExpanded}
+				/>
+			</div>
+			{#if favoritesExpandedState}
 			<div class="gb-exercise-list">
 				{#each favoriteExercises as exercise}
 					<div class="gb-exercise-item">
@@ -149,6 +168,7 @@
 					</div>
 				{/each}
 			</div>
+			{/if}
 		</div>
 	{/if}
 

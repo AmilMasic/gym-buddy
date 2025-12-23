@@ -570,6 +570,78 @@ Mobile-first design with touch-friendly targets
 	font-size: var(--gb-font-xl);
 	font-weight: 600;
 	color: var(--text-normal);
+	background: transparent;
+	border: none;
+	cursor: default;
+	padding: 8px;
+	border-radius: var(--gb-radius-md);
+	transition: all var(--gb-transition);
+}
+
+.gb-stepper-value--clickable {
+	cursor: pointer;
+	background: var(--background-secondary);
+}
+
+.gb-stepper-value--clickable:hover {
+	background: var(--background-modifier-hover);
+	border: 1px solid var(--interactive-accent);
+}
+
+.gb-stepper-value--clickable:active {
+	transform: scale(0.98);
+}
+
+.gb-stepper-input {
+	min-width: 80px;
+	text-align: center;
+	font-size: var(--gb-font-xl);
+	font-weight: 600;
+	color: var(--text-normal);
+	background: var(--background-primary);
+	border: 2px solid var(--interactive-accent);
+	border-radius: var(--gb-radius-md);
+	padding: 8px;
+	outline: none;
+}
+
+.gb-stepper-quick-increments,
+.gb-stepper-quick-decrements {
+	display: flex;
+	gap: 8px;
+	justify-content: center;
+	margin-top: 8px;
+}
+
+.gb-quick-increment {
+	min-height: 44px;
+	min-width: 60px;
+	padding: 10px 16px;
+	font-size: var(--gb-font-md);
+	font-weight: 600;
+	color: var(--text-normal);
+	background: var(--background-secondary);
+	border: 2px solid var(--background-modifier-border);
+	border-radius: var(--gb-radius-md);
+	cursor: pointer;
+	transition: all var(--gb-transition);
+	font-family: inherit;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.gb-quick-increment:hover:not(:disabled) {
+	background: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+	transform: translateY(-1px);
+}
+
+.gb-quick-increment:active:not(:disabled) {
+	transform: scale(0.96);
+}
+
+.gb-quick-increment:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
 }
 
 /* Specialized Small Labels */
@@ -772,9 +844,133 @@ Mobile-first design with touch-friendly targets
 	color: var(--text-on-accent);
 }
 
-/* Exercise Card Content */
+/* Exercise Card */
+.gb-exercise-card {
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--gb-radius-lg);
+	overflow: hidden;
+}
+
+.gb-exercise-card-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--gb-space-md) var(--gb-space-lg);
+	gap: var(--gb-space-md);
+	/* Reset button styles */
+	background: none;
+	border: none;
+	width: 100%;
+	cursor: pointer;
+	text-align: left;
+	transition: background 0.2s ease;
+}
+
+.gb-exercise-card-header:hover {
+	background: var(--background-modifier-hover);
+}
+
+.gb-exercise-card-title {
+	display: flex;
+	align-items: center;
+	gap: var(--gb-space-sm);
+	flex: 1;
+	min-width: 0; /* Allow text truncation if needed */
+}
+
+.gb-exercise-card-info {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	flex: 1;
+	min-width: 0; /* Allow text truncation if needed */
+}
+
+.gb-exercise-name {
+	font-size: var(--gb-font-md);
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.gb-exercise-sets-count {
+	font-size: var(--gb-font-sm);
+	color: var(--text-muted);
+}
+
 .gb-exercise-card-content {
-	padding-top: var(--gb-space-md);
+	padding: 0 var(--gb-space-lg) var(--gb-space-lg) var(--gb-space-lg);
+	display: flex;
+	flex-direction: column;
+	gap: var(--gb-space-lg);
+}
+
+.gb-exercise-card--collapsed .gb-exercise-card-content {
+	display: none;
+}
+
+/* Logged Sets */
+.gb-logged-sets {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gb-space-sm);
+}
+
+.gb-logged-set {
+	display: flex;
+	align-items: center;
+	gap: var(--gb-space-md);
+	padding: var(--gb-space-sm) var(--gb-space-md);
+	background: var(--background-secondary);
+	border-radius: var(--gb-radius-md);
+	border: 1px solid transparent;
+	transition: all 0.2s ease;
+}
+
+.gb-logged-set--latest {
+	border-color: var(--interactive-accent);
+	background: var(--background-modifier-hover);
+}
+
+.gb-set-number {
+	font-size: var(--gb-font-sm);
+	font-weight: 600;
+	color: var(--text-muted);
+	min-width: 48px;
+}
+
+.gb-set-details {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	flex: 1;
+	font-size: var(--gb-font-md);
+	color: var(--text-normal);
+}
+
+.gb-set-rpe {
+	font-size: var(--gb-font-sm);
+	color: var(--text-muted);
+}
+
+.gb-set-check {
+	color: var(--interactive-accent);
+	flex-shrink: 0;
+}
+
+/* Next Set Input */
+.gb-next-set {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gb-space-sm);
+}
+
+.gb-next-set-label {
+	font-size: var(--gb-font-sm);
+	font-weight: 600;
+	color: var(--text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
 }
 
 /* Tooltips & Info */
@@ -941,6 +1137,16 @@ Mobile-first design with touch-friendly targets
 	.gb-stepper-value {
 		font-size: 24px;
 		min-width: 100px;
+	}
+
+	.gb-stepper-input {
+		font-size: 24px;
+		min-width: 100px;
+	}
+
+	.gb-quick-increment {
+		min-height: 48px;
+		font-size: var(--gb-font-lg);
 	}
 
 	.gb-exercise h3 {
