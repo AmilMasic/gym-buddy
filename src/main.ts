@@ -14,17 +14,28 @@ import {
 	BUILT_IN_TEMPLATES,
 } from "./features/splits";
 import { TrainingSetupModal } from "./features/setup";
+import { TemplaterIntegration } from "./integrations";
 import { Notice, Plugin } from "obsidian";
 
 export default class GymBuddyPlugin extends Plugin {
 	settings: GymBuddySettings;
 	storage: Storage;
+	templaterIntegration: TemplaterIntegration | null = null;
 	activeWorkout: ActiveWorkout | null = null;
 	settingTab: GymBuddySettingTab | null = null;
 
 	async onload() {
 		await this.loadSettings();
 		this.storage = new Storage(this);
+		this.templaterIntegration = new TemplaterIntegration(
+			this,
+			this.storage
+		);
+
+		// Register Templater token if enabled
+		if (this.settings.templaterTokenEnabled) {
+			this.templaterIntegration.registerTemplaterToken();
+		}
 
 		// Register sidebar view for active workout
 		this.registerView(
@@ -92,11 +103,117 @@ export default class GymBuddyPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign(
-			{},
-			DEFAULT_SETTINGS,
-			(await this.loadData()) as Partial<GymBuddySettings>
-		);
+		const loadedData = (await this.loadData()) as Partial<GymBuddySettings>;
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
+
+		// Migrate old settings to new structure
+		await this.migrateSettings();
+	}
+
+	/**
+	 * Migrate old settings format to new format
+	 */
+	private async migrateSettings(): Promise<void> {
+		let needsSave = false;
+
+		// Migrate workoutSaveMode to new structure
+		if (this.settings.workoutSaveMode) {
+			const oldMode = this.settings.workoutSaveMode;
+
+			// Set workoutFilenameFormat based on old mode
+			if (!this.settings.workoutFilenameFormat) {
+				if (oldMode === "daily-timestamp") {
+					this.settings.workoutFilenameFormat = "{{date}}-{{time}}";
+				} else {
+					this.settings.workoutFilenameFormat = "{{date}}-{{time}}";
+				}
+				needsSave = true;
+			}
+
+			// Migrate weekly note settings
+			if (oldMode === "weekly") {
+				if (!this.settings.weeklyNotesEnabled) {
+					this.settings.weeklyNotesEnabled = true;
+					needsSave = true;
+				}
+
+				// Migrate weeklyNotePath to weeklyNoteFolder and weeklyNoteFilename
+				if (
+					this.settings.weeklyNotePath &&
+					!this.settings.weeklyNoteFolder
+				) {
+					const path = this.settings.weeklyNotePath;
+					const lastSlash = path.lastIndexOf("/");
+					if (lastSlash !== -1) {
+						this.settings.weeklyNoteFolder = path.substring(
+							0,
+							lastSlash
+						);
+						let filename = path
+							.substring(lastSlash + 1)
+							.replace(".md", "");
+						// Convert old format placeholders to new ones
+						filename = filename
+							.replace(/\{\{year\}\}/g, "{{year}}")
+							.replace(/\{\{week\}\}/g, "{{week}}");
+						this.settings.weeklyNoteFilename = filename;
+					} else {
+						let filename = path.replace(".md", "");
+						filename = filename
+							.replace(/\{\{year\}\}/g, "{{year}}")
+							.replace(/\{\{week\}\}/g, "{{week}}");
+						this.settings.weeklyNoteFilename = filename;
+						this.settings.weeklyNoteFolder = "Workouts/Weeks";
+					}
+					needsSave = true;
+				}
+			} else {
+				// For non-weekly modes, disable weekly notes
+				if (this.settings.weeklyNotesEnabled === undefined) {
+					this.settings.weeklyNotesEnabled = false;
+					needsSave = true;
+				}
+			}
+
+			// Clear old workoutSaveMode after migration
+			delete this.settings.workoutSaveMode;
+			needsSave = true;
+		}
+
+		// Ensure new settings have defaults if not set
+		if (!this.settings.workoutFilenameFormat) {
+			this.settings.workoutFilenameFormat = "{{date}}-{{time}}";
+			needsSave = true;
+		}
+
+		if (this.settings.weeklyNotesEnabled === undefined) {
+			this.settings.weeklyNotesEnabled = false;
+			needsSave = true;
+		}
+
+		if (!this.settings.weeklyNoteFolder) {
+			this.settings.weeklyNoteFolder = "Workouts/Weeks";
+			needsSave = true;
+		}
+
+		if (!this.settings.weeklyNoteFilename) {
+			this.settings.weeklyNoteFilename = "{{year}}-W{{week}}";
+			needsSave = true;
+		}
+
+		if (this.settings.usePeriodicNotesConfig === undefined) {
+			this.settings.usePeriodicNotesConfig = true;
+			needsSave = true;
+		}
+
+		if (this.settings.templaterTokenEnabled === undefined) {
+			this.settings.templaterTokenEnabled = false;
+			needsSave = true;
+		}
+
+		if (needsSave) {
+			await this.saveSettings();
+		}
 	}
 
 	async saveSettings() {

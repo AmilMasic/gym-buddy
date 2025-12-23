@@ -109,8 +109,6 @@ export type WeeklySchedule = {
 	sunday?: string;
 };
 
-export type WorkoutSaveMode = "daily-append" | "daily-timestamp" | "weekly";
-
 export type GymBuddySettings = {
 	workoutFolder: string; // Default: "Workouts"
 	defaultUnit: WeightUnit;
@@ -119,9 +117,24 @@ export type GymBuddySettings = {
 	restTimerDuration: number; // seconds (default: 90)
 	dailyNoteIntegration: boolean; // embed in daily note
 	dailyNoteHeading: string; // "## Workout"
-	workoutSaveMode: WorkoutSaveMode;
-	weeklyNotePath: string; // e.g., "Weekly/{{year}}-W{{week}}.md"
-	weeklyNoteHeading: string; // e.g., "## Workouts"
+
+	// Individual workout notes (always saved)
+	workoutFilenameFormat: string; // "{{date}}-{{time}}" or "{{date}}-{{split}}"
+
+	// Weekly aggregation (optional)
+	weeklyNotesEnabled: boolean; // false by default
+	weeklyNoteFolder: string; // "Workouts/Weeks"
+	weeklyNoteFilename: string; // "{{year}}-W{{week}}" or "{{year}}-W{{week}}.md"
+
+	// Integration
+	usePeriodicNotesConfig: boolean; // Auto-detect Periodic Notes paths
+	templaterTokenEnabled: boolean; // Expose {{gym-buddy-weekly-links}} token
+
+	// Deprecated: kept for migration (will be removed in future version)
+	workoutSaveMode?: string; // Old: "daily-append" | "daily-timestamp" | "weekly"
+	weeklyNotePath?: string; // e.g., "Weekly/{{year}}-W{{week}}.md" (deprecated)
+	weeklyNoteHeading?: string; // e.g., "## Workouts" (deprecated)
+
 	activeSplitTemplateId: string; // ID of active split template
 	customSplitTemplates: SplitTemplate[]; // User-created custom splits
 	weeklySchedule: WeeklySchedule; // Maps days to splits for auto-detection
@@ -142,9 +155,19 @@ export const DEFAULT_SETTINGS: GymBuddySettings = {
 	restTimerDuration: 90,
 	dailyNoteIntegration: false,
 	dailyNoteHeading: "## Workout",
-	workoutSaveMode: "daily-append",
-	weeklyNotePath: "Weekly/{{year}}-W{{week}}.md",
-	weeklyNoteHeading: "## Workouts",
+
+	// Individual workout notes (always saved)
+	workoutFilenameFormat: "{{date}}-{{time}}",
+
+	// Weekly aggregation (optional)
+	weeklyNotesEnabled: false,
+	weeklyNoteFolder: "Workouts/Weeks",
+	weeklyNoteFilename: "{{year}}-W{{week}}",
+
+	// Integration
+	usePeriodicNotesConfig: true, // Auto-detect Periodic Notes by default
+	templaterTokenEnabled: false, // Disabled by default
+
 	activeSplitTemplateId: "ppl", // Default to PPL
 	customSplitTemplates: [],
 	weeklySchedule: {}, // Empty by default - user sets up via training setup

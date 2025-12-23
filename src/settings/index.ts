@@ -1,6 +1,6 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import type GymBuddyPlugin from "../main";
-import { WeightUnit, WorkoutSaveMode } from "../types";
+import { WeightUnit } from "../types";
 import { BUILT_IN_TEMPLATES } from "../features/splits/splitTemplates";
 
 export class GymBuddySettingTab extends PluginSettingTab {
@@ -115,58 +115,120 @@ export class GymBuddySettingTab extends PluginSettingTab {
 					})
 			);
 
-		new Setting(containerEl).setName("Save strategy").setHeading();
+		// Individual Workouts Section
+		new Setting(containerEl).setName("Individual workouts").setHeading();
 
 		new Setting(containerEl)
-			.setName("Workout save mode")
-			.setDesc("How multiple workouts on the same day are handled")
-			.addDropdown((dropdown) =>
-				dropdown
-					.addOption("daily-append", "Append to daily file")
-					.addOption(
-						"daily-timestamp",
-						"Create unique timestamp files"
-					)
-					.addOption("weekly", "Save to weekly note")
-					.setValue(settings.workoutSaveMode)
+			.setName("Workout folder")
+			.setDesc("Folder where individual workout notes are saved")
+			.addText((text) =>
+				text
+					.setPlaceholder("Workouts")
+					.setValue(settings.workoutFolder)
 					.onChange(async (value) => {
-						settings.workoutSaveMode = value as WorkoutSaveMode;
+						settings.workoutFolder = value || "Workouts";
+						await this.gbPlugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Workout filename format")
+			.setDesc(
+				"Pattern for workout filenames. Available: {{date}}, {{time}}, {{year}}, {{month}}, {{day}}, {{split}}"
+			)
+			.addText((text) =>
+				text
+					.setPlaceholder("{{date}}-{{time}}")
+					.setValue(settings.workoutFilenameFormat)
+					.onChange(async (value) => {
+						settings.workoutFilenameFormat =
+							value || "{{date}}-{{time}}";
+						await this.gbPlugin.saveSettings();
+					})
+			);
+
+		// Weekly Summaries Section
+		new Setting(containerEl).setName("Weekly summaries").setHeading();
+
+		new Setting(containerEl)
+			.setName("Enable weekly summaries")
+			.setDesc(
+				"Automatically create weekly notes with links to individual workout sessions"
+			)
+			.addToggle((toggle) =>
+				toggle
+					.setValue(settings.weeklyNotesEnabled)
+					.onChange(async (value) => {
+						settings.weeklyNotesEnabled = value;
 						await this.gbPlugin.saveSettings();
 						this.display(); // Refresh to show/hide conditional settings
 					})
 			);
 
-		if (settings.workoutSaveMode === "weekly") {
+		if (settings.weeklyNotesEnabled) {
 			new Setting(containerEl)
-				.setName("Weekly note path pattern")
-				.setDesc(
-					"Pattern for weekly note path. Uses moment.js formatting."
-				)
+				.setName("Weekly note folder")
+				.setDesc("Folder where weekly summary notes are saved")
 				.addText((text) =>
 					text
-						.setPlaceholder("Weekly/{{year}}-W{{week}}.md")
-						.setValue(settings.weeklyNotePath)
+						// eslint-disable-next-line obsidianmd/ui/sentence-case
+						.setPlaceholder("Workouts/Weeks")
+						.setValue(settings.weeklyNoteFolder)
 						.onChange(async (value) => {
-							settings.weeklyNotePath =
-								value || "Weekly/{{year}}-W{{week}}.md";
+							settings.weeklyNoteFolder =
+								value || "Workouts/Weeks";
 							await this.gbPlugin.saveSettings();
 						})
 				);
 
 			new Setting(containerEl)
-				.setName("Weekly note heading")
-				.setDesc("Heading to insert workouts under in the weekly note")
+				.setName("Weekly note filename")
+				.setDesc(
+					"Pattern for weekly note filenames. Available: {{year}}, {{week}}, {{month}}, {{day}}"
+				)
 				.addText((text) =>
 					text
-						// eslint-disable-next-line obsidianmd/ui/sentence-case
-						.setPlaceholder("## Workouts")
-						.setValue(settings.weeklyNoteHeading)
+						.setPlaceholder("{{year}}-W{{week}}")
+						.setValue(settings.weeklyNoteFilename)
 						.onChange(async (value) => {
-							settings.weeklyNoteHeading = value || "## Workouts";
+							settings.weeklyNoteFilename =
+								value || "{{year}}-W{{week}}";
 							await this.gbPlugin.saveSettings();
 						})
 				);
 		}
+
+		// Integrations Section
+		new Setting(containerEl).setName("Integrations").setHeading();
+
+		new Setting(containerEl)
+			.setName("Use periodic notes configuration")
+			.setDesc(
+				// eslint-disable-next-line obsidianmd/ui/sentence-case
+				"Automatically detect and use Periodic Notes plugin settings for weekly notes"
+			)
+			.addToggle((toggle) =>
+				toggle
+					.setValue(settings.usePeriodicNotesConfig)
+					.onChange(async (value) => {
+						settings.usePeriodicNotesConfig = value;
+						await this.gbPlugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Enable templater token")
+			.setDesc(
+				"Expose {{gym-buddy-weekly-links}} token for use in Templater templates"
+			)
+			.addToggle((toggle) =>
+				toggle
+					.setValue(settings.templaterTokenEnabled)
+					.onChange(async (value) => {
+						settings.templaterTokenEnabled = value;
+						await this.gbPlugin.saveSettings();
+					})
+			);
 
 		// Training Split Settings Section
 		new Setting(containerEl).setName("Training splits").setHeading();

@@ -3,11 +3,23 @@ import { Workout, Exercise, PRRecord, SplitFavorites } from "../types";
 import GymBuddyPlugin from "../main";
 import { getExerciseDatabase } from "../features/exercises/exerciseDatabase";
 import { WorkoutParser } from "./parser";
+import { BUILT_IN_TEMPLATES } from "../features/splits/splitTemplates";
 
 type PluginData = {
 	exercises?: Exercise[]; // Custom exercises only
 	prs?: PRRecord[];
 	splitFavorites?: SplitFavorites[];
+};
+
+type WeeklyNoteConfig = {
+	folder: string;
+	format: string;
+};
+
+type WorkoutLinkInfo = {
+	date: string;
+	filePath: string;
+	linkText: string;
 };
 
 /**
@@ -223,69 +235,186 @@ export class Storage {
 	}
 
 	/**
-	 * Get workout file path for a given date
+	 * Resolve path pattern with placeholders to actual path
 	 */
-	getWorkoutFilePath(date: string, useTimestamp = false): string {
-		const folder = this.getWorkoutFolder();
-		if (useTimestamp) {
-			const time = moment().format("HH-mm");
-			return `${folder}/${date}-${time}.md`;
+	private resolvePathPattern(
+		pattern: string,
+		workout: Workout,
+		timestamp?: string
+	): string {
+		const m = moment(workout.date);
+		let resolved = pattern
+			.replace(/\{\{date\}\}/g, workout.date)
+			.replace(/\{\{year\}\}/g, m.format("YYYY"))
+			.replace(/\{\{month\}\}/g, m.format("MM"))
+			.replace(/\{\{day\}\}/g, m.format("DD"))
+			.replace(/\{\{time\}\}/g, timestamp || moment().format("HH-mm"))
+			.replace(/\{\{split\}\}/g, workout.split || "workout");
+
+		// Ensure .md extension
+		if (!resolved.endsWith(".md")) {
+			resolved += ".md";
 		}
-		return `${folder}/${date}.md`;
+
+		return resolved;
 	}
 
 	/**
-	 * Save workout to markdown file
+	 * Get workout file path for a given workout
 	 */
-	async saveWorkout(workout: Workout, markdown: string): Promise<TFile> {
-		const saveMode = this.plugin.settings.workoutSaveMode;
+	private getWorkoutFilePath(workout: Workout): string {
+		const folder = this.getWorkoutFolder();
+		const format =
+			this.plugin.settings.workoutFilenameFormat || "{{date}}-{{time}}";
+		const timestamp = moment().format("HH-mm");
+		const filename = this.resolvePathPattern(format, workout, timestamp);
+		return `${folder}/${filename}`;
+	}
 
-		if (saveMode === "weekly") {
-			return await this.saveToWeeklyNote(workout);
-		}
-
+	/**
+	 * Save individual workout note (always called)
+	 */
+	async saveIndividualWorkout(
+		workout: Workout,
+		markdown: string
+	): Promise<TFile> {
 		await this.ensureWorkoutFolder();
 
-		const useTimestamp = saveMode === "daily-timestamp";
-		const filePath = this.getWorkoutFilePath(workout.date, useTimestamp);
+		// Generate unique filename with timestamp
+		let filePath = this.getWorkoutFilePath(workout);
+		let counter = 1;
 
-		const existingFile =
-			this.plugin.app.vault.getAbstractFileByPath(filePath);
-
-		if (existingFile instanceof TFile) {
-			if (saveMode === "daily-append") {
-				const existingContent = await this.plugin.app.vault.read(
-					existingFile
-				);
-				// Generate append-friendly markdown (no frontmatter)
-				const appendMarkdown = WorkoutParser.workoutToMarkdown(
-					workout,
-					false
-				);
-				const newContent = `${existingContent}\n\n${appendMarkdown}`;
-				await this.plugin.app.vault.modify(existingFile, newContent);
-				return existingFile;
-			} else {
-				// Overwrite (default or if daily-timestamp somehow collisions)
-				await this.plugin.app.vault.modify(existingFile, markdown);
-				return existingFile;
-			}
-		} else {
-			return await this.plugin.app.vault.create(filePath, markdown);
+		// Ensure filename is unique (in case of multiple workouts at same time)
+		while (
+			this.plugin.app.vault.getAbstractFileByPath(filePath) instanceof
+			TFile
+		) {
+			const basePath = filePath.replace(".md", "");
+			filePath = `${basePath}-${counter}.md`;
+			counter++;
 		}
+
+		return await this.plugin.app.vault.create(filePath, markdown);
 	}
 
 	/**
-	 * Save workout to a weekly note
+	 * Get split name for display in links
 	 */
-	private async saveToWeeklyNote(workout: Workout): Promise<TFile> {
-		const config = this.getWeeklyNoteConfig();
-		const filePath = this.resolveWeeklyPath(config, workout.date);
+	private getSplitDisplayName(workout: Workout): string {
+		if (!workout.split) return "Workout";
 
-		// Ensure the parent folder exists
-		const lastSlash = filePath.lastIndexOf("/");
+		const allTemplates = [
+			...BUILT_IN_TEMPLATES,
+			...this.plugin.settings.customSplitTemplates,
+		];
+
+		// Try to find split name from templates
+		for (const template of allTemplates) {
+			const split = template.splits.find((s) => s.id === workout.split);
+			if (split) {
+				return split.name;
+			}
+		}
+
+		// Fallback: use muscles if available
+		if (workout.muscles.length > 0) {
+			return workout.muscles.slice(0, 2).join("/");
+		}
+
+		return workout.split;
+	}
+
+	/**
+	 * Get day name from date (Monday, Tuesday, etc.)
+	 */
+	private getDayName(date: string): string {
+		const days = [
+			"Sunday",
+			"Monday",
+			"Tuesday",
+			"Wednesday",
+			"Thursday",
+			"Friday",
+			"Saturday",
+		];
+		const dayIndex = moment(date).day();
+		return days[dayIndex] || "Unknown";
+	}
+
+	/**
+	 * Generate weekly note content structure with Mon-Sun headers
+	 */
+	private generateWeeklyNoteContent(workoutLinks: WorkoutLinkInfo[]): string {
+		const lines: string[] = [];
+		lines.push("---");
+		lines.push("type: weekly-workout-summary");
+		const weekStart = moment(
+			workoutLinks[0]?.date || moment().format("YYYY-MM-DD")
+		)
+			.startOf("week")
+			.format("YYYY-MM-DD");
+		const weekEnd = moment(weekStart).endOf("week").format("YYYY-MM-DD");
+		lines.push(`week: ${weekStart} to ${weekEnd}`);
+		lines.push("---");
+		lines.push("");
+
+		// Group workouts by day
+		const workoutsByDay = new Map<string, typeof workoutLinks>();
+		for (const link of workoutLinks) {
+			const dayName = this.getDayName(link.date);
+			if (!workoutsByDay.has(dayName)) {
+				workoutsByDay.set(dayName, []);
+			}
+			workoutsByDay.get(dayName)!.push(link);
+		}
+
+		// Generate Mon-Sun structure
+		const dayOrder = [
+			"Monday",
+			"Tuesday",
+			"Wednesday",
+			"Thursday",
+			"Friday",
+			"Saturday",
+			"Sunday",
+		];
+
+		for (const dayName of dayOrder) {
+			lines.push(`## ${dayName}`);
+			const dayWorkouts = workoutsByDay.get(dayName) || [];
+			if (dayWorkouts.length === 0) {
+				lines.push("");
+			} else {
+				for (const workout of dayWorkouts) {
+					// Extract filename without extension for link
+					const linkPath = workout.filePath.replace(".md", "");
+					lines.push(`- [[${linkPath}|${workout.linkText}]]`);
+				}
+				lines.push("");
+			}
+		}
+
+		return lines.join("\n");
+	}
+
+	/**
+	 * Update weekly note with workout link
+	 */
+	async updateWeeklyNote(
+		workout: Workout,
+		workoutFilePath: string
+	): Promise<void> {
+		if (!this.plugin.settings.weeklyNotesEnabled) {
+			return;
+		}
+
+		const config = this.getWeeklyNoteConfig();
+		const weeklyFilePath = this.resolveWeeklyNotePath(config, workout.date);
+
+		// Ensure parent folder exists
+		const lastSlash = weeklyFilePath.lastIndexOf("/");
 		if (lastSlash !== -1) {
-			const folderPath = filePath.substring(0, lastSlash);
+			const folderPath = weeklyFilePath.substring(0, lastSlash);
 			const folder =
 				this.plugin.app.vault.getAbstractFileByPath(folderPath);
 			if (!folder) {
@@ -293,71 +422,184 @@ export class Storage {
 			}
 		}
 
-		let file = this.plugin.app.vault.getAbstractFileByPath(filePath);
-		if (!(file instanceof TFile)) {
-			// Create file with the heading if it doesn't exist
-			const initialContent = `${this.plugin.settings.weeklyNoteHeading}\n\n`;
-			file = await this.plugin.app.vault.create(filePath, initialContent);
+		// Get all workouts for this week
+		const weekStart = moment(workout.date).startOf("week");
+		const weekEnd = moment(workout.date).endOf("week");
+		const weekWorkouts = await this.getWorkoutsForWeek(
+			weekStart.format("YYYY-MM-DD"),
+			weekEnd.format("YYYY-MM-DD")
+		);
+
+		// Add current workout if not already in list
+		const splitName = this.getSplitDisplayName(workout);
+		const linkText = `${splitName}${
+			workout.muscles.length > 0
+				? ` - ${workout.muscles.slice(0, 2).join("/")}`
+				: ""
+		}`;
+
+		const existingLink = weekWorkouts.find(
+			(w) => w.filePath === workoutFilePath
+		);
+		if (!existingLink) {
+			weekWorkouts.push({
+				date: workout.date,
+				filePath: workoutFilePath,
+				linkText,
+			});
 		}
 
-		if (file instanceof TFile) {
-			const content = await this.plugin.app.vault.read(file);
-			const heading = this.plugin.settings.weeklyNoteHeading;
-			const workoutMarkdown = WorkoutParser.workoutToMarkdown(
-				workout,
-				false
+		// Get or create weekly note
+		let weeklyFile =
+			this.plugin.app.vault.getAbstractFileByPath(weeklyFilePath);
+		if (!(weeklyFile instanceof TFile)) {
+			// Create initial weekly note structure
+			const initialContent = this.generateWeeklyNoteContent(weekWorkouts);
+			weeklyFile = await this.plugin.app.vault.create(
+				weeklyFilePath,
+				initialContent
 			);
-
-			let newContent: string;
-			if (content.includes(heading)) {
-				// Insert after heading
-				const lines = content.split("\n");
-				const headingIndex = lines.findIndex((l) =>
-					l.trim().startsWith(heading)
-				);
-				lines.splice(headingIndex + 1, 0, "", workoutMarkdown);
-				newContent = lines.join("\n");
-			} else {
-				// Append heading and workout at end
-				newContent = `${content}\n\n${heading}\n\n${workoutMarkdown}`;
-			}
-
-			await this.plugin.app.vault.modify(file, newContent);
-			return file;
 		}
 
-		throw new Error("Could not save to weekly note");
+		if (!(weeklyFile instanceof TFile)) {
+			throw new Error("Could not create or access weekly note");
+		}
+
+		// Regenerate weekly note content with all workouts
+		const newContent = this.generateWeeklyNoteContent(weekWorkouts);
+		await this.plugin.app.vault.modify(weeklyFile, newContent);
+	}
+
+	/**
+	 * Get all workout files for a given week
+	 */
+	private async getWorkoutsForWeek(
+		weekStart: string,
+		weekEnd: string
+	): Promise<WorkoutLinkInfo[]> {
+		const workouts: WorkoutLinkInfo[] = [];
+
+		const folder = this.plugin.app.vault.getAbstractFileByPath(
+			this.getWorkoutFolder()
+		);
+		if (!folder || !(folder instanceof TFolder)) {
+			return workouts;
+		}
+
+		const startMoment = moment(weekStart);
+		const endMoment = moment(weekEnd);
+
+		// Collect all workout files in the week
+		const workoutFiles: TFile[] = [];
+		const collectWorkoutFiles = (file: TAbstractFile) => {
+			if (file instanceof TFile && file.extension === "md") {
+				// Try to parse date from filename
+				const basename = file.basename;
+				const dateMatch = basename.match(/(\d{4}-\d{2}-\d{2})/);
+				if (dateMatch) {
+					const fileDate = dateMatch[1];
+					const fileMoment = moment(fileDate);
+					if (
+						fileMoment.isSameOrAfter(startMoment, "day") &&
+						fileMoment.isSameOrBefore(endMoment, "day")
+					) {
+						workoutFiles.push(file);
+					}
+				}
+			} else if (file instanceof TFolder && file.children) {
+				file.children.forEach(collectWorkoutFiles);
+			}
+		};
+
+		collectWorkoutFiles(folder);
+
+		// Read each file and extract workout info
+		for (const file of workoutFiles) {
+			try {
+				const content = await this.plugin.app.vault.read(file);
+				const dateMatch = file.basename.match(/(\d{4}-\d{2}-\d{2})/);
+				if (dateMatch && dateMatch[1]) {
+					const fileDate = dateMatch[1];
+					const workout = WorkoutParser.markdownToWorkout(
+						content,
+						fileDate
+					);
+					const splitName = this.getSplitDisplayName(workout);
+					const linkText = `${splitName}${
+						workout.muscles.length > 0
+							? ` - ${workout.muscles.slice(0, 2).join("/")}`
+							: ""
+					}`;
+					workouts.push({
+						date: fileDate,
+						filePath: file.path,
+						linkText,
+					});
+				}
+			} catch (error) {
+				console.error(
+					`Failed to read workout file ${file.path}:`,
+					error
+				);
+			}
+		}
+
+		// Sort by date
+		workouts.sort((a, b) => a.date.localeCompare(b.date));
+
+		return workouts;
+	}
+
+	/**
+	 * Save workout to markdown file
+	 * Always saves individual note, optionally updates weekly note
+	 */
+	async saveWorkout(workout: Workout, markdown: string): Promise<TFile> {
+		// Always save individual workout note
+		const individualFile = await this.saveIndividualWorkout(
+			workout,
+			markdown
+		);
+
+		// Optionally update weekly note with link
+		if (this.plugin.settings.weeklyNotesEnabled) {
+			try {
+				await this.updateWeeklyNote(workout, individualFile.path);
+			} catch (error) {
+				console.error("Failed to update weekly note:", error);
+				// Don't fail the whole save if weekly note update fails
+			}
+		}
+
+		return individualFile;
 	}
 
 	/**
 	 * Get weekly note configuration (Periodic Notes or manual)
 	 */
-	private getWeeklyNoteConfig(): { folder: string; format: string } {
-		// Try Periodic Notes first
-		const periodicConfig = this.getPeriodicNotesWeeklyConfig();
-		if (periodicConfig) return periodicConfig;
-
-		// Fallback to manual settings
-		const manualPath = this.plugin.settings.weeklyNotePath;
-		const lastSlash = manualPath.lastIndexOf("/");
-
-		if (lastSlash === -1) {
-			return { folder: "", format: manualPath.replace(".md", "") };
+	private getWeeklyNoteConfig(): WeeklyNoteConfig {
+		// Try Periodic Notes first if enabled
+		if (this.plugin.settings.usePeriodicNotesConfig) {
+			const periodicConfig = this.getPeriodicNotesWeeklyConfig();
+			if (periodicConfig) return periodicConfig;
 		}
 
-		return {
-			folder: manualPath.substring(0, lastSlash),
-			format: manualPath.substring(lastSlash + 1).replace(".md", ""),
-		};
+		// Fallback to manual settings
+		const folder =
+			this.plugin.settings.weeklyNoteFolder || "Workouts/Weeks";
+		let format =
+			this.plugin.settings.weeklyNoteFilename || "{{year}}-W{{week}}";
+
+		// Remove .md extension if present
+		format = format.replace(".md", "");
+
+		return { folder, format };
 	}
 
 	/**
 	 * Detect Periodic Notes weekly config
 	 */
-	private getPeriodicNotesWeeklyConfig(): {
-		folder: string;
-		format: string;
-	} | null {
+	private getPeriodicNotesWeeklyConfig(): WeeklyNoteConfig | null {
 		try {
 			type PeriodicNotesPlugin = {
 				settings?: {
@@ -401,7 +643,7 @@ export class Storage {
 				folder: periodicNotes.settings.weekly.folder || "",
 				format: periodicNotes.settings.weekly.format || "gggg-[W]ww",
 			};
-		} catch (error) {
+		} catch {
 			// Gracefully handle errors accessing Periodic Notes plugin API
 			// Falls back to manual settings configuration
 			return null;
@@ -421,10 +663,10 @@ export class Storage {
 	}
 
 	/**
-	 * Resolve weekly path pattern to actual file path
+	 * Resolve weekly note path pattern to actual file path
 	 */
-	private resolveWeeklyPath(
-		config: { folder: string; format: string },
+	private resolveWeeklyNotePath(
+		config: WeeklyNoteConfig,
 		date: string
 	): string {
 		const m = moment(date);
@@ -435,10 +677,18 @@ export class Storage {
 	}
 
 	/**
+	 * Get workout file path for a given date (legacy method for loading)
+	 */
+	private getWorkoutFilePathByDate(date: string): string {
+		const folder = this.getWorkoutFolder();
+		return `${folder}/${date}.md`;
+	}
+
+	/**
 	 * Load workout from markdown file
 	 */
 	async loadWorkout(date: string): Promise<string | null> {
-		const filePath = this.getWorkoutFilePath(date);
+		const filePath = this.getWorkoutFilePathByDate(date);
 		const file = this.plugin.app.vault.getAbstractFileByPath(filePath);
 
 		if (file instanceof TFile) {
