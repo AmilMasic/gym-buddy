@@ -3,6 +3,8 @@ import { SplitTemplate, TrainingSplit } from "../../types";
 /**
  * Built-in training split templates
  */
+
+export const BACK = ["Lower Back", "Upper Back", "Lats", "Traps"];
 export const BUILT_IN_TEMPLATES: SplitTemplate[] = [
 	{
 		id: "ppl",
@@ -16,7 +18,7 @@ export const BUILT_IN_TEMPLATES: SplitTemplate[] = [
 			{
 				id: "ppl-pull",
 				name: "Pull",
-				muscleGroups: ["Back", "Biceps", "Traps", "Rear Delts"],
+				muscleGroups: [...BACK, "Biceps", "Rear Delts"],
 			},
 			{
 				id: "ppl-legs",
@@ -34,11 +36,10 @@ export const BUILT_IN_TEMPLATES: SplitTemplate[] = [
 				name: "Upper Body",
 				muscleGroups: [
 					"Chest",
-					"Back",
+					...BACK,
 					"Shoulders",
 					"Biceps",
 					"Triceps",
-					"Traps",
 				],
 			},
 			{
@@ -66,7 +67,7 @@ export const BUILT_IN_TEMPLATES: SplitTemplate[] = [
 			{
 				id: "bro-back",
 				name: "Back",
-				muscleGroups: ["Back", "Biceps", "Traps"],
+				muscleGroups: [...BACK, "Biceps"],
 			},
 			{
 				id: "bro-shoulders",
@@ -94,7 +95,7 @@ export const BUILT_IN_TEMPLATES: SplitTemplate[] = [
 				name: "Full Body",
 				muscleGroups: [
 					"Chest",
-					"Back",
+					...BACK,
 					"Shoulders",
 					"Biceps",
 					"Triceps",
