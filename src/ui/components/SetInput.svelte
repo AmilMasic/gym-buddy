@@ -9,9 +9,10 @@
 		showRPE?: boolean;
 		unit?: string;
 		lastSet?: WorkoutSet | null;
+		onLogSet?: (set: WorkoutSet) => void;
 	}
 
-	let { set = $bindable(), showRPE = true, unit = 'lbs', lastSet = null }: Props = $props();
+	let { set = $bindable(), showRPE = true, unit = 'lbs', lastSet = null, onLogSet }: Props = $props();
 
 	// Extract initial values using IIFE to avoid reactivity warnings
 	const { initialWeight, initialReps, initialRpe, initialTime } = (() => {
@@ -36,11 +37,17 @@
 	});
 
 	function logSet() {
-		// Emit event to parent
-		const event = new CustomEvent('log-set', {
-			detail: {set: {...set, weight, reps, rpe, time}},
-		});
-		document.dispatchEvent(event);
+		const setData: WorkoutSet = {...set, weight, reps, rpe, time};
+
+		// Use callback if provided, otherwise dispatch to document
+		if (onLogSet) {
+			onLogSet(setData);
+		} else {
+			const event = new CustomEvent('log-set', {
+				detail: {set: setData},
+			});
+			document.dispatchEvent(event);
+		}
 	}
 </script>
 

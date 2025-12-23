@@ -1,0 +1,31 @@
+<script lang="ts">
+	import { Clock } from "@lucide/svelte";
+	import { formatDuration } from "./workoutUtils";
+
+	interface Props {
+		startTime: Date;
+	}
+
+	let { startTime }: Props = $props();
+	let elapsed = $state("");
+
+	$effect(() => {
+		// Capture startTime in effect so it's reactive
+		const time = startTime;
+
+		// Update immediately
+		elapsed = formatDuration(time);
+
+		// Update every second
+		const interval = setInterval(() => {
+			elapsed = formatDuration(time);
+		}, 1000);
+
+		return () => clearInterval(interval);
+	});
+</script>
+
+<div class="gb-workout-timer">
+	<Clock size={16} />
+	<span>{elapsed}</span>
+</div>

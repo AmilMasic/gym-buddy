@@ -1,16 +1,28 @@
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import { ItemView, WorkspaceLeaf, Modal, Notice } from "obsidian";
+import { mount, unmount } from "svelte";
+import ActiveWorkoutViewComponent from "./ActiveWorkoutView.svelte";
 import { VIEW_TYPE_WORKOUT } from "../../constants";
-import { WorkoutExercise, Exercise, ActiveWorkout } from "../../types";
+import { WorkoutExercise, Exercise, ActiveWorkout, WorkoutSet } from "../../types";
 import { ExercisePickerModal } from "../exercises/ExercisePickerModal";
+import { WorkoutParser } from "../../data/parser";
+import { activeWorkoutToWorkout } from "./workoutUtils";
+import { BUILT_IN_TEMPLATES } from "../splits/splitTemplates";
 import GymBuddyPlugin from "../../main";
 
 /**
  * Sidebar view for active workout logging
  */
 export class ActiveWorkoutView extends ItemView {
-	private activeWorkout: ActiveWorkout | null = null;
+	private component: ReturnType<typeof mount> | null = null;
 	private exercises: Exercise[] = [];
 	private plugin: GymBuddyPlugin;
+
+	// Event handlers
+	private openPickerHandler: (() => void) | null = null;
+	private logSetHandler: ((e: Event) => void) | null = null;
+	private removeExerciseHandler: ((e: Event) => void) | null = null;
+	private finishHandler: (() => void) | null = null;
+	private cancelHandler: (() => void) | null = null;
 
 	constructor(leaf: WorkspaceLeaf, plugin: GymBuddyPlugin) {
 		super(leaf);
@@ -30,57 +42,118 @@ export class ActiveWorkoutView extends ItemView {
 	}
 
 	async onOpen() {
-		const container = this.containerEl.children[1];
-		if (!container) {
-			return;
-		}
-		container.empty();
-
-		// Create Svelte component for the workout view
-		// For now, we'll create a simple HTML structure
-		// Full Svelte integration will be added in next phase
-		const content = container.createDiv("gb-workout-view");
-		content.createEl("h2", { text: "Active workout" });
-
-		const addExerciseBtn = content.createEl("button", {
-			text: "Add exercise",
-			cls: "gb-btn gb-btn--primary gb-btn--lg gb-btn--full-width",
-		});
-
-		addExerciseBtn.addEventListener("click", () => {
-			try {
-				this.showExercisePicker();
-			} catch (error) {
-				console.error("Error showing exercise picker:", error);
-			}
-		});
-
-		if (this.activeWorkout && this.activeWorkout.exercises.length > 0) {
-			const exercisesContainer = content.createDiv("gb-exercises");
-			for (const exercise of this.activeWorkout.exercises) {
-				this.renderExercise(exercisesContainer, exercise);
-			}
-		}
+		await this.loadExercises();
+		this.mountComponent();
+		this.setupEventListeners();
 	}
 
 	async onClose() {
-		// Cleanup - Obsidian handles view cleanup automatically
+		this.cleanupEventListeners();
+		if (this.component) {
+			void unmount(this.component);
+			this.component = null;
+		}
 	}
 
-	setExercises(exercises: Exercise[]) {
-		this.exercises = exercises;
+	private async loadExercises() {
+		this.exercises = await this.plugin.storage.loadExerciseLibrary();
 	}
 
-	setActiveWorkout(workout: ActiveWorkout | null) {
-		this.activeWorkout = workout;
-		void this.onOpen(); // Re-render
+	private getSplitName(): string {
+		if (!this.plugin.activeWorkout?.splitId) return "";
+
+		const templateId = this.plugin.settings.activeSplitTemplateId;
+		const template =
+			this.plugin.settings.customSplitTemplates.find(
+				(t) => t.id === templateId
+			) || BUILT_IN_TEMPLATES.find((t) => t.id === templateId);
+
+		const split = template?.splits.find(
+			(s) => s.id === this.plugin.activeWorkout?.splitId
+		);
+		return split?.name || "";
 	}
 
-	private showExercisePicker() {
-		if (!this.plugin) {
+	private mountComponent() {
+		const container = this.containerEl.children[1];
+		if (!container) return;
+
+		container.empty();
+
+		if (this.component) {
+			void unmount(this.component);
+		}
+
+		if (!this.plugin.activeWorkout) {
+			// Show empty state
+			const emptyState = container.createDiv("gb-empty-state");
+			emptyState.createEl("p", {
+				text: "No active workout.",
+			});
+			emptyState.createEl("p", {
+				text: "Start a new workout from the command palette or ribbon icon.",
+				cls: "gb-text-muted",
+			});
 			return;
 		}
 
+		this.component = mount(ActiveWorkoutViewComponent, {
+			target: container as HTMLElement,
+			props: {
+				activeWorkout: this.plugin.activeWorkout,
+				exercises: this.exercises,
+				showRPE: this.plugin.settings.showRPE,
+				unit: this.plugin.settings.defaultUnit,
+				splitName: this.getSplitName(),
+			},
+		});
+	}
+
+	private setupEventListeners() {
+		this.openPickerHandler = () => this.showExercisePicker();
+		this.logSetHandler = (e) => this.handleLogSet(e as CustomEvent);
+		this.removeExerciseHandler = (e) =>
+			this.handleRemoveExercise(e as CustomEvent);
+		this.finishHandler = () => void this.finishWorkout();
+		this.cancelHandler = () => this.cancelWorkout();
+
+		document.addEventListener("open-exercise-picker", this.openPickerHandler);
+		document.addEventListener("exercise-log-set", this.logSetHandler);
+		document.addEventListener("remove-exercise", this.removeExerciseHandler);
+		document.addEventListener("finish-workout", this.finishHandler);
+		document.addEventListener("cancel-workout", this.cancelHandler);
+	}
+
+	private cleanupEventListeners() {
+		if (this.openPickerHandler) {
+			document.removeEventListener(
+				"open-exercise-picker",
+				this.openPickerHandler
+			);
+			this.openPickerHandler = null;
+		}
+		if (this.logSetHandler) {
+			document.removeEventListener("exercise-log-set", this.logSetHandler);
+			this.logSetHandler = null;
+		}
+		if (this.removeExerciseHandler) {
+			document.removeEventListener(
+				"remove-exercise",
+				this.removeExerciseHandler
+			);
+			this.removeExerciseHandler = null;
+		}
+		if (this.finishHandler) {
+			document.removeEventListener("finish-workout", this.finishHandler);
+			this.finishHandler = null;
+		}
+		if (this.cancelHandler) {
+			document.removeEventListener("cancel-workout", this.cancelHandler);
+			this.cancelHandler = null;
+		}
+	}
+
+	private showExercisePicker() {
 		const modal = new ExercisePickerModal(this.plugin, (exercise) => {
 			this.addExerciseToWorkout(exercise);
 		});
@@ -88,14 +161,11 @@ export class ActiveWorkoutView extends ItemView {
 	}
 
 	private addExerciseToWorkout(exercise: Exercise) {
-		if (!this.activeWorkout) {
-			this.activeWorkout = {
+		if (!this.plugin.activeWorkout) {
+			this.plugin.activeWorkout = {
 				startTime: new Date(),
 				exercises: [],
 			};
-			if (this.plugin) {
-				this.plugin.activeWorkout = this.activeWorkout;
-			}
 		}
 
 		const workoutExercise: WorkoutExercise = {
@@ -104,27 +174,116 @@ export class ActiveWorkoutView extends ItemView {
 			sets: [],
 		};
 
-		this.activeWorkout.exercises.push(workoutExercise);
-		if (this.plugin) {
-			this.plugin.activeWorkout = this.activeWorkout;
-		}
-
-		// Re-render the view
-		void this.onOpen();
+		this.plugin.activeWorkout.exercises.push(workoutExercise);
+		this.mountComponent();
 	}
 
-	private renderExercise(container: HTMLElement, exercise: WorkoutExercise) {
-		if (!container) return;
-		const exerciseEl = container.createDiv("gb-exercise");
-		exerciseEl.createEl("h3", { text: exercise.name });
+	private handleLogSet(event: CustomEvent) {
+		const { exerciseIndex, set } = event.detail as {
+			exerciseIndex: number;
+			set: WorkoutSet;
+		};
 
-		const setsContainer = exerciseEl.createDiv("gb-sets");
-		for (const set of exercise.sets) {
-			const setEl = setsContainer.createDiv("gb-set");
-			setEl.createSpan({ text: `Set ${set.setNumber}: ` });
-			if (set.weight) setEl.createSpan({ text: `${set.weight} lbs × ` });
-			if (set.reps) setEl.createSpan({ text: `${set.reps} reps` });
-			if (set.rpe) setEl.createSpan({ text: ` @ RPE ${set.rpe}` });
+		if (!this.plugin.activeWorkout) return;
+
+		const exercise = this.plugin.activeWorkout.exercises[exerciseIndex];
+		if (exercise) {
+			exercise.sets.push(set);
+			this.mountComponent();
 		}
+	}
+
+	private handleRemoveExercise(event: CustomEvent) {
+		const { index } = event.detail as { index: number };
+
+		if (!this.plugin.activeWorkout) return;
+
+		this.plugin.activeWorkout.exercises.splice(index, 1);
+		this.mountComponent();
+	}
+
+	private async finishWorkout() {
+		if (!this.plugin.activeWorkout) return;
+
+		// Check if there are any logged sets
+		const totalSets = this.plugin.activeWorkout.exercises.reduce(
+			(sum, ex) => sum + ex.sets.length,
+			0
+		);
+
+		if (totalSets === 0) {
+			new Notice(
+				"No sets logged. Add some exercises and log sets before finishing."
+			);
+			return;
+		}
+
+		// Convert to Workout
+		const workout = activeWorkoutToWorkout(
+			this.plugin.activeWorkout,
+			this.exercises
+		);
+
+		// Generate markdown
+		const markdown = WorkoutParser.workoutToMarkdown(workout);
+
+		// Save to file
+		try {
+			const file = await this.plugin.storage.saveWorkout(workout, markdown);
+			new Notice(`Workout saved to ${file.path}`);
+
+			// Open the saved file
+			await this.plugin.app.workspace.openLinkText(file.path, "", false);
+
+			// Clear active workout
+			this.plugin.activeWorkout = null;
+
+			// Show empty state
+			this.mountComponent();
+		} catch (error) {
+			console.error("Failed to save workout:", error);
+			new Notice("Failed to save workout. Please try again.");
+		}
+	}
+
+	private cancelWorkout() {
+		// Show confirmation modal
+		const modal = new Modal(this.plugin.app);
+		modal.titleEl.setText("Cancel Workout?");
+		modal.contentEl.createEl("p", {
+			text: "Are you sure you want to cancel this workout? All logged sets will be lost.",
+		});
+
+		const buttonContainer = modal.contentEl.createDiv({
+			cls: "gb-modal-buttons",
+		});
+
+		const keepBtn = buttonContainer.createEl("button", {
+			text: "Keep Working Out",
+			cls: "mod-cta",
+		});
+		keepBtn.onclick = () => modal.close();
+
+		const discardBtn = buttonContainer.createEl("button", {
+			text: "Discard Workout",
+			cls: "mod-warning",
+		});
+		discardBtn.onclick = () => {
+			this.plugin.activeWorkout = null;
+			modal.close();
+			this.mountComponent();
+			new Notice("Workout cancelled");
+		};
+
+		modal.open();
+	}
+
+	setActiveWorkout(workout: ActiveWorkout | null) {
+		this.mountComponent();
+	}
+
+	setExercises(exercises: Exercise[]) {
+		this.exercises = exercises;
+		this.mountComponent();
 	}
 }
