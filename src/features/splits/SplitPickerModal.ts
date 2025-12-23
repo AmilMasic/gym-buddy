@@ -28,7 +28,7 @@ export class SplitPickerModal extends Modal {
 	async onOpen() {
 		const { contentEl } = this;
 		contentEl.empty();
-		contentEl.addClass("gym-buddy-modal");
+		contentEl.addClass("gb-modal");
 
 		// Get active template (built-in or custom)
 		const templateId = this.plugin.settings.activeSplitTemplateId;

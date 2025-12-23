@@ -32,7 +32,7 @@ export class CustomSplitBuilderModal extends Modal {
 	async onOpen() {
 		const { contentEl } = this;
 		contentEl.empty();
-		contentEl.addClass("gym-buddy-modal");
+		contentEl.addClass("gb-modal");
 
 		// Mount Svelte component
 		this.component = mount(CustomSplitBuilderModalComponent, {

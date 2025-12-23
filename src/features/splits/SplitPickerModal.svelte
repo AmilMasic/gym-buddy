@@ -24,17 +24,17 @@
 	}
 </script>
 
-<div class="gym-buddy-split-picker">
+<div class="gb-split-picker">
 	{#if template}
 		{#if suggestedSplit}
 			<!-- Today's scheduled split suggestion -->
-			<div class="gym-buddy-split-suggestion">
-				<div class="gym-buddy-split-suggestion-header">
-					<span class="gym-buddy-today-label">{todayName}</span>
+			<div class="gb-split-suggestion">
+				<div class="gb-split-suggestion-header">
+					<span class="gb-today-label">{todayName}</span>
 				</div>
-				<div class="gym-buddy-split-suggestion-content">
-					<div class="gym-buddy-suggested-split-name">{suggestedSplit.name}</div>
-					<div class="gym-buddy-suggested-split-muscles">
+				<div class="gb-split-suggestion-content">
+					<div class="gb-suggested-split-name">{suggestedSplit.name}</div>
+					<div class="gb-suggested-split-muscles">
 						{suggestedSplit.muscleGroups.join(', ')}
 					</div>
 				</div>
@@ -43,22 +43,22 @@
 				</Button>
 			</div>
 
-			<div class="gym-buddy-divider">
+			<div class="gb-divider">
 				<span>or choose a different split</span>
 			</div>
 		{:else}
-			<div class="gym-buddy-split-picker-header">
+			<div class="gb-split-picker-header">
 				<h2>What are you training today?</h2>
-				<p class="gym-buddy-template-name">{template.name}</p>
+				<p class="gb-template-name">{template.name}</p>
 			</div>
 		{/if}
 
-		<div class="gym-buddy-split-list">
+		<div class="gb-split-list">
 			{#each template.splits as split}
 				{#if !suggestedSplit || split.id !== suggestedSplit.id}
 					<Card clickable onclick={() => selectSplit(split)}>
-						<div class="gym-buddy-split-name">{split.name}</div>
-						<div class="gym-buddy-split-muscles">
+						<div class="gb-split-name">{split.name}</div>
+						<div class="gb-split-muscles">
 							{split.muscleGroups.join(', ')}
 						</div>
 					</Card>
@@ -66,6 +66,6 @@
 			{/each}
 		</div>
 	{:else}
-		<p class="gym-buddy-no-template">No template configured. Please select a template in settings.</p>
+		<p class="gb-no-template">No template configured. Please select a template in settings.</p>
 	{/if}
 </div>

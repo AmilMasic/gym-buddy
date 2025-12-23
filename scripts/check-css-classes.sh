@@ -4,12 +4,16 @@
 
 cd "$(dirname "$0")/.." || exit 1
 
-# Extract gym-buddy-* classes from Svelte files
+# Extract gb-* classes from Svelte files
+# Filter out Svelte-internal classes and BEM sub-components/modifiers
+# We ignore classes starting with gb-[component] as they are defined in component <style>
 svelte_classes=$(grep -rhoE 'class="[^"]*"' src --include="*.svelte" | \
-  grep -oE 'gym-buddy-[a-z0-9-]+' | sort -u)
+  grep -oE 'gb-[a-z0-9-]+' | \
+  grep -vE '^gb-(btn|chip|input|select|card|icon-btn|modal|label|text)(-[a-z0-9-]+)*' | \
+  sort -u)
 
-# Extract gym-buddy-* classes from styles.css
-css_classes=$(grep -oE '\.gym-buddy-[a-z0-9-]+' styles.css | \
+# Extract gb-* classes from styles.css
+css_classes=$(grep -oE '\.gb-[a-z0-9-]+' styles.css | \
   sed 's/^\.//' | sort -u)
 
 # Find classes in Svelte but not in CSS

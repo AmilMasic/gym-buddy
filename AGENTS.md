@@ -207,14 +207,25 @@ Follow Obsidian's **Developer Policies** and **Plugin Guidelines**. In particula
 
 ## CSS Guidelines
 
-- **All CSS lives in `styles.css`** - No inline styles, no CSS-in-JS, no component-scoped styles
-- Use Obsidian CSS variables for theming:
-  - Colors: `var(--text-normal)`, `var(--background-secondary)`, `var(--interactive-accent)`
-  - Spacing: Use consistent values (4px, 8px, 16px scale)
-- Never use `el.style.property = value` - use CSS classes with `{cls: 'class-name'}`
-- Mobile-first: Design for touch first, enhance for desktop
-- **Touch targets**: Minimum 48px height for buttons and interactive elements
-- Use `-webkit-tap-highlight-color: transparent` for touch optimization
+- **Prefix all classes with `gb-`**: Use the `gb-` prefix for all plugin-specific classes (e.g., `.gb-workout-view`, `.gb-btn`). Avoid the older `gym-buddy-` prefix.
+- **Main styles in `styles.css`**: Layout containers, shared utility classes, and typography defaults live in the global `styles.css`.
+- **Component-scoped styles**: Use `<style>` blocks in Svelte components for internal component-specific styling (e.g., BEM sub-elements).
+- **Typography System**:
+  - **Scoped Defaults**: Common tags like `h2`, `h3`, and `p` are automatically styled when inside plugin containers (e.g., `.gb-setup-step`).
+  - **Utility Classes**: Use standardized utilities for explicit control:
+    - `.gb-heading-lg/md/sm`: Standardized heading sizes.
+    - `.gb-text`, `.gb-text-sm`: Standard body text.
+    - `.gb-text-muted`: For secondary/de-emphasized information.
+    - `.gb-label`: Small, uppercase, letter-spaced labels for UI sections.
+- **Use Obsidian CSS variables**:
+  - Colors: `var(--text-normal)`, `var(--background-secondary)`, `var(--interactive-accent)`, `var(--text-muted)`.
+  - Spacing: Use the provided scale (e.g., `var(--gb-space-sm)`, `var(--gb-space-md)`).
+- **Naming Convention**: Follow BEM-lite (e.g., `.gb-btn` as block, `.gb-btn--primary` as modifier).
+- **Mobile-first**: Design for touch first, enhance for desktop.
+  - **Touch targets**: Minimum 48px height for buttons and interactive elements.
+- **Linting**: Always run `npm run lint:css` after adding new classes to ensure they are defined in `styles.css` or scoped within the component.
+- Never use `el.style.property = value` - use CSS classes with `{cls: 'class-name'}`.
+- Use `-webkit-tap-highlight-color: transparent` for touch optimization.
 
 ## Iconography Guidelines
 

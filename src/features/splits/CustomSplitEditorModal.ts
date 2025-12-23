@@ -27,13 +27,7 @@ export class CustomSplitEditorModal extends Modal {
 	async onOpen() {
 		const { contentEl } = this;
 		contentEl.empty();
-		contentEl.addClass("gym-buddy-modal");
-
-		// Get all templates (built-in + custom)
-		const allTemplates = [
-			...BUILT_IN_TEMPLATES,
-			...this.plugin.settings.customSplitTemplates,
-		];
+		contentEl.addClass("gb-modal");
 
 		// Mount Svelte component
 		this.component = mount(CustomSplitEditorModalComponent, {

@@ -78,21 +78,21 @@
 	}
 </script>
 
-<div class="gym-buddy-custom-split-builder">
-	<div class="gym-buddy-builder-header">
+<div class="gb-custom-split-builder">
+	<div class="gb-builder-header">
 		<h2>Build Custom Split</h2>
-		<p class="gym-buddy-builder-subtitle">
+		<p class="gb-builder-subtitle">
 			Select splits from any template to create your custom combination
 		</p>
 	</div>
 
-	<div class="gym-buddy-builder-content">
+	<div class="gb-builder-content">
 		<!-- Splits Grid -->
-		<div class="gym-buddy-section">
-			<div class="gym-buddy-section-header">
-				<div class="gym-buddy-section-header-content">
+		<div class="gb-section">
+			<div class="gb-section-header">
+				<div class="gb-section-header-content">
 					<h3>Available Splits</h3>
-					<span class="gym-buddy-selected-count">
+					<span class="gb-selected-count">
 						{selectedSplits.length} selected
 					</span>
 				</div>
@@ -105,7 +105,7 @@
 				/>
 			</div>
 			{#if splitsExpanded}
-			<div class="gym-buddy-split-chips">
+			<div class="gb-split-chips">
 				{#each allSplits as availableSplit}
 					<Chip
 						active={isSplitSelected(availableSplit)}
@@ -120,11 +120,11 @@
 
 		<!-- Selected Splits Preview -->
 		{#if selectedSplits.length > 0}
-			<div class="gym-buddy-section">
-				<div class="gym-buddy-section-header">
+			<div class="gb-section">
+				<div class="gb-section-header">
 					<h3>Selected Splits ({selectedSplits.length})</h3>
 				</div>
-				<div class="gym-buddy-selected-splits-chips">
+				<div class="gb-selected-splits-chips">
 					{#each selectedSplits as availableSplit}
 						<Chip
 							active={true}
@@ -139,8 +139,8 @@
 	</div>
 
 	<!-- Save Option -->
-	<div class="gym-buddy-save-option">
-		<label class="gym-buddy-save-toggle">
+	<div class="gb-save-option">
+		<label class="gb-save-toggle">
 			<input
 				type="checkbox"
 				bind:checked={showSaveOption}
@@ -157,7 +157,7 @@
 	</div>
 
 	<!-- Actions -->
-	<div class="gym-buddy-builder-actions">
+	<div class="gb-builder-actions">
 		<Button variant="ghost" onclick={cancel}>
 			Cancel
 		</Button>

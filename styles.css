@@ -65,11 +65,56 @@ Mobile-first design with touch-friendly targets
 }
 
 /* ===========================================
+   1.5. Typography System
+   =========================================== */
+
+/* Scoped heading & paragraph defaults */
+.gb-setup-step h2,
+.gb-section-header h2,
+.gb-exercise h3,
+.gb-custom-split-builder h2,
+.gb-custom-split-editor h2,
+.gb-split-picker h2 {
+  margin: 0 0 var(--gb-space-md) 0;
+  color: var(--text-normal);
+}
+
+.gb-setup-step p,
+.gb-section p,
+.gb-builder-content p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Headings Utilities */
+.gb-heading-lg { font-size: var(--gb-font-xl); font-weight: 600; color: var(--text-normal); margin: 0; }
+.gb-heading-md { font-size: var(--gb-font-lg); font-weight: 600; color: var(--text-normal); margin: 0; }
+.gb-heading-sm { font-size: var(--gb-font-md); font-weight: 600; color: var(--text-normal); margin: 0; }
+
+/* Body text Utilities */
+.gb-text    { font-size: var(--gb-font-md); color: var(--text-normal); margin: 0; }
+.gb-text-sm { font-size: var(--gb-font-sm); color: var(--text-normal); margin: 0; }
+
+/* Muted/subtitle Utilities */
+.gb-text-muted { font-size: var(--gb-font-sm); color: var(--text-muted); margin: 0; }
+
+/* Labels (uppercase, small) Utilities */
+.gb-label { 
+  font-size: var(--gb-font-xs); 
+  font-weight: 600; 
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+/* ===========================================
    2. Layout Containers
    =========================================== */
 
 /* Main View Containers */
-.gym-buddy-workout-view {
+.gb-workout-view {
 	padding: 16px;
 	display: flex;
 	flex-direction: column;
@@ -77,11 +122,11 @@ Mobile-first design with touch-friendly targets
 }
 
 /* Modal Containers */
-.gym-buddy-exercise-picker,
-.gym-buddy-split-picker,
-.gym-buddy-training-setup,
-.gym-buddy-custom-split-builder,
-.gym-buddy-custom-split-editor {
+.gb-exercise-picker,
+.gb-split-picker,
+.gb-training-setup,
+.gb-custom-split-builder,
+.gb-custom-split-editor {
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
@@ -90,39 +135,39 @@ Mobile-first design with touch-friendly targets
 	overflow-y: auto;
 }
 
-.gym-buddy-training-setup,
-.gym-buddy-custom-split-editor {
+.gb-training-setup,
+.gb-custom-split-editor {
 	min-width: 400px;
 	max-width: 600px;
 }
 
-.gym-buddy-custom-split-builder {
+.gb-custom-split-builder {
 	min-width: 500px;
 	max-width: 700px;
 }
 
 /* Section Containers */
-.gym-buddy-section {
+.gb-section {
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
 }
 
-.gym-buddy-section-header {
+.gb-section-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 8px;
 }
 
-.gym-buddy-section-header-content {
+.gb-section-header-content {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
 }
 
-.gym-buddy-builder-content {
+.gb-builder-content {
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
@@ -130,14 +175,14 @@ Mobile-first design with touch-friendly targets
 	overflow-y: auto;
 }
 
-.gym-buddy-setup-step {
+.gb-setup-step {
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
 }
 
 /* Component Containers */
-.gym-buddy-set-input {
+.gb-set-input {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
@@ -146,47 +191,47 @@ Mobile-first design with touch-friendly targets
 	border-radius: 12px;
 }
 
-.gym-buddy-set-input-row {
+.gb-set-input-row {
 	display: flex;
 	gap: 16px;
 	flex-wrap: wrap;
 }
 
-.gym-buddy-stepper {
+.gb-stepper {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
 }
 
-.gym-buddy-stepper-controls {
+.gb-stepper-controls {
 	display: flex;
 	align-items: center;
 	gap: 12px;
 }
 
 /* Modal Helpers */
-.gym-buddy-modal-button-container {
+.gb-modal-button-container {
 	display: flex;
 	gap: 10px;
 	justify-content: flex-end;
 	margin-top: 20px;
 }
 
-.gym-buddy-modal-button-container-compact {
+.gb-modal-button-container-compact {
 	margin-top: 10px;
 }
 
-.gym-buddy-modal-input-container {
+.gb-modal-input-container {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 }
 
-.gym-buddy-modal-input-full-width {
+.gb-modal-input-full-width {
 	width: 100%;
 }
 
-.gym-buddy-divider {
+.gb-divider {
 	display: flex;
 	align-items: center;
 	gap: 16px;
@@ -194,8 +239,8 @@ Mobile-first design with touch-friendly targets
 	font-size: 12px;
 }
 
-.gym-buddy-divider::before,
-.gym-buddy-divider::after {
+.gb-divider::before,
+.gb-divider::after {
 	content: '';
 	flex: 1;
 	height: 1px;
@@ -207,18 +252,18 @@ Mobile-first design with touch-friendly targets
    =========================================== */
 
 /* Lists */
-.gym-buddy-exercises,
-.gym-buddy-exercise-list,
-.gym-buddy-split-list,
-.gym-buddy-template-grid,
-.gym-buddy-template-list,
-.gym-buddy-selected-splits {
+.gb-exercises,
+.gb-exercise-list,
+.gb-split-list,
+.gb-template-grid,
+.gb-template-list,
+.gb-selected-splits {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 }
 
-.gym-buddy-exercise-item {
+.gb-exercise-item {
 	padding: 16px;
 	text-align: left;
 	border: 2px solid var(--background-modifier-border);
@@ -232,23 +277,23 @@ Mobile-first design with touch-friendly targets
 	gap: 4px;
 }
 
-.gym-buddy-exercise-item:hover {
+.gb-exercise-item:hover {
 	background: var(--background-modifier-hover);
 	border-color: var(--interactive-accent);
 }
 
-.gym-buddy-exercise-item:active {
+.gb-exercise-item:active {
 	transform: scale(0.98);
 }
 
-.gym-buddy-exercise {
+.gb-exercise {
 	padding: 16px;
 	background: var(--background-secondary);
 	border-radius: 12px;
 	border: 1px solid var(--background-modifier-border);
 }
 
-.gym-buddy-split-item {
+.gb-split-item {
 	padding: 16px;
 	text-align: left;
 	border: 2px solid var(--background-modifier-border);
@@ -261,13 +306,13 @@ Mobile-first design with touch-friendly targets
 	gap: 6px;
 }
 
-.gym-buddy-split-item:hover {
+.gb-split-item:hover {
 	background: var(--background-modifier-hover);
 	border-color: var(--interactive-accent);
 }
 
 /* Selected Split Items */
-.gym-buddy-selected-split {
+.gb-selected-split {
 	padding: 10px 12px;
 	display: flex;
 	justify-content: space-between;
@@ -277,24 +322,24 @@ Mobile-first design with touch-friendly targets
 	border-radius: 6px;
 }
 
-.gym-buddy-selected-split-info {
+.gb-selected-split-info {
 	flex: 1;
 }
 
 /* Grids */
-.gym-buddy-schedule-grid {
+.gb-schedule-grid {
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
 }
 
-.gym-buddy-schedule-row {
+.gb-schedule-row {
 	display: flex;
 	align-items: flex-start;
 	gap: 12px;
 }
 
-.gym-buddy-schedule-day {
+.gb-schedule-day {
 	width: 100px;
 	font-size: 14px;
 	font-weight: 500;
@@ -303,7 +348,7 @@ Mobile-first design with touch-friendly targets
 	padding-top: 8px;
 }
 
-.gym-buddy-schedule-splits {
+.gb-schedule-splits {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
@@ -311,31 +356,31 @@ Mobile-first design with touch-friendly targets
 }
 
 /* Chip & Item Groups */
-.gym-buddy-muscle-chips,
-.gym-buddy-split-chips,
-.gym-buddy-selected-splits-chips,
-.gym-buddy-selected-muscles-chips,
-.gym-buddy-confirm-splits,
-.gym-buddy-confirm-schedule {
+.gb-muscle-chips,
+.gb-split-chips,
+.gb-selected-splits-chips,
+.gb-selected-muscles-chips,
+.gb-confirm-splits,
+.gb-confirm-schedule {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
 }
 
 /* Template Card Items */
-.gym-buddy-template-card-wrapper {
+.gb-template-card-wrapper {
 	position: relative;
 	border: 2px solid var(--background-modifier-border);
 	border-radius: 10px;
 	transition: all 0.2s ease;
 }
 
-.gym-buddy-template-card-wrapper.selected {
+.gb-template-card-wrapper.selected {
 	border-color: var(--interactive-accent);
 	background: var(--background-secondary);
 }
 
-.gym-buddy-template-card {
+.gb-template-card {
 	padding: 16px;
 	text-align: left;
 	border: none;
@@ -347,7 +392,7 @@ Mobile-first design with touch-friendly targets
 	width: 100%;
 }
 
-.gym-buddy-template-header {
+.gb-template-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -355,24 +400,24 @@ Mobile-first design with touch-friendly targets
 }
 
 /* Action Groups */
-.gym-buddy-builder-actions,
-.gym-buddy-setup-actions,
-.gym-buddy-form-actions,
-.gym-buddy-template-actions {
+.gb-builder-actions,
+.gb-setup-actions,
+.gb-form-actions,
+.gb-template-actions {
 	display: flex;
 	gap: 12px;
 }
 
-.gym-buddy-builder-actions,
-.gym-buddy-form-actions {
+.gb-builder-actions,
+.gb-form-actions {
 	justify-content: flex-end;
 }
 
-.gym-buddy-setup-actions {
+.gb-setup-actions {
 	justify-content: center;
 }
 
-.gym-buddy-template-actions {
+.gb-template-actions {
 	position: absolute;
 	top: 8px;
 	right: 8px;
@@ -382,14 +427,14 @@ Mobile-first design with touch-friendly targets
 	z-index: 10;
 }
 
-.gym-buddy-template-card-wrapper:hover .gym-buddy-template-actions {
+.gb-template-card-wrapper:hover .gb-template-actions {
 	opacity: 1;
 }
 
 /* ===========================================
    4. Progress Indicators
    =========================================== */
-.gym-buddy-setup-progress {
+.gb-setup-progress {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -397,7 +442,7 @@ Mobile-first design with touch-friendly targets
 	padding-bottom: 8px;
 }
 
-.gym-buddy-progress-step {
+.gb-progress-step {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -406,12 +451,12 @@ Mobile-first design with touch-friendly targets
 	transition: opacity 0.2s ease;
 }
 
-.gym-buddy-progress-step.active,
-.gym-buddy-progress-step.completed {
+.gb-progress-step.active,
+.gb-progress-step.completed {
 	opacity: 1;
 }
 
-.gym-buddy-progress-number {
+.gb-progress-number {
 	width: 28px;
 	height: 28px;
 	border-radius: 50%;
@@ -425,13 +470,13 @@ Mobile-first design with touch-friendly targets
 	transition: all 0.2s ease;
 }
 
-.gym-buddy-progress-step.active .gym-buddy-progress-number,
-.gym-buddy-progress-step.completed .gym-buddy-progress-number {
+.gb-progress-step.active .gb-progress-number,
+.gb-progress-step.completed .gb-progress-number {
 	background: var(--interactive-accent);
 	color: var(--text-on-accent);
 }
 
-.gym-buddy-progress-line {
+.gb-progress-line {
 	width: 40px;
 	height: 2px;
 	background: var(--background-modifier-border);
@@ -439,77 +484,224 @@ Mobile-first design with touch-friendly targets
 	transition: background 0.2s ease;
 }
 
-.gym-buddy-progress-line.completed {
+.gb-progress-line.completed {
 	background: var(--interactive-accent);
 }
 
 /* ===========================================
-   5. Typography & Labels
+   5. Typography & Labels (Refactored)
    =========================================== */
 
-/* Headers */
-.gym-buddy-exercise h3,
-.gym-buddy-builder-header h2,
-.gym-buddy-setup-step h2,
-.gym-buddy-split-picker-header h2,
-.gym-buddy-editor-header h2 {
-	margin: 0 0 12px 0;
-	color: var(--text-normal);
-}
-
-.gym-buddy-section-header h3,
-.gym-buddy-confirm-section h3,
-.gym-buddy-template-list-header h3,
-.gym-buddy-splits-section h3 {
+/* Scoped Subheaders (uppercase, small) */
+.gb-section-header h3,
+.gb-confirm-section h3,
+.gb-template-list-header h3,
+.gb-splits-section h3 {
 	margin: 0;
-	font-size: 12px;
+	font-size: var(--gb-font-xs);
 	font-weight: 600;
 	color: var(--text-muted);
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
 }
 
-/* Names & Values */
-.gym-buddy-exercise-name,
-.gym-buddy-split-name,
-.gym-buddy-suggested-split-name,
-.gym-buddy-template-name,
-.gym-buddy-confirm-value,
-.gym-buddy-selected-split-name {
+/* Specific Labels & Values */
+.gb-exercise-name,
+.gb-split-name,
+.gb-suggested-split-name,
+.gb-template-name,
+.gb-confirm-value,
+.gb-selected-split-name {
 	font-weight: 600;
 	color: var(--text-normal);
 }
 
-.gym-buddy-stepper-value {
+.gb-stepper-value {
 	min-width: 80px;
 	text-align: center;
-	font-size: 20px;
+	font-size: var(--gb-font-xl);
 	font-weight: 600;
 	color: var(--text-normal);
 }
 
-/* Labels & Muted Text */
-.gym-buddy-stepper-label,
-.gym-buddy-progress-label,
-.gym-buddy-today-label,
-.gym-buddy-selected-muscles-label {
-	font-size: 11px;
+/* Specialized Small Labels */
+.gb-stepper-label,
+.gb-progress-label,
+.gb-today-label,
+.gb-selected-muscles-label {
+	font-size: var(--gb-font-xs);
 	font-weight: 600;
 	color: var(--text-muted);
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
 }
 
-.gym-buddy-exercise-muscles,
-.gym-buddy-split-muscles,
-.gym-buddy-suggested-split-muscles,
-.gym-buddy-builder-subtitle,
-.gym-buddy-setup-subtitle,
-.gym-buddy-selected-count,
-.gym-buddy-selected-split-source,
-.gym-buddy-confirm-value.gym-buddy-muted {
-	font-size: 12px;
+/* Specialized Muted Text */
+.gb-exercise-muscles,
+.gb-split-muscles,
+.gb-suggested-split-muscles,
+.gb-builder-subtitle,
+.gb-setup-subtitle,
+.gb-selected-count,
+.gb-selected-split-source,
+.gb-confirm-value.gb-muted {
+	font-size: var(--gb-font-sm);
 	color: var(--text-muted);
+}
+
+/* Feature Layout Utilities */
+.gb-add-split {
+	margin-top: 16px;
+	padding-top: 16px;
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.gb-confirm-summary {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.gb-current-split-badge {
+	padding: 4px 10px;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-radius: var(--gb-radius-full);
+	font-size: var(--gb-font-xs);
+	font-weight: 600;
+	align-self: flex-start;
+	margin-bottom: 8px;
+}
+
+.gb-empty-state {
+	padding: 40px 20px;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	align-items: center;
+}
+
+.gb-exercise-content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	cursor: pointer;
+}
+
+.gb-form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.gb-save-option {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 16px;
+	background: var(--background-secondary);
+	border-radius: var(--gb-radius-md);
+}
+
+.gb-selected-muscle-chip {
+	padding: 2px 8px;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-radius: var(--gb-radius-full);
+	font-size: var(--gb-font-xs);
+}
+
+.gb-selected-muscles-preview {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 4px;
+}
+
+.gb-split-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.gb-split-suggestion {
+	padding: 16px;
+	background: var(--background-secondary);
+	border: 2px solid var(--interactive-accent);
+	border-radius: var(--gb-radius-lg);
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.gb-split-suggestion-header {
+	display: flex;
+	justify-content: space-between;
+}
+
+.gb-template-item {
+	padding: 12px;
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--gb-radius-md);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.gb-no-template {
+	padding: 20px;
+	text-align: center;
+	color: var(--text-muted);
+	font-style: italic;
+}
+
+.gb-schedule-item-day {
+	font-weight: 600;
+	min-width: 40px;
+}
+
+.gb-schedule-item-split {
+	color: var(--text-accent);
+}
+
+.gb-template-info {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.gb-template-info h4 {
+	margin: 0;
+	font-size: var(--gb-font-md);
+}
+
+.gb-template-info p {
+	margin: 0;
+	font-size: var(--gb-font-sm);
+	color: var(--text-muted);
+}
+
+.gb-split-picker-header {
+	margin-bottom: 20px;
+}
+
+.gb-split-suggestion-content {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.gb-editor-header, .gb-builder-header {
+	margin-bottom: 24px;
+}
+
+.gb-editor-form {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
 }
 
 /* ===========================================
@@ -517,7 +709,7 @@ Mobile-first design with touch-friendly targets
    =========================================== */
 
 /* Rest Timer */
-.gym-buddy-rest-timer {
+.gb-rest-timer {
 	padding: 12px;
 	background: var(--background-modifier-border);
 	border-radius: 8px;
@@ -527,18 +719,18 @@ Mobile-first design with touch-friendly targets
 	color: var(--text-normal);
 }
 
-.gym-buddy-rest-timer.active {
+.gb-rest-timer.active {
 	background: var(--interactive-accent);
 	color: var(--text-on-accent);
 }
 
 /* Tooltips & Info */
-.gym-buddy-template-info-wrapper {
+.gb-template-info-wrapper {
 	position: relative;
 	flex-shrink: 0;
 }
 
-.gym-buddy-template-info-icon {
+.gb-template-info-icon {
 	display: inline-block;
 	font-size: 16px;
 	cursor: help;
@@ -547,11 +739,11 @@ Mobile-first design with touch-friendly targets
 	line-height: 1;
 }
 
-.gym-buddy-template-info-icon:hover {
+.gb-template-info-icon:hover {
 	opacity: 1;
 }
 
-.gym-buddy-template-tooltip {
+.gb-template-tooltip {
 	position: absolute;
 	top: 100%;
 	right: 0;
@@ -569,12 +761,12 @@ Mobile-first design with touch-friendly targets
 	min-width: 200px;
 }
 
-.gym-buddy-template-info-wrapper:hover .gym-buddy-template-tooltip {
+.gb-template-info-wrapper:hover .gb-template-tooltip {
 	opacity: 1;
 	pointer-events: auto;
 }
 
-.gym-buddy-tooltip-title {
+.gb-tooltip-title {
 	font-size: 11px;
 	font-weight: 600;
 	color: var(--text-muted);
@@ -583,7 +775,7 @@ Mobile-first design with touch-friendly targets
 	margin-bottom: 4px;
 }
 
-.gym-buddy-tooltip-content {
+.gb-tooltip-content {
 	font-size: 13px;
 	color: var(--text-normal);
 	white-space: normal;
@@ -591,7 +783,7 @@ Mobile-first design with touch-friendly targets
 }
 
 /* Form Elements */
-.gym-buddy-collapse-toggle {
+.gb-collapse-toggle {
 	padding: 4px 8px;
 	border: 1px solid var(--background-modifier-border);
 	border-radius: 4px;
@@ -603,7 +795,7 @@ Mobile-first design with touch-friendly targets
 	flex-shrink: 0;
 }
 
-.gym-buddy-save-toggle {
+.gb-save-toggle {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -613,7 +805,7 @@ Mobile-first design with touch-friendly targets
 }
 
 /* Special Items */
-.gym-buddy-template-badge {
+.gb-template-badge {
 	padding: 2px 6px;
 	font-size: 10px;
 	font-weight: 600;
@@ -623,17 +815,17 @@ Mobile-first design with touch-friendly targets
 	border-radius: 4px;
 }
 
-.gym-buddy-custom-builder-card {
+.gb-custom-builder-card {
 	border: 2px dashed var(--interactive-accent);
 	background: var(--background-secondary);
 }
 
-.gym-buddy-custom-builder-badge {
+.gb-custom-builder-badge {
 	background: var(--interactive-accent);
 	color: var(--text-on-accent);
 }
 
-.gym-buddy-split-option-check {
+.gb-split-option-check {
 	width: 20px;
 	height: 20px;
 	display: flex;
@@ -645,13 +837,13 @@ Mobile-first design with touch-friendly targets
 	color: var(--interactive-accent);
 }
 
-.gym-buddy-split-option.selected .gym-buddy-split-option-check {
+.gb-split-option.selected .gb-split-option-check {
 	background: var(--interactive-accent);
 	border-color: var(--interactive-accent);
 	color: var(--text-on-accent);
 }
 
-.gym-buddy-schedule-item {
+.gb-schedule-item {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -666,25 +858,25 @@ Mobile-first design with touch-friendly targets
 
 /* Desktop adjustments */
 @media (min-width: 769px) {
-	.gym-buddy-workout-view {
+	.gb-workout-view {
 		padding: 12px;
 		gap: 12px;
 	}
 
-	.gym-buddy-exercise {
+	.gb-exercise {
 		padding: 10px 12px;
 	}
 
-	.gym-buddy-exercise h3 {
+	.gb-exercise h3 {
 		font-size: 14px;
 	}
 
-	.gym-buddy-stepper-value {
+	.gb-stepper-value {
 		font-size: 16px;
 		min-width: 60px;
 	}
 
-	.gym-buddy-exercise-picker {
+	.gb-exercise-picker {
 		padding: 12px;
 		gap: 16px;
 	}
@@ -692,23 +884,23 @@ Mobile-first design with touch-friendly targets
 
 /* Mobile Adjustments */
 @media (max-width: 768px) {
-	.gym-buddy-stepper-value {
+	.gb-stepper-value {
 		font-size: 24px;
 		min-width: 100px;
 	}
 
-	.gym-buddy-exercise h3 {
+	.gb-exercise h3 {
 		font-size: 20px;
 	}
 
-	.gym-buddy-template-actions {
+	.gb-template-actions {
 		opacity: 1; /* Always visible on mobile */
 	}
 }
 
 /* Touch device adjustments */
 @media (hover: none) and (pointer: coarse) {
-	.gym-buddy-exercise-item {
+	.gb-exercise-item {
 		min-height: 56px;
 	}
 }

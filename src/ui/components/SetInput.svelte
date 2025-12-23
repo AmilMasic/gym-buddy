@@ -44,8 +44,8 @@
 	}
 </script>
 
-<div class="gym-buddy-set-input">
-	<div class="gym-buddy-set-input-row">
+<div class="gb-set-input">
+	<div class="gb-set-input-row">
 		<NumberStepper
 			bind:value={weight}
 			min={0}
@@ -64,7 +64,7 @@
 	</div>
 
 	{#if showRPE}
-		<div class="gym-buddy-set-input-row">
+		<div class="gb-set-input-row">
 			<NumberStepper
 				bind:value={rpe}
 				min={0}

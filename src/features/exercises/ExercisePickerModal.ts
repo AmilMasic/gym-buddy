@@ -33,7 +33,7 @@ export class ExercisePickerModal extends Modal {
 	async onOpen() {
 		const { contentEl } = this;
 		contentEl.empty();
-		contentEl.addClass("gym-buddy-modal");
+		contentEl.addClass("gb-modal");
 
 		// Load exercises from storage
 		this.exercises = await this.plugin.storage.loadExerciseLibrary();
@@ -155,7 +155,7 @@ export class ExercisePickerModal extends Modal {
 
 		// Clear and remount
 		contentEl.empty();
-		contentEl.addClass("gym-buddy-modal");
+		contentEl.addClass("gb-modal");
 
 		this.component = mount(ExercisePickerModalComponent, {
 			target: contentEl,

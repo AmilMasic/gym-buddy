@@ -58,7 +58,7 @@ export class TrainingSetupModal extends Modal {
 		}
 		const { contentEl } = this;
 		contentEl.empty();
-		contentEl.addClass("gym-buddy-modal");
+		contentEl.addClass("gb-modal");
 
 		// Deduplicate templates before mounting
 		this.deduplicateTemplates();
@@ -161,7 +161,7 @@ export class TrainingSetupModal extends Modal {
 				});
 
 				const buttonContainer = confirmModal.contentEl.createDiv({
-					cls: "gym-buddy-modal-button-container",
+					cls: "gb-modal-button-container",
 				});
 
 				const cancelBtn = buttonContainer.createEl("button", {
@@ -231,7 +231,7 @@ export class TrainingSetupModal extends Modal {
 				const renameModal = new Modal(this.app);
 				renameModal.titleEl.setText("Rename template");
 				const inputContainer = renameModal.contentEl.createDiv({
-					cls: "gym-buddy-modal-input-container",
+					cls: "gb-modal-input-container",
 				});
 
 				inputContainer.createEl("label", {
@@ -240,13 +240,13 @@ export class TrainingSetupModal extends Modal {
 				const input = inputContainer.createEl("input", {
 					type: "text",
 					value: currentName,
-					cls: "gym-buddy-modal-input-full-width",
+					cls: "gb-modal-input-full-width",
 				});
 				input.focus();
 				input.select();
 
 				const buttonContainer = inputContainer.createDiv({
-					cls: "gym-buddy-modal-button-container gym-buddy-modal-button-container-compact",
+					cls: "gb-modal-button-container gb-modal-button-container-compact",
 				});
 
 				const cancelBtn = buttonContainer.createEl("button", {

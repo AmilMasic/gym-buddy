@@ -112,10 +112,10 @@
 	}
 </script>
 
-<div class="gym-buddy-exercise-picker">
+<div class="gb-exercise-picker">
 	<!-- Current split indicator (if set) -->
 	{#if currentSplit}
-		<div class="gym-buddy-current-split-badge">
+		<div class="gb-current-split-badge">
 			Training: {currentSplit.name}
 		</div>
 	{/if}
@@ -127,13 +127,13 @@
 	/>
 
 	{#if favoriteExercises.length > 0}
-		<div class="gym-buddy-section">
+		<div class="gb-section">
 			<h3>Favorites</h3>
-			<div class="gym-buddy-exercise-list">
+			<div class="gb-exercise-list">
 				{#each favoriteExercises as exercise}
-					<div class="gym-buddy-exercise-item">
+					<div class="gb-exercise-item">
 						<div
-							class="gym-buddy-exercise-content"
+							class="gb-exercise-content"
 							onclick={() => selectExercise(exercise)}
 							role="button"
 							tabindex="0"
@@ -144,8 +144,8 @@
 								}
 							}}
 						>
-							<div class="gym-buddy-exercise-name">{exercise.name}</div>
-							<div class="gym-buddy-exercise-muscles">
+							<div class="gb-exercise-name">{exercise.name}</div>
+							<div class="gb-exercise-muscles">
 								{exercise.muscles.join(', ')}
 							</div>
 						</div>
@@ -163,8 +163,8 @@
 	{/if}
 
 	{#if recentExercises.length > 0}
-		<div class="gym-buddy-section">
-			<div class="gym-buddy-section-header">
+		<div class="gb-section">
+			<div class="gb-section-header">
 				<h3>Recent</h3>
 				<IconButton
 					icon={recentExpandedState ? ChevronDown : ChevronRight}
@@ -175,11 +175,11 @@
 				/>
 			</div>
 			{#if recentExpandedState}
-			<div class="gym-buddy-exercise-list">
+			<div class="gb-exercise-list">
 				{#each recentExercises as exercise}
-					<div class="gym-buddy-exercise-item">
+					<div class="gb-exercise-item">
 						<div
-							class="gym-buddy-exercise-content"
+							class="gb-exercise-content"
 							onclick={() => selectExercise(exercise)}
 							role="button"
 							tabindex="0"
@@ -190,8 +190,8 @@
 								}
 							}}
 						>
-							<div class="gym-buddy-exercise-name">{exercise.name}</div>
-							<div class="gym-buddy-exercise-muscles">
+							<div class="gb-exercise-name">{exercise.name}</div>
+							<div class="gb-exercise-muscles">
 								{exercise.muscles.join(', ')}
 							</div>
 						</div>
@@ -209,16 +209,16 @@
 		</div>
 	{/if}
 
-	<div class="gym-buddy-section">
-		<div class="gym-buddy-section-header">
-			<div class="gym-buddy-section-header-content">
+	<div class="gb-section">
+		<div class="gb-section-header">
+			<div class="gb-section-header-content">
 				<h3>Muscle Groups</h3>
 				{#if selectedMuscles.length > 0}
-					<div class="gym-buddy-selected-muscles-preview">
-						<span class="gym-buddy-selected-muscles-label">Filtered:</span>
-						<div class="gym-buddy-selected-muscles-chips">
+					<div class="gb-selected-muscles-preview">
+						<span class="gb-selected-muscles-label">Filtered:</span>
+						<div class="gb-selected-muscles-chips">
 							{#each selectedMuscles as muscle}
-								<span class="gym-buddy-selected-muscle-chip">{muscle}</span>
+								<span class="gb-selected-muscle-chip">{muscle}</span>
 							{/each}
 						</div>
 					</div>
@@ -233,7 +233,7 @@
 			/>
 		</div>
 		{#if muscleGroupsExpandedState}
-		<div class="gym-buddy-muscle-chips">
+		<div class="gb-muscle-chips">
 			{#each allMuscles as muscle}
 				<Chip
 					active={selectedMuscles.includes(muscle)}
@@ -246,13 +246,13 @@
 		{/if}
 	</div>
 
-	<div class="gym-buddy-section">
+	<div class="gb-section">
 		<h3>All Exercises ({filteredExercises.length})</h3>
-		<div class="gym-buddy-exercise-list">
+		<div class="gb-exercise-list">
 			{#each filteredExercises as exercise}
-				<div class="gym-buddy-exercise-item">
+				<div class="gb-exercise-item">
 					<div
-						class="gym-buddy-exercise-content"
+						class="gb-exercise-content"
 						onclick={() => selectExercise(exercise)}
 						role="button"
 						tabindex="0"
@@ -263,8 +263,8 @@
 							}
 						}}
 					>
-						<div class="gym-buddy-exercise-name">{exercise.name}</div>
-						<div class="gym-buddy-exercise-muscles">
+						<div class="gb-exercise-name">{exercise.name}</div>
+						<div class="gb-exercise-muscles">
 							{exercise.muscles.join(', ')}
 						</div>
 					</div>

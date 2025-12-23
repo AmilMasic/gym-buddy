@@ -39,7 +39,7 @@ export class ActiveWorkoutView extends ItemView {
 		// Create Svelte component for the workout view
 		// For now, we'll create a simple HTML structure
 		// Full Svelte integration will be added in next phase
-		const content = container.createDiv("gym-buddy-workout-view");
+		const content = container.createDiv("gb-workout-view");
 		content.createEl("h2", { text: "Active workout" });
 
 		const addExerciseBtn = content.createEl("button", {
@@ -56,7 +56,7 @@ export class ActiveWorkoutView extends ItemView {
 		});
 
 		if (this.activeWorkout && this.activeWorkout.exercises.length > 0) {
-			const exercisesContainer = content.createDiv("gym-buddy-exercises");
+			const exercisesContainer = content.createDiv("gb-exercises");
 			for (const exercise of this.activeWorkout.exercises) {
 				this.renderExercise(exercisesContainer, exercise);
 			}
@@ -115,12 +115,12 @@ export class ActiveWorkoutView extends ItemView {
 
 	private renderExercise(container: HTMLElement, exercise: WorkoutExercise) {
 		if (!container) return;
-		const exerciseEl = container.createDiv("gym-buddy-exercise");
+		const exerciseEl = container.createDiv("gb-exercise");
 		exerciseEl.createEl("h3", { text: exercise.name });
 
-		const setsContainer = exerciseEl.createDiv("gym-buddy-sets");
+		const setsContainer = exerciseEl.createDiv("gb-sets");
 		for (const set of exercise.sets) {
-			const setEl = setsContainer.createDiv("gym-buddy-set");
+			const setEl = setsContainer.createDiv("gb-set");
 			setEl.createSpan({ text: `Set ${set.setNumber}: ` });
 			if (set.weight) setEl.createSpan({ text: `${set.weight} lbs × ` });
 			if (set.reps) setEl.createSpan({ text: `${set.reps} reps` });

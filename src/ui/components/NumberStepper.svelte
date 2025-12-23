@@ -33,11 +33,11 @@
 	}
 </script>
 
-<div class="gym-buddy-stepper">
+<div class="gb-stepper">
 	{#if label}
-		<div class="gym-buddy-stepper-label">{label}</div>
+		<div class="gb-stepper-label">{label}</div>
 	{/if}
-	<div class="gym-buddy-stepper-controls" role="group" aria-label={label || undefined}>
+	<div class="gb-stepper-controls" role="group" aria-label={label || undefined}>
 		<IconButton
 			icon={Minus}
 			variant="ghost"
@@ -46,7 +46,7 @@
 			disabled={value <= min}
 			ariaLabel="Decrease {label}"
 		/>
-		<div class="gym-buddy-stepper-value">
+		<div class="gb-stepper-value">
 			{value}{#if unit} {unit}{/if}
 		</div>
 		<IconButton

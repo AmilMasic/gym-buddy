@@ -148,61 +148,61 @@
 	const hasSchedule = $derived(Object.keys(schedule).some(k => schedule[k as keyof WeeklySchedule]));
 </script>
 
-<div class="gym-buddy-training-setup">
+<div class="gb-training-setup">
 	<!-- Progress indicator -->
-	<div class="gym-buddy-setup-progress">
-		<div class="gym-buddy-progress-step" class:active={currentStep === 'template'} class:completed={currentStep !== 'template'}>
-			<span class="gym-buddy-progress-number">1</span>
-			<span class="gym-buddy-progress-label">Template</span>
+	<div class="gb-setup-progress">
+		<div class="gb-progress-step" class:active={currentStep === 'template'} class:completed={currentStep !== 'template'}>
+			<span class="gb-progress-number">1</span>
+			<span class="gb-progress-label">Template</span>
 		</div>
-		<div class="gym-buddy-progress-line" class:completed={currentStep !== 'template'}></div>
-		<div class="gym-buddy-progress-step" class:active={currentStep === 'schedule'} class:completed={currentStep === 'confirm'}>
-			<span class="gym-buddy-progress-number">2</span>
-			<span class="gym-buddy-progress-label">Schedule</span>
+		<div class="gb-progress-line" class:completed={currentStep !== 'template'}></div>
+		<div class="gb-progress-step" class:active={currentStep === 'schedule'} class:completed={currentStep === 'confirm'}>
+			<span class="gb-progress-number">2</span>
+			<span class="gb-progress-label">Schedule</span>
 		</div>
-		<div class="gym-buddy-progress-line" class:completed={currentStep === 'confirm'}></div>
-		<div class="gym-buddy-progress-step" class:active={currentStep === 'confirm'}>
-			<span class="gym-buddy-progress-number">3</span>
-			<span class="gym-buddy-progress-label">Confirm</span>
+		<div class="gb-progress-line" class:completed={currentStep === 'confirm'}></div>
+		<div class="gb-progress-step" class:active={currentStep === 'confirm'}>
+			<span class="gb-progress-number">3</span>
+			<span class="gb-progress-label">Confirm</span>
 		</div>
 	</div>
 
 	<!-- Step 1: Template Selection -->
 	{#if currentStep === 'template'}
-		<div class="gym-buddy-setup-step">
+		<div class="gb-setup-step">
 			<h2>Choose your training split</h2>
-			<p class="gym-buddy-setup-subtitle">Select how you want to organize your workouts</p>
+			<p class="gb-setup-subtitle">Select how you want to organize your workouts</p>
 
-			<div class="gym-buddy-template-grid">
+			<div class="gb-template-grid">
 				{#each templates as template}
 					<div
-						class="gym-buddy-template-card-wrapper"
+						class="gb-template-card-wrapper"
 						class:selected={selectedTemplateId === template.id}
 					>
 						<button
-							class="gym-buddy-template-card"
+							class="gb-template-card"
 							onclick={() => selectTemplate(template.id)}
 						>
-							<div class="gym-buddy-template-header">
-								<div class="gym-buddy-template-name">{template.name}</div>
-								<div class="gym-buddy-template-info-wrapper">
-									<span class="gym-buddy-template-info-icon" title={template.splits.map(s => s.name).join(' • ')}>
+							<div class="gb-template-header">
+								<div class="gb-template-name">{template.name}</div>
+								<div class="gb-template-info-wrapper">
+									<span class="gb-template-info-icon" title={template.splits.map(s => s.name).join(' • ')}>
 										<Info size={14} />
 									</span>
-									<div class="gym-buddy-template-tooltip">
-										<div class="gym-buddy-tooltip-title">Splits:</div>
-										<div class="gym-buddy-tooltip-content">
+									<div class="gb-template-tooltip">
+										<div class="gb-tooltip-title">Splits:</div>
+										<div class="gb-tooltip-content">
 											{template.splits.map(s => s.name).join(' • ')}
 										</div>
 									</div>
 								</div>
 							</div>
 							{#if template.isCustom}
-								<span class="gym-buddy-template-badge">Custom</span>
+								<span class="gb-template-badge">Custom</span>
 							{/if}
 						</button>
 						{#if template.isCustom}
-							<div class="gym-buddy-template-actions">
+							<div class="gb-template-actions">
 								<IconButton
 									icon={Pencil}
 									variant="ghost"
@@ -235,29 +235,29 @@
 				{/each}
 				<!-- Custom Split Builder Option -->
 				<button
-					class="gym-buddy-template-card gym-buddy-custom-builder-card"
+					class="gb-template-card gb-custom-builder-card"
 					class:selected={selectedTemplateId === 'custom-builder'}
 					onclick={() => selectTemplate('custom-builder')}
 				>
-					<div class="gym-buddy-template-header">
-						<div class="gym-buddy-template-name">Custom</div>
-						<div class="gym-buddy-template-info-wrapper">
-							<span class="gym-buddy-template-info-icon" title="Mix and match splits from any template">
+					<div class="gb-template-header">
+						<div class="gb-template-name">Custom</div>
+						<div class="gb-template-info-wrapper">
+							<span class="gb-template-info-icon" title="Mix and match splits from any template">
 								<Info size={14} />
 							</span>
-							<div class="gym-buddy-template-tooltip">
-								<div class="gym-buddy-tooltip-title">Custom Builder:</div>
-								<div class="gym-buddy-tooltip-content">
+							<div class="gb-template-tooltip">
+								<div class="gb-tooltip-title">Custom Builder:</div>
+								<div class="gb-tooltip-content">
 									Combine splits from any template to create your perfect split
 								</div>
 							</div>
 						</div>
 					</div>
-					<span class="gym-buddy-template-badge gym-buddy-custom-builder-badge">Build Your Own</span>
+					<span class="gb-template-badge gb-custom-builder-badge">Build Your Own</span>
 				</button>
 			</div>
 
-			<div class="gym-buddy-setup-actions">
+			<div class="gb-setup-actions">
 				<Button
 					variant="primary"
 					onclick={nextStep}
@@ -271,16 +271,16 @@
 
 	<!-- Step 2: Weekly Schedule -->
 	{#if currentStep === 'schedule'}
-		<div class="gym-buddy-setup-step">
+		<div class="gb-setup-step">
 			<h2>Set your weekly schedule</h2>
-			<p class="gym-buddy-setup-subtitle">Assign splits to days for auto-detection (optional)</p>
+			<p class="gb-setup-subtitle">Assign splits to days for auto-detection (optional)</p>
 
 			{#if selectedTemplate}
-				<div class="gym-buddy-schedule-grid">
+				<div class="gb-schedule-grid">
 					{#each days as day}
-						<div class="gym-buddy-schedule-row">
-							<span class="gym-buddy-schedule-day">{day.label}</span>
-							<div class="gym-buddy-schedule-splits">
+						<div class="gb-schedule-row">
+							<span class="gb-schedule-day">{day.label}</span>
+							<div class="gb-schedule-splits">
 								<Chip
 									active={!schedule[day.key as keyof WeeklySchedule]}
 									onclick={() => setDaySplit(day.key, null)}
@@ -301,7 +301,7 @@
 				</div>
 			{/if}
 
-			<div class="gym-buddy-setup-actions">
+			<div class="gb-setup-actions">
 				<Button variant="ghost" onclick={prevStep}>
 					Back
 				</Button>
@@ -317,16 +317,16 @@
 
 	<!-- Step 3: Confirmation -->
 	{#if currentStep === 'confirm'}
-		<div class="gym-buddy-setup-step">
+		<div class="gb-setup-step">
 			<h2>Ready to go!</h2>
-			<p class="gym-buddy-setup-subtitle">Review your training configuration</p>
+			<p class="gb-setup-subtitle">Review your training configuration</p>
 
-			<div class="gym-buddy-confirm-summary">
-				<div class="gym-buddy-confirm-section">
+			<div class="gb-confirm-summary">
+				<div class="gb-confirm-section">
 					<h3>Training Split</h3>
-					<div class="gym-buddy-confirm-value">{selectedTemplate?.name || 'None'}</div>
+					<div class="gb-confirm-value">{selectedTemplate?.name || 'None'}</div>
 					{#if selectedTemplate}
-						<div class="gym-buddy-confirm-splits">
+						<div class="gb-confirm-splits">
 							{#each selectedTemplate.splits as split}
 								<Chip size="sm" active={false}>{split.name}</Chip>
 							{/each}
@@ -334,26 +334,26 @@
 					{/if}
 				</div>
 
-				<div class="gym-buddy-confirm-section">
+				<div class="gb-confirm-section">
 					<h3>Weekly Schedule</h3>
 					{#if hasSchedule}
-						<div class="gym-buddy-confirm-schedule">
+						<div class="gb-confirm-schedule">
 							{#each scheduleSummary as item}
-								<div class="gym-buddy-schedule-item">
-									<span class="gym-buddy-schedule-item-day">{item.day}</span>
-									<span class="gym-buddy-schedule-item-split">{item.split}</span>
+								<div class="gb-schedule-item">
+									<span class="gb-schedule-item-day">{item.day}</span>
+									<span class="gb-schedule-item-split">{item.split}</span>
 								</div>
 							{/each}
 						</div>
 					{:else}
-						<div class="gym-buddy-confirm-value gym-buddy-muted">
+						<div class="gb-confirm-value gb-muted">
 							No schedule set — you'll choose your split each workout
 						</div>
 					{/if}
 				</div>
 			</div>
 
-			<div class="gym-buddy-setup-actions">
+			<div class="gb-setup-actions">
 				<Button variant="ghost" onclick={prevStep}>
 					Back
 				</Button>
