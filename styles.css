@@ -406,10 +406,10 @@ Mobile-first design with touch-friendly targets
 }
 
 .gb-template-card {
-	padding: 16px;
+	padding: var(--gb-space-md) var(--gb-space-lg);
 	text-align: left;
 	border: none;
-	border-radius: 10px;
+	border-radius: var(--gb-radius-xl);
 	background: transparent;
 	cursor: pointer;
 	transition: all 0.2s ease;
@@ -420,8 +420,27 @@ Mobile-first design with touch-friendly targets
 .gb-template-header {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	gap: 8px;
+	justify-content: flex-start;
+	width: 100%;
+	min-height: 24px;
+}
+
+.gb-template-name-group {
+	display: flex;
+	align-items: center;
+	gap: var(--gb-space-md);
+}
+
+.gb-custom-icon {
+	color: var(--interactive-accent);
+	display: flex;
+	align-items: center;
+	opacity: 0.8;
+}
+
+.gb-template-card .gb-template-info-wrapper {
+	display: flex;
+	align-items: center;
 }
 
 /* Action Groups */
@@ -444,8 +463,9 @@ Mobile-first design with touch-friendly targets
 
 .gb-template-actions {
 	position: absolute;
-	top: 8px;
-	right: 8px;
+	top: 50%;
+	right: var(--gb-space-sm);
+	transform: translateY(-50%);
 	gap: 4px;
 	opacity: 0;
 	transition: opacity 0.2s ease;
@@ -771,7 +791,7 @@ Mobile-first design with touch-friendly targets
 .gb-template-tooltip {
 	position: absolute;
 	top: 100%;
-	right: 0;
+	left: 0;
 	margin-top: 8px;
 	padding: 10px 12px;
 	background: var(--background-secondary);
@@ -831,24 +851,9 @@ Mobile-first design with touch-friendly targets
 }
 
 /* Special Items */
-.gb-template-badge {
-	padding: 2px 6px;
-	font-size: 10px;
-	font-weight: 600;
-	text-transform: uppercase;
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-	border-radius: 4px;
-}
-
 .gb-custom-builder-card {
 	border: 2px dashed var(--interactive-accent);
 	background: var(--background-secondary);
-}
-
-.gb-custom-builder-badge {
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
 }
 
 .gb-split-option-check {

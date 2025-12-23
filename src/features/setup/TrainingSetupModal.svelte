@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SplitTemplate, TrainingSplit } from '../../types';
 	import type { WeeklySchedule } from '../../settings';
-	import { Info, Pencil, Trash2 } from '@lucide/svelte';
+	import { Info, Pencil, Trash2, User, Plus } from '@lucide/svelte';
 	import { Button, Chip, IconButton } from '../../ui/components';
 
 	interface Props {
@@ -184,22 +184,26 @@
 							onclick={() => selectTemplate(template.id)}
 						>
 							<div class="gb-template-header">
-								<div class="gb-template-name">{template.name}</div>
-								<div class="gb-template-info-wrapper">
-									<span class="gb-template-info-icon" title={template.splits.map(s => s.name).join(' • ')}>
-										<Info size={14} />
-									</span>
-									<div class="gb-template-tooltip">
-										<div class="gb-tooltip-title">Splits:</div>
-										<div class="gb-tooltip-content">
-											{template.splits.map(s => s.name).join(' • ')}
+								<div class="gb-template-name-group">
+									<div class="gb-template-name">{template.name}</div>
+									{#if template.isCustom}
+										<div class="gb-custom-icon" title="Custom Template">
+											<User size={14} />
+										</div>
+									{/if}
+									<div class="gb-template-info-wrapper">
+										<span class="gb-template-info-icon" title={template.splits.map(s => s.name).join(' • ')}>
+											<Info size={14} />
+										</span>
+										<div class="gb-template-tooltip">
+											<div class="gb-tooltip-title">Splits:</div>
+											<div class="gb-tooltip-content">
+												{template.splits.map(s => s.name).join(' • ')}
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-							{#if template.isCustom}
-								<span class="gb-template-badge">Custom</span>
-							{/if}
 						</button>
 						{#if template.isCustom}
 							<div class="gb-template-actions">
@@ -240,20 +244,24 @@
 					onclick={() => selectTemplate('custom-builder')}
 				>
 					<div class="gb-template-header">
-						<div class="gb-template-name">Custom</div>
-						<div class="gb-template-info-wrapper">
-							<span class="gb-template-info-icon" title="Mix and match splits from any template">
-								<Info size={14} />
-							</span>
-							<div class="gb-template-tooltip">
-								<div class="gb-tooltip-title">Custom Builder:</div>
-								<div class="gb-tooltip-content">
-									Combine splits from any template to create your perfect split
+						<div class="gb-template-name-group">
+							<div class="gb-template-name">Custom</div>
+							<div class="gb-custom-icon" title="Build Your Own">
+								<Plus size={14} />
+							</div>
+							<div class="gb-template-info-wrapper">
+								<span class="gb-template-info-icon" title="Mix and match splits from any template">
+									<Info size={14} />
+								</span>
+								<div class="gb-template-tooltip">
+									<div class="gb-tooltip-title">Custom Builder:</div>
+									<div class="gb-tooltip-content">
+										Combine splits from any template to create your perfect split
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<span class="gb-template-badge gb-custom-builder-badge">Build Your Own</span>
 				</button>
 			</div>
 
