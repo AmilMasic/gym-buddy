@@ -205,6 +205,17 @@ Follow Obsidian's **Developer Policies** and **Plugin Guidelines**. In particula
 - Avoid Node/Electron APIs if you want mobile compatibility; set `isDesktopOnly` accordingly.
 - Prefer `async/await` over promise chains; handle errors gracefully.
 
+## Type & props conventions
+
+- Colocate by default: keep component/feature-only types in the same file or a sibling `types.ts` inside the feature folder; export via the feature barrel if reused.
+- Shared domain types live in `src/types.ts` (with a simple barrel) and should be limited to cross-feature shapes (e.g., Exercise, Workout, Settings).
+- Prefer `type` for flexibility (unions, mapped/conditional); use `interface` only when you need declaration merging or `implements`.
+- Naming: PascalCase for types/interfaces/enums; camelCase for members; no `I` prefix.
+- Request/response: keep separate DTOs (e.g., `FooRequest`, `FooResponse`) even if identical today.
+- Imports order: feature-local first (`./types` or sibling files), then shared (`src/types`). Avoid ambient app-specific `*.d.ts`.
+- Granularity: compose small focused types; favor intersections over large catch-alls.
+- Circulars: if two features depend on the same shape, lift it to `src/types.ts` instead of cross-importing features.
+
 ## CSS Guidelines
 
 - **Prefix all classes with `gb-`**: Use the `gb-` prefix for all plugin-specific classes (e.g., `.gb-workout-view`, `.gb-btn`). Avoid the older `gym-buddy-` prefix.
