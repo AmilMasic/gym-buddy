@@ -358,9 +358,30 @@ export class Storage {
 		folder: string;
 		format: string;
 	} | null {
-		const periodicNotes = (this.plugin.app as any).plugins?.getPlugin(
-			"periodic-notes"
-		);
+		interface PeriodicNotesPlugin {
+			settings?: {
+				weekly?: {
+					enabled?: boolean;
+					folder?: string;
+					format?: string;
+				};
+			};
+		}
+
+		interface AppWithPlugins {
+			plugins?: {
+				getPlugin?: (id: string) => unknown;
+			};
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const app = this.plugin.app as any as AppWithPlugins;
+		const pluginGetter = app.plugins?.getPlugin;
+		if (!pluginGetter) return null;
+
+		const periodicNotes = pluginGetter("periodic-notes") as
+			| PeriodicNotesPlugin
+			| undefined;
 		if (!periodicNotes?.settings?.weekly?.enabled) return null;
 		return {
 			folder: periodicNotes.settings.weekly.folder || "",

@@ -1,10 +1,9 @@
 import { Modal } from "obsidian";
 import { mount, unmount } from "svelte";
 import SplitPickerModalComponent from "./SplitPickerModal.svelte";
-import { TrainingSplit, SplitTemplate } from "../../types";
+import { TrainingSplit } from "../../types";
 import GymBuddyPlugin from "../../main";
 import {
-	getSplitTemplate,
 	getTodaysSplit,
 	getTodayDayOfWeek,
 	BUILT_IN_TEMPLATES,

@@ -2,7 +2,12 @@ import { ItemView, WorkspaceLeaf, Modal, Notice } from "obsidian";
 import { mount, unmount } from "svelte";
 import ActiveWorkoutViewComponent from "./ActiveWorkoutView.svelte";
 import { VIEW_TYPE_WORKOUT } from "../../constants";
-import { WorkoutExercise, Exercise, ActiveWorkout, WorkoutSet } from "../../types";
+import {
+	WorkoutExercise,
+	Exercise,
+	ActiveWorkout,
+	WorkoutSet,
+} from "../../types";
 import { ExercisePickerModal } from "../exercises/ExercisePickerModal";
 import { WorkoutParser } from "../../data/parser";
 import { activeWorkoutToWorkout } from "./workoutUtils";
@@ -117,9 +122,15 @@ export class ActiveWorkoutView extends ItemView {
 		this.finishHandler = () => void this.finishWorkout();
 		this.cancelHandler = () => this.cancelWorkout();
 
-		document.addEventListener("open-exercise-picker", this.openPickerHandler);
+		document.addEventListener(
+			"open-exercise-picker",
+			this.openPickerHandler
+		);
 		document.addEventListener("exercise-log-set", this.logSetHandler);
-		document.addEventListener("remove-exercise", this.removeExerciseHandler);
+		document.addEventListener(
+			"remove-exercise",
+			this.removeExerciseHandler
+		);
 		document.addEventListener("finish-workout", this.finishHandler);
 		document.addEventListener("cancel-workout", this.cancelHandler);
 	}
@@ -133,7 +144,10 @@ export class ActiveWorkoutView extends ItemView {
 			this.openPickerHandler = null;
 		}
 		if (this.logSetHandler) {
-			document.removeEventListener("exercise-log-set", this.logSetHandler);
+			document.removeEventListener(
+				"exercise-log-set",
+				this.logSetHandler
+			);
 			this.logSetHandler = null;
 		}
 		if (this.removeExerciseHandler) {
@@ -229,7 +243,10 @@ export class ActiveWorkoutView extends ItemView {
 
 		// Save to file
 		try {
-			const file = await this.plugin.storage.saveWorkout(workout, markdown);
+			const file = await this.plugin.storage.saveWorkout(
+				workout,
+				markdown
+			);
 			new Notice(`Workout saved to ${file.path}`);
 
 			// Open the saved file
@@ -249,7 +266,7 @@ export class ActiveWorkoutView extends ItemView {
 	private cancelWorkout() {
 		// Show confirmation modal
 		const modal = new Modal(this.plugin.app);
-		modal.titleEl.setText("Cancel Workout?");
+		modal.titleEl.setText("Cancel workout?");
 		modal.contentEl.createEl("p", {
 			text: "Are you sure you want to cancel this workout? All logged sets will be lost.",
 		});
@@ -259,13 +276,13 @@ export class ActiveWorkoutView extends ItemView {
 		});
 
 		const keepBtn = buttonContainer.createEl("button", {
-			text: "Keep Working Out",
+			text: "Keep working out",
 			cls: "mod-cta",
 		});
 		keepBtn.onclick = () => modal.close();
 
 		const discardBtn = buttonContainer.createEl("button", {
-			text: "Discard Workout",
+			text: "Discard workout",
 			cls: "mod-warning",
 		});
 		discardBtn.onclick = () => {
