@@ -56,20 +56,22 @@
 				{#if !suggestedSplit || split.id !== suggestedSplit.id}
 					<Card clickable onclick={() => selectSplit(split)}>
 						<div class="gb-split-card-inner">
-							<span class="gb-split-name">{split.name}</span>
-							{#if !split.name.toLowerCase().includes('total body') && !split.name.toLowerCase().includes('full body')}
-								<div class="gb-template-info-wrapper">
-									<span class="gb-template-info-icon" title={split.muscleGroups.join(', ')}>
-										<Info size={14} />
-									</span>
-									<div class="gb-template-tooltip">
-										<div class="gb-tooltip-title">Muscle Groups:</div>
-										<div class="gb-tooltip-content">
-											{split.muscleGroups.join(', ')}
+							<div class="gb-split-name-group">
+								<span class="gb-split-name">{split.name}</span>
+								{#if !split.name.toLowerCase().includes('total body') && !split.name.toLowerCase().includes('full body')}
+									<div class="gb-template-info-wrapper">
+										<span class="gb-template-info-icon" title={split.muscleGroups.join(', ')}>
+											<Info size={14} />
+										</span>
+										<div class="gb-template-tooltip">
+											<div class="gb-tooltip-title">Muscle Groups:</div>
+											<div class="gb-tooltip-content">
+												{split.muscleGroups.join(', ')}
+											</div>
 										</div>
 									</div>
-								</div>
-							{/if}
+								{/if}
+							</div>
 						</div>
 					</Card>
 				{/if}

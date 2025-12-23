@@ -129,9 +129,14 @@ Mobile-first design with touch-friendly targets
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	position: relative;
 	width: 100%;
 	min-height: 24px;
+}
+
+.gb-split-name-group {
+	display: flex;
+	align-items: center;
+	gap: var(--gb-space-md);
 }
 
 .gb-split-card-inner .gb-split-name {
@@ -140,8 +145,6 @@ Mobile-first design with touch-friendly targets
 }
 
 .gb-split-card-inner .gb-template-info-wrapper {
-	position: absolute;
-	right: 0;
 	display: flex;
 	align-items: center;
 }
@@ -851,9 +854,24 @@ Mobile-first design with touch-friendly targets
 }
 
 /* Special Items */
+.gb-template-badge {
+	padding: 2px 6px;
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-radius: 4px;
+}
+
 .gb-custom-builder-card {
 	border: 2px dashed var(--interactive-accent);
 	background: var(--background-secondary);
+}
+
+.gb-custom-builder-badge {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
 }
 
 .gb-split-option-check {
@@ -884,190 +902,7 @@ Mobile-first design with touch-friendly targets
 }
 
 /* ===========================================
-   7. Active Workout View
-   =========================================== */
-
-/* Workout Header */
-.gb-workout-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	margin-bottom: 8px;
-}
-
-.gb-workout-header h2 {
-	margin: 0;
-	font-size: var(--gb-font-xl);
-	color: var(--text-normal);
-}
-
-.gb-workout-header-info {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-}
-
-.gb-workout-split-badge {
-	padding: 4px 10px;
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-	border-radius: var(--gb-radius-full);
-	font-size: var(--gb-font-xs);
-	font-weight: 600;
-	align-self: flex-start;
-}
-
-/* Workout Timer */
-.gb-workout-timer {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	font-size: var(--gb-font-lg);
-	font-weight: 600;
-	color: var(--text-normal);
-	padding: 8px 12px;
-	background: var(--background-secondary);
-	border-radius: var(--gb-radius-lg);
-	flex-shrink: 0;
-}
-
-/* Exercise Card */
-.gb-exercise-card {
-	background: var(--background-secondary);
-	border: 2px solid var(--background-modifier-border);
-	border-radius: var(--gb-radius-xl);
-	overflow: hidden;
-}
-
-.gb-exercise-card-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 12px 16px;
-	cursor: pointer;
-	transition: background 0.2s ease;
-	border: none;
-	background: transparent;
-	width: 100%;
-	text-align: left;
-}
-
-.gb-exercise-card-header:hover {
-	background: var(--background-modifier-hover);
-}
-
-.gb-exercise-card-title {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	color: var(--text-muted);
-}
-
-.gb-exercise-card-info {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-}
-
-.gb-exercise-card-info .gb-exercise-name {
-	font-weight: 600;
-	color: var(--text-normal);
-}
-
-.gb-exercise-sets-count {
-	font-size: var(--gb-font-sm);
-	color: var(--text-muted);
-}
-
-.gb-exercise-card-content {
-	padding: 0 16px 16px 16px;
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-}
-
-/* Logged Sets */
-.gb-logged-sets {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.gb-logged-set {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	padding: 10px 12px;
-	background: var(--background-primary);
-	border-radius: var(--gb-radius-md);
-}
-
-.gb-logged-set--latest {
-	border: 1px solid var(--interactive-accent);
-}
-
-.gb-set-number {
-	font-weight: 600;
-	min-width: 50px;
-	color: var(--text-muted);
-}
-
-.gb-set-details {
-	flex: 1;
-	font-weight: 600;
-	color: var(--text-normal);
-}
-
-.gb-set-rpe {
-	color: var(--text-muted);
-	font-weight: normal;
-}
-
-.gb-set-check {
-	color: var(--interactive-accent);
-}
-
-/* Next Set Input */
-.gb-next-set {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.gb-next-set-label {
-	font-size: var(--gb-font-sm);
-	font-weight: 600;
-	color: var(--text-muted);
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-}
-
-/* Workout Actions */
-.gb-workout-actions {
-	margin-top: 8px;
-}
-
-.gb-workout-cancel {
-	margin-top: 16px;
-	display: flex;
-	justify-content: center;
-	opacity: 0.7;
-}
-
-.gb-workout-cancel:hover {
-	opacity: 1;
-}
-
-/* Cancel Modal Buttons */
-.gb-modal-buttons {
-	display: flex;
-	gap: 12px;
-	justify-content: flex-end;
-	margin-top: 20px;
-}
-
-/* ===========================================
-   8. Media Queries & Desktop Adjustments
+   7. Media Queries & Desktop Adjustments
    =========================================== */
 
 /* Desktop adjustments */
