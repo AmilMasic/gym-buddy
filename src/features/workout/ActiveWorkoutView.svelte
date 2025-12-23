@@ -1,17 +1,10 @@
 <script lang="ts">
+	import type { ActiveWorkoutViewProps } from "./types";
 	import type { ActiveWorkout, Exercise } from "../../types";
 	import { Plus, X, Flag } from "@lucide/svelte";
 	import { Button } from "../../ui/components";
 	import WorkoutTimer from "./WorkoutTimer.svelte";
 	import ExerciseCard from "./ExerciseCard.svelte";
-
-	interface Props {
-		activeWorkout: ActiveWorkout;
-		exercises: Exercise[];
-		showRPE?: boolean;
-		unit?: string;
-		splitName?: string;
-	}
 
 	let {
 		activeWorkout,
@@ -19,7 +12,7 @@
 		showRPE = true,
 		unit = "lbs",
 		splitName = "",
-	}: Props = $props();
+	}: ActiveWorkoutViewProps = $props();
 
 	function addExercise() {
 		document.dispatchEvent(new CustomEvent("open-exercise-picker"));

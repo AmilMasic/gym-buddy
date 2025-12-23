@@ -3,7 +3,7 @@ import type { Snippet, Component } from 'svelte';
 export type ButtonVariant = 'primary' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
-export interface ButtonProps {
+export type ButtonProps = {
   /** Visual variant */
   variant?: ButtonVariant;
   /** Size preset */

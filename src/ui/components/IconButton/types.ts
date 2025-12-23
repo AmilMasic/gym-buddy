@@ -3,7 +3,7 @@ import type { Component } from 'svelte';
 export type IconButtonVariant = 'ghost' | 'danger' | 'favorite';
 export type IconButtonSize = 'sm' | 'md' | 'lg';
 
-export interface IconButtonProps {
+export type IconButtonProps = {
   /** Lucide icon component */
   icon: Component<{ size?: number; fill?: string }>;
   /** Visual variant */

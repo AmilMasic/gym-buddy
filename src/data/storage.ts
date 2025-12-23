@@ -4,11 +4,11 @@ import GymBuddyPlugin from "../main";
 import { getExerciseDatabase } from "../features/exercises/exerciseDatabase";
 import { WorkoutParser } from "./parser";
 
-interface PluginData {
+type PluginData = {
 	exercises?: Exercise[]; // Custom exercises only
 	prs?: PRRecord[];
 	splitFavorites?: SplitFavorites[];
-}
+};
 
 /**
  * Storage layer for Gym Buddy plugin data
@@ -358,35 +358,66 @@ export class Storage {
 		folder: string;
 		format: string;
 	} | null {
-		interface PeriodicNotesPlugin {
-			settings?: {
-				weekly?: {
-					enabled?: boolean;
-					folder?: string;
-					format?: string;
+		try {
+			type PeriodicNotesPlugin = {
+				settings?: {
+					weekly?: {
+						enabled?: boolean;
+						folder?: string;
+						format?: string;
+					};
 				};
 			};
-		}
 
-		interface AppWithPlugins {
-			plugins?: {
-				getPlugin?: (id: string) => unknown;
+			type AppWithPlugins = {
+				plugins?: {
+					getPlugin?: (id: string) => unknown;
+				};
 			};
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const app = this.plugin.app as any as AppWithPlugins;
+
+			// Safely check if plugins API exists
+			if (
+				!app ||
+				!app.plugins ||
+				typeof app.plugins.getPlugin !== "function"
+			) {
+				return null;
+			}
+
+			const pluginGetter = app.plugins.getPlugin;
+			if (!pluginGetter) {
+				return null;
+			}
+
+			const periodicNotes = pluginGetter("periodic-notes") as
+				| PeriodicNotesPlugin
+				| undefined;
+
+			if (!periodicNotes?.settings?.weekly?.enabled) return null;
+			return {
+				folder: periodicNotes.settings.weekly.folder || "",
+				format: periodicNotes.settings.weekly.format || "gggg-[W]ww",
+			};
+		} catch (error) {
+			// Gracefully handle errors accessing Periodic Notes plugin API
+			// Falls back to manual settings configuration
+			return null;
 		}
+	}
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const app = this.plugin.app as any as AppWithPlugins;
-		const pluginGetter = app.plugins?.getPlugin;
-		if (!pluginGetter) return null;
-
-		const periodicNotes = pluginGetter("periodic-notes") as
-			| PeriodicNotesPlugin
-			| undefined;
-		if (!periodicNotes?.settings?.weekly?.enabled) return null;
-		return {
-			folder: periodicNotes.settings.weekly.folder || "",
-			format: periodicNotes.settings.weekly.format || "gggg-[W]ww",
-		};
+	/**
+	 * Convert user-friendly format placeholders to moment.js format tokens
+	 */
+	private convertFormatToMoment(format: string): string {
+		// Convert user-friendly placeholders to moment.js tokens
+		return format
+			.replace(/\{\{year\}\}/g, "gggg") // 4-digit year
+			.replace(/\{\{week\}\}/g, "ww") // Week number with leading zero
+			.replace(/\{\{month\}\}/g, "MM") // 2-digit month
+			.replace(/\{\{day\}\}/g, "DD"); // 2-digit day
 	}
 
 	/**
@@ -397,7 +428,8 @@ export class Storage {
 		date: string
 	): string {
 		const m = moment(date);
-		const filename = m.format(config.format);
+		const momentFormat = this.convertFormatToMoment(config.format);
+		const filename = m.format(momentFormat);
 		const folder = config.folder ? `${config.folder}/` : "";
 		return `${folder}${filename}.md`;
 	}

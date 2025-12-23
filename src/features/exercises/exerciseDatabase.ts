@@ -1,5 +1,5 @@
-import { Exercise, ExternalExercise, ExerciseType } from "../../types";
 import exercisesData from "./exercises.json";
+import { Exercise, ExternalExercise, ExerciseType } from "../../types";
 
 /**
  * Muscle name normalization map

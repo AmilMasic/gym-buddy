@@ -2,7 +2,7 @@ import type { Snippet } from 'svelte';
 
 export type ChipSize = 'sm' | 'md' | 'lg';
 
-export interface ChipProps {
+export type ChipProps = {
   /** Active/selected state */
   active?: boolean;
   /** Size preset */

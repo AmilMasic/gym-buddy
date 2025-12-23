@@ -1,11 +1,11 @@
 export type SelectSize = 'sm' | 'md' | 'lg';
 
-export interface SelectOption {
+export type SelectOption = {
   value: string;
   label: string;
-}
+};
 
-export interface SelectProps {
+export type SelectProps = {
   /** Bound value */
   value?: string;
   /** Options list */

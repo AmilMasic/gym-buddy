@@ -1,6 +1,7 @@
+import ActiveWorkoutViewComponent from "./ActiveWorkoutView.svelte";
+import { activeWorkoutToWorkout } from "./workoutUtils";
 import { ItemView, WorkspaceLeaf, Modal, Notice } from "obsidian";
 import { mount, unmount } from "svelte";
-import ActiveWorkoutViewComponent from "./ActiveWorkoutView.svelte";
 import { VIEW_TYPE_WORKOUT } from "../../constants";
 import {
 	WorkoutExercise,
@@ -10,7 +11,6 @@ import {
 } from "../../types";
 import { ExercisePickerModal } from "../exercises/ExercisePickerModal";
 import { WorkoutParser } from "../../data/parser";
-import { activeWorkoutToWorkout } from "./workoutUtils";
 import { BUILT_IN_TEMPLATES } from "../splits/splitTemplates";
 import GymBuddyPlugin from "../../main";
 

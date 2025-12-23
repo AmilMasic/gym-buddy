@@ -1,18 +1,11 @@
 <script lang="ts">
-	import NumberStepper from './NumberStepper.svelte';
-	import type {WorkoutSet} from '../../types';
+	import NumberStepper from '../NumberStepper';
+	import type { WorkoutSet } from '../../../types';
 	import { Check } from '@lucide/svelte';
-	import { Button } from './index';
+	import { Button } from '../index';
+	import type { SetInputProps } from './types';
 
-	interface Props {
-		set: WorkoutSet;
-		showRPE?: boolean;
-		unit?: string;
-		lastSet?: WorkoutSet | null;
-		onLogSet?: (set: WorkoutSet) => void;
-	}
-
-	let { set = $bindable(), showRPE = true, unit = 'lbs', lastSet = null, onLogSet }: Props = $props();
+	let { set = $bindable(), showRPE = true, unit = 'lbs', lastSet = null, onLogSet }: SetInputProps = $props();
 
 	// Extract initial values using IIFE to avoid reactivity warnings
 	const { initialWeight, initialReps, initialRpe, initialTime } = (() => {

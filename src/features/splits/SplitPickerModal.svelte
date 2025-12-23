@@ -1,15 +1,10 @@
 <script lang="ts">
+	import type { SplitPickerProps } from './types';
 	import type { SplitTemplate, TrainingSplit } from '../../types';
 	import { Info } from '@lucide/svelte';
 	import { Button, Card } from '../../ui/components';
 
-	interface Props {
-		template?: SplitTemplate;
-		suggestedSplit?: TrainingSplit | null;
-		todayName?: string;
-	}
-
-	let { template, suggestedSplit = null, todayName = "" }: Props = $props();
+	let { template, suggestedSplit = null, todayName = "" }: SplitPickerProps = $props();
 
 	function selectSplit(split: TrainingSplit) {
 		const event = new CustomEvent('select-split', {

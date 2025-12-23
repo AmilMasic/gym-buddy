@@ -1,15 +1,7 @@
 <script lang="ts">
 	import { Minus, Plus } from '@lucide/svelte';
-	import { IconButton } from './index';
-
-	interface Props {
-		value: number;
-		min?: number;
-		max?: number;
-		step?: number;
-		label?: string;
-		unit?: string;
-	}
+	import { IconButton } from '../index';
+	import type { NumberStepperProps } from './types';
 
 	let {
 		value = $bindable(),
@@ -18,7 +10,7 @@
 		step = 1,
 		label = '',
 		unit = ''
-	}: Props = $props();
+	}: NumberStepperProps = $props();
 
 	function decrement() {
 		if (value > min) {

@@ -1,15 +1,8 @@
 <script lang="ts">
+	import type { ExerciseCardProps } from "./types";
 	import type { WorkoutExercise, WorkoutSet, Exercise } from "../../types";
 	import { ChevronDown, ChevronRight, Trash2, Check } from "@lucide/svelte";
 	import { IconButton, SetInput } from "../../ui/components";
-
-	interface Props {
-		exercise: WorkoutExercise;
-		exerciseIndex: number;
-		exerciseInfo?: Exercise | null;
-		showRPE?: boolean;
-		unit?: string;
-	}
 
 	let {
 		exercise,
@@ -17,7 +10,7 @@
 		exerciseInfo = null,
 		showRPE = true,
 		unit = "lbs",
-	}: Props = $props();
+	}: ExerciseCardProps = $props();
 
 	let expanded = $state(true);
 	let currentSet = $state<WorkoutSet>({

@@ -1,19 +1,14 @@
 <script lang="ts">
+	import type { TrainingSetupProps } from './types';
 	import type { SplitTemplate, TrainingSplit, WeeklySchedule } from '../../types';
 	import { Info, Pencil, Trash2, User, Plus } from '@lucide/svelte';
 	import { Button, Chip, IconButton } from '../../ui/components';
-
-	interface Props {
-		templates?: SplitTemplate[];
-		currentTemplateId?: string;
-		currentSchedule?: WeeklySchedule;
-	}
 
 	let {
 		templates: initialTemplates = [],
 		currentTemplateId = "",
 		currentSchedule = {}
-	}: Props = $props();
+	}: TrainingSetupProps = $props();
 
 	// Track custom templates added during this session
 	let customTemplates = $state<SplitTemplate[]>([]);

@@ -2,7 +2,7 @@ import type { Snippet } from 'svelte';
 
 export type CardVariant = 'default' | 'interactive';
 
-export interface CardProps {
+export type CardProps = {
   /** Visual variant */
   variant?: CardVariant;
   /** Make card clickable */

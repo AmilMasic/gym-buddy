@@ -6,3 +6,4 @@ export {
 	deriveMuscles,
 	activeWorkoutToWorkout,
 } from "./workoutUtils";
+export * from "./types";

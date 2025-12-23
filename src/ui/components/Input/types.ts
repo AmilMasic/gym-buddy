@@ -1,6 +1,6 @@
 export type InputSize = 'sm' | 'md' | 'lg';
 
-export interface InputProps {
+export type InputProps = {
   /** Bound value */
   value?: string;
   /** Placeholder text */

@@ -1,18 +1,8 @@
 <script lang="ts">
-	import type {Exercise, TrainingSplit} from '../../types';
+	import type { ExercisePickerProps } from './types';
+	import type { Exercise, TrainingSplit } from '../../types';
 	import { Heart, ChevronDown, ChevronRight } from '@lucide/svelte';
 	import { Input, Chip, IconButton } from '../../ui/components';
-
-	interface Props {
-		exercises?: Exercise[];
-		recentExercises?: Exercise[];
-		favoriteExercises?: Exercise[];
-		favoriteIds?: Set<string>;
-		currentSplit?: TrainingSplit | null;
-		selectedMuscles?: string[];
-		recentExpanded?: boolean;
-		muscleGroupsExpanded?: boolean;
-	}
 
 	let {
 		exercises = [],
@@ -23,7 +13,7 @@
 		selectedMuscles = $bindable([]),
 		recentExpanded = true,
 		muscleGroupsExpanded = true
-	}: Props = $props();
+	}: ExercisePickerProps = $props();
 
 	let recentExpandedState = $state(true);
 	let muscleGroupsExpandedState = $state(true);

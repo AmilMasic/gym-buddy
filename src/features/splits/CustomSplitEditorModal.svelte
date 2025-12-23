@@ -1,13 +1,9 @@
 <script lang="ts">
+	import type { CustomSplitEditorProps } from './types';
 	import type { SplitTemplate, TrainingSplit } from '../../types';
 	import { Button, Input } from '../../ui/components';
 
-	interface Props {
-		customTemplates?: SplitTemplate[];
-		builtInTemplates?: SplitTemplate[];
-	}
-
-	let { customTemplates = [], builtInTemplates = [] }: Props = $props();
+	let { customTemplates = [], builtInTemplates = [] }: CustomSplitEditorProps = $props();
 
 	let editingTemplate: SplitTemplate | null = $state(null);
 	let templateName = $state('');

@@ -5,7 +5,7 @@
 export type ExerciseType = "weight" | "bodyweight" | "timed" | "cardio";
 export type WeightUnit = "lbs" | "kg";
 
-export interface Exercise {
+export type Exercise = {
 	id: string;
 	name: string;
 	muscles: string[]; // primary muscles worked
@@ -20,24 +20,24 @@ export interface Exercise {
 	equipment?: string | null;
 	instructions?: string[];
 	source?: "database" | "custom"; // Track if from external DB or user-created
-}
+};
 
-export interface WorkoutSet {
+export type WorkoutSet = {
 	setNumber: number;
 	weight?: number;
 	reps?: number;
 	time?: number; // seconds
 	distance?: number;
 	rpe?: number; // Rate of Perceived Exertion (1-10)
-}
+};
 
-export interface WorkoutExercise {
+export type WorkoutExercise = {
 	name: string;
 	exerciseId?: string;
 	sets: WorkoutSet[];
-}
+};
 
-export interface Workout {
+export type Workout = {
 	date: string; // ISO date string (YYYY-MM-DD)
 	duration?: number; // minutes
 	muscles: string[]; // AUTO: derived from exercises
@@ -45,25 +45,25 @@ export interface Workout {
 	prs?: number; // AUTO: count of PRs hit this session
 	exercises: WorkoutExercise[];
 	split?: string; // Training split ID for this workout
-}
+};
 
-export interface PRRecord {
+export type PRRecord = {
 	exerciseId: string;
 	type: "1rm" | "maxWeight" | "maxReps" | "maxVolume";
 	value: number;
 	date: string;
 	workoutFile: string;
-}
+};
 
-export interface ActiveWorkout {
+export type ActiveWorkout = {
 	startTime: Date;
 	exercises: WorkoutExercise[];
 	currentExerciseIndex?: number;
 	splitId?: string; // ID of the training split for this workout
-}
+};
 
 // External exercise format (from free-exercise-db)
-export interface ExternalExercise {
+export type ExternalExercise = {
 	id: string;
 	name: string;
 	force: "push" | "pull" | "static" | null;
@@ -73,32 +73,32 @@ export interface ExternalExercise {
 	secondaryMuscles: string[];
 	instructions: string[];
 	category: string;
-}
+};
 
 // Training split
-export interface TrainingSplit {
+export type TrainingSplit = {
 	id: string;
 	name: string;
 	muscleGroups: string[];
 	sourceTemplateId?: string; // ID of template this split came from (for composite templates)
-}
+};
 
-export interface SplitTemplate {
+export type SplitTemplate = {
 	id: string;
 	name: string;
 	splits: TrainingSplit[];
 	isCustom?: boolean;
 	isComposite?: boolean; // True if this template combines splits from other templates
-}
+};
 
 // Per-split favorites
-export interface SplitFavorites {
+export type SplitFavorites = {
 	splitId: string;
 	exerciseIds: string[];
-}
+};
 
 // Weekly schedule maps day of week to split ID
-export interface WeeklySchedule {
+export type WeeklySchedule = {
 	[key: string]: string | undefined;
 	monday?: string;
 	tuesday?: string;
@@ -107,11 +107,11 @@ export interface WeeklySchedule {
 	friday?: string;
 	saturday?: string;
 	sunday?: string;
-}
+};
 
 export type WorkoutSaveMode = "daily-append" | "daily-timestamp" | "weekly";
 
-export interface GymBuddySettings {
+export type GymBuddySettings = {
 	workoutFolder: string; // Default: "Workouts"
 	defaultUnit: WeightUnit;
 	showRPE: boolean;
@@ -132,7 +132,7 @@ export interface GymBuddySettings {
 	defaultRecentExercisesExpanded: boolean; // Default state for recent exercises
 	defaultMuscleGroupsExpanded: boolean; // Default state for muscle groups
 	selectedMuscleGroups: string[]; // Persisted muscle group selections
-}
+};
 
 export const DEFAULT_SETTINGS: GymBuddySettings = {
 	workoutFolder: "Workouts",

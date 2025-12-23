@@ -1,6 +1,6 @@
+import ExercisePickerModalComponent from "./ExercisePickerModal.svelte";
 import { Modal } from "obsidian";
 import { mount, unmount } from "svelte";
-import ExercisePickerModalComponent from "./ExercisePickerModal.svelte";
 import { Exercise, TrainingSplit } from "../../types";
 import GymBuddyPlugin from "../../main";
 import { BUILT_IN_TEMPLATES } from "../splits/splitTemplates";

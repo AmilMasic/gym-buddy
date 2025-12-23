@@ -1,16 +1,11 @@
 <script lang="ts">
-	import type { SplitTemplate } from '../../types';
-	import type { AvailableSplit } from './splitTemplates';
+	import type { AvailableSplit, CustomSplitBuilderProps } from './types';
 	import { getAllAvailableSplits, createCompositeTemplate } from './splitTemplates';
+	import type { SplitTemplate } from '../../types';
 	import { Button, Chip, Input, IconButton } from '../../ui/components';
 	import { ChevronDown, ChevronRight } from '@lucide/svelte';
 
-	interface Props {
-		builtInTemplates?: SplitTemplate[];
-		customTemplates?: SplitTemplate[];
-	}
-
-	let { builtInTemplates = [], customTemplates = [] }: Props = $props();
+	let { builtInTemplates = [], customTemplates = [] }: CustomSplitBuilderProps = $props();
 
 	// Get all available splits (exclude hybrid template splits)
 	const allSplits = $derived(

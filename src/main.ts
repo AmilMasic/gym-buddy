@@ -1,4 +1,3 @@
-import { Notice, Plugin } from "obsidian";
 import { GymBuddySettingTab } from "./settings";
 import { ActiveWorkoutView } from "./features/workout";
 import { VIEW_TYPE_WORKOUT } from "./constants";
@@ -15,6 +14,7 @@ import {
 	BUILT_IN_TEMPLATES,
 } from "./features/splits";
 import { TrainingSetupModal } from "./features/setup";
+import { Notice, Plugin } from "obsidian";
 
 export default class GymBuddyPlugin extends Plugin {
 	settings: GymBuddySettings;

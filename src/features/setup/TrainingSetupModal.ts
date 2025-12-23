@@ -1,16 +1,16 @@
+import TrainingSetupModalComponent from "./TrainingSetupModal.svelte";
 import { Modal, Notice } from "obsidian";
 import { mount, unmount } from "svelte";
-import TrainingSetupModalComponent from "./TrainingSetupModal.svelte";
-import GymBuddyPlugin from "../../main";
 import { BUILT_IN_TEMPLATES } from "../splits/splitTemplates";
+import { CustomSplitBuilderModal } from "../splits/CustomSplitBuilderModal";
 import { GymBuddySettingTab } from "../../settings";
 import { WeeklySchedule } from "../../types";
-import { CustomSplitBuilderModal } from "../splits/CustomSplitBuilderModal";
+import GymBuddyPlugin from "../../main";
 
-interface SetupResult {
+type SetupResult = {
 	templateId: string;
 	schedule: WeeklySchedule;
-}
+};
 
 export class TrainingSetupModal extends Modal {
 	private component: ReturnType<typeof mount> | null = null;

@@ -1,3 +1,4 @@
+import { AvailableSplit } from "./types";
 import { SplitTemplate, TrainingSplit } from "../../types";
 
 /**
@@ -259,12 +260,6 @@ export function getTodaysSplit(
  * Get all available splits from all templates (built-in + custom)
  * Returns an array of objects with split, template info, and source template ID
  */
-export interface AvailableSplit {
-	split: TrainingSplit;
-	templateName: string;
-	templateId: string;
-	isCustom: boolean;
-}
 
 export function getAllAvailableSplits(
 	customTemplates: SplitTemplate[] = []

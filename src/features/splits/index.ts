@@ -7,3 +7,4 @@ export {
 	getTodayDayOfWeek,
 	BUILT_IN_TEMPLATES,
 } from "./splitTemplates";
+export * from "./types";

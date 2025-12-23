@@ -1,12 +1,9 @@
 <script lang="ts">
 	import { Clock } from "@lucide/svelte";
 	import { formatDuration } from "./workoutUtils";
+	import type { WorkoutTimerProps } from "./types";
 
-	interface Props {
-		startTime: Date;
-	}
-
-	let { startTime }: Props = $props();
+	let { startTime }: WorkoutTimerProps = $props();
 	let elapsed = $state("");
 
 	$effect(() => {

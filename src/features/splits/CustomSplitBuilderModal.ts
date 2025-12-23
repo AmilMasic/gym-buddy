@@ -5,10 +5,10 @@ import { SplitTemplate } from "../../types";
 import { BUILT_IN_TEMPLATES } from "./splitTemplates";
 import GymBuddyPlugin from "../../main";
 
-interface BuilderResult {
+type BuilderResult = {
 	template: SplitTemplate;
 	saveAsTemplate: boolean;
-}
+};
 
 export class CustomSplitBuilderModal extends Modal {
 	private component: ReturnType<typeof mount> | null = null;
