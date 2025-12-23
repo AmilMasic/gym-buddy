@@ -121,6 +121,31 @@ Mobile-first design with touch-friendly targets
 	gap: 16px;
 }
 
+.gb-split-list .gb-card {
+	padding: var(--gb-space-md) var(--gb-space-lg);
+}
+
+.gb-split-card-inner {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	width: 100%;
+	min-height: 24px;
+}
+
+.gb-split-card-inner .gb-split-name {
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.gb-split-card-inner .gb-template-info-wrapper {
+	position: absolute;
+	right: 0;
+	display: flex;
+	align-items: center;
+}
+
 /* Modal Containers */
 .gb-exercise-picker,
 .gb-split-picker,
@@ -753,12 +778,13 @@ Mobile-first design with touch-friendly targets
 	border: 1px solid var(--background-modifier-border);
 	border-radius: 6px;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-	white-space: nowrap;
+	white-space: normal;
 	opacity: 0;
 	pointer-events: none;
 	transition: opacity 0.2s ease;
 	z-index: 1000;
-	min-width: 200px;
+	min-width: 180px;
+	max-width: 250px;
 }
 
 .gb-template-info-wrapper:hover .gb-template-tooltip {

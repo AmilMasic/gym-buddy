@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { SplitTemplate, TrainingSplit } from '../../types';
+	import { Info } from '@lucide/svelte';
 	import { Button, Card } from '../../ui/components';
 
 	interface Props {
@@ -34,9 +35,11 @@
 				</div>
 				<div class="gb-split-suggestion-content">
 					<div class="gb-suggested-split-name">{suggestedSplit.name}</div>
-					<div class="gb-suggested-split-muscles">
-						{suggestedSplit.muscleGroups.join(', ')}
-					</div>
+					{#if !suggestedSplit.name.toLowerCase().includes('total body') && !suggestedSplit.name.toLowerCase().includes('full body')}
+						<div class="gb-suggested-split-muscles">
+							{suggestedSplit.muscleGroups.join(', ')}
+						</div>
+					{/if}
 				</div>
 				<Button variant="primary" size="lg" fullWidth onclick={confirmSuggested}>
 					Start {suggestedSplit.name} Workout
@@ -57,9 +60,21 @@
 			{#each template.splits as split}
 				{#if !suggestedSplit || split.id !== suggestedSplit.id}
 					<Card clickable onclick={() => selectSplit(split)}>
-						<div class="gb-split-name">{split.name}</div>
-						<div class="gb-split-muscles">
-							{split.muscleGroups.join(', ')}
+						<div class="gb-split-card-inner">
+							<span class="gb-split-name">{split.name}</span>
+							{#if !split.name.toLowerCase().includes('total body') && !split.name.toLowerCase().includes('full body')}
+								<div class="gb-template-info-wrapper">
+									<span class="gb-template-info-icon" title={split.muscleGroups.join(', ')}>
+										<Info size={14} />
+									</span>
+									<div class="gb-template-tooltip">
+										<div class="gb-tooltip-title">Muscle Groups:</div>
+										<div class="gb-tooltip-content">
+											{split.muscleGroups.join(', ')}
+										</div>
+									</div>
+								</div>
+							{/if}
 						</div>
 					</Card>
 				{/if}
