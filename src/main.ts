@@ -1,13 +1,14 @@
 import { Notice, Plugin } from "obsidian";
-import {
-	DEFAULT_SETTINGS,
-	GymBuddySettings,
-	GymBuddySettingTab,
-} from "./settings";
+import { GymBuddySettingTab } from "./settings";
 import { ActiveWorkoutView } from "./features/workout";
 import { VIEW_TYPE_WORKOUT } from "./constants";
 import { Storage } from "./data";
-import { ActiveWorkout, TrainingSplit } from "./types";
+import {
+	ActiveWorkout,
+	TrainingSplit,
+	GymBuddySettings,
+	DEFAULT_SETTINGS,
+} from "./types";
 import {
 	SplitPickerModal,
 	getTodaysSplit,

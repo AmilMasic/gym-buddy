@@ -96,3 +96,63 @@ export interface SplitFavorites {
 	splitId: string;
 	exerciseIds: string[];
 }
+
+// Weekly schedule maps day of week to split ID
+export interface WeeklySchedule {
+	[key: string]: string | undefined;
+	monday?: string;
+	tuesday?: string;
+	wednesday?: string;
+	thursday?: string;
+	friday?: string;
+	saturday?: string;
+	sunday?: string;
+}
+
+export type WorkoutSaveMode = "daily-append" | "daily-timestamp" | "weekly";
+
+export interface GymBuddySettings {
+	workoutFolder: string; // Default: "Workouts"
+	defaultUnit: WeightUnit;
+	showRPE: boolean;
+	restTimerEnabled: boolean;
+	restTimerDuration: number; // seconds (default: 90)
+	dailyNoteIntegration: boolean; // embed in daily note
+	dailyNoteHeading: string; // "## Workout"
+	workoutSaveMode: WorkoutSaveMode;
+	weeklyNotePath: string; // e.g., "Weekly/{{year}}-W{{week}}.md"
+	weeklyNoteHeading: string; // e.g., "## Workouts"
+	activeSplitTemplateId: string; // ID of active split template
+	customSplitTemplates: SplitTemplate[]; // User-created custom splits
+	weeklySchedule: WeeklySchedule; // Maps days to splits for auto-detection
+	promptForSplitOnStart: boolean; // Ask for split when starting workout
+	showSplitFilterInPicker: boolean; // Auto-filter exercises by split in picker
+	recentExercisesExpanded: boolean; // Recent exercises section expanded state
+	muscleGroupsExpanded: boolean; // Muscle groups section expanded state
+	defaultRecentExercisesExpanded: boolean; // Default state for recent exercises
+	defaultMuscleGroupsExpanded: boolean; // Default state for muscle groups
+	selectedMuscleGroups: string[]; // Persisted muscle group selections
+}
+
+export const DEFAULT_SETTINGS: GymBuddySettings = {
+	workoutFolder: "Workouts",
+	defaultUnit: "lbs",
+	showRPE: true,
+	restTimerEnabled: true,
+	restTimerDuration: 90,
+	dailyNoteIntegration: false,
+	dailyNoteHeading: "## Workout",
+	workoutSaveMode: "daily-append",
+	weeklyNotePath: "Weekly/{{year}}-W{{week}}.md",
+	weeklyNoteHeading: "## Workouts",
+	activeSplitTemplateId: "ppl", // Default to PPL
+	customSplitTemplates: [],
+	weeklySchedule: {}, // Empty by default - user sets up via training setup
+	promptForSplitOnStart: true,
+	showSplitFilterInPicker: false, // Disabled - removed the split filter UI
+	recentExercisesExpanded: true,
+	muscleGroupsExpanded: true,
+	defaultRecentExercisesExpanded: true,
+	defaultMuscleGroupsExpanded: true,
+	selectedMuscleGroups: [],
+};

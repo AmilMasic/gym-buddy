@@ -1,70 +1,21 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
-import GymBuddyPlugin from "../main";
-import { WeightUnit, SplitTemplate } from "../types";
+import type GymBuddyPlugin from "../main";
+import { WeightUnit, WorkoutSaveMode } from "../types";
 import { BUILT_IN_TEMPLATES } from "../features/splits/splitTemplates";
 
-// Weekly schedule maps day of week to split ID
-export interface WeeklySchedule {
-	[key: string]: string | undefined;
-	monday?: string;
-	tuesday?: string;
-	wednesday?: string;
-	thursday?: string;
-	friday?: string;
-	saturday?: string;
-	sunday?: string;
-}
-
-export interface GymBuddySettings {
-	workoutFolder: string; // Default: "Workouts"
-	defaultUnit: WeightUnit;
-	showRPE: boolean;
-	restTimerEnabled: boolean;
-	restTimerDuration: number; // seconds (default: 90)
-	dailyNoteIntegration: boolean; // embed in daily note
-	dailyNoteHeading: string; // "## Workout"
-	activeSplitTemplateId: string; // ID of active split template
-	customSplitTemplates: SplitTemplate[]; // User-created custom splits
-	weeklySchedule: WeeklySchedule; // Maps days to splits for auto-detection
-	promptForSplitOnStart: boolean; // Ask for split when starting workout
-	showSplitFilterInPicker: boolean; // Auto-filter exercises by split in picker
-	recentExercisesExpanded: boolean; // Recent exercises section expanded state
-	muscleGroupsExpanded: boolean; // Muscle groups section expanded state
-	defaultRecentExercisesExpanded: boolean; // Default state for recent exercises
-	defaultMuscleGroupsExpanded: boolean; // Default state for muscle groups
-	selectedMuscleGroups: string[]; // Persisted muscle group selections
-}
-
-export const DEFAULT_SETTINGS: GymBuddySettings = {
-	workoutFolder: "Workouts",
-	defaultUnit: "lbs",
-	showRPE: true,
-	restTimerEnabled: true,
-	restTimerDuration: 90,
-	dailyNoteIntegration: false,
-	dailyNoteHeading: "## Workout",
-	activeSplitTemplateId: "ppl", // Default to PPL
-	customSplitTemplates: [],
-	weeklySchedule: {}, // Empty by default - user sets up via training setup
-	promptForSplitOnStart: true,
-	showSplitFilterInPicker: false, // Disabled - removed the split filter UI
-	recentExercisesExpanded: true,
-	muscleGroupsExpanded: true,
-	defaultRecentExercisesExpanded: true,
-	defaultMuscleGroupsExpanded: true,
-	selectedMuscleGroups: [],
-};
-
 export class GymBuddySettingTab extends PluginSettingTab {
-	plugin: GymBuddyPlugin;
+	gbPlugin: GymBuddyPlugin;
 
 	constructor(app: App, plugin: GymBuddyPlugin) {
 		super(app, plugin);
-		this.plugin = plugin;
+		this.gbPlugin = plugin;
 	}
 
 	display(): void {
 		const { containerEl } = this;
+		// Explicitly cast to GymBuddySettings to help the linter resolve types
+		// in the presence of circular dependencies.
+		const settings = this.gbPlugin.settings;
 
 		containerEl.empty();
 
@@ -74,11 +25,10 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			.addText((text) =>
 				text
 					.setPlaceholder("Workouts")
-					.setValue(this.plugin.settings.workoutFolder)
+					.setValue(settings.workoutFolder)
 					.onChange(async (value) => {
-						this.plugin.settings.workoutFolder =
-							value || "Workouts";
-						await this.plugin.saveSettings();
+						settings.workoutFolder = value || "Workouts";
+						await this.gbPlugin.saveSettings();
 					})
 			);
 
@@ -89,10 +39,10 @@ export class GymBuddySettingTab extends PluginSettingTab {
 				dropdown
 					.addOption("lbs", "Lbs")
 					.addOption("kg", "Kg")
-					.setValue(this.plugin.settings.defaultUnit)
+					.setValue(settings.defaultUnit)
 					.onChange(async (value: WeightUnit) => {
-						this.plugin.settings.defaultUnit = value;
-						await this.plugin.saveSettings();
+						settings.defaultUnit = value;
+						await this.gbPlugin.saveSettings();
 					})
 			);
 
@@ -100,12 +50,10 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			.setName("Show rate of perceived exertion")
 			.setDesc("Show rate of perceived exertion field when logging sets")
 			.addToggle((toggle) =>
-				toggle
-					.setValue(this.plugin.settings.showRPE)
-					.onChange(async (value) => {
-						this.plugin.settings.showRPE = value;
-						await this.plugin.saveSettings();
-					})
+				toggle.setValue(settings.showRPE).onChange(async (value) => {
+					settings.showRPE = value;
+					await this.gbPlugin.saveSettings();
+				})
 			);
 
 		new Setting(containerEl)
@@ -117,10 +65,10 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			)
 			.addToggle((toggle) =>
 				toggle
-					.setValue(this.plugin.settings.restTimerEnabled)
+					.setValue(settings.restTimerEnabled)
 					.onChange(async (value) => {
-						this.plugin.settings.restTimerEnabled = value;
-						await this.plugin.saveSettings();
+						settings.restTimerEnabled = value;
+						await this.gbPlugin.saveSettings();
 					})
 			);
 
@@ -132,12 +80,12 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			.addText((text) =>
 				text
 					.setPlaceholder("90")
-					.setValue(this.plugin.settings.restTimerDuration.toString())
+					.setValue(settings.restTimerDuration.toString())
 					.onChange(async (value) => {
 						const num = parseInt(value, 10);
 						if (!isNaN(num) && num > 0) {
-							this.plugin.settings.restTimerDuration = num;
-							await this.plugin.saveSettings();
+							settings.restTimerDuration = num;
+							await this.gbPlugin.saveSettings();
 						}
 					})
 			);
@@ -147,10 +95,10 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			.setDesc("Embed workout logs in daily notes")
 			.addToggle((toggle) =>
 				toggle
-					.setValue(this.plugin.settings.dailyNoteIntegration)
+					.setValue(settings.dailyNoteIntegration)
 					.onChange(async (value) => {
-						this.plugin.settings.dailyNoteIntegration = value;
-						await this.plugin.saveSettings();
+						settings.dailyNoteIntegration = value;
+						await this.gbPlugin.saveSettings();
 					})
 			);
 
@@ -160,13 +108,65 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			.addText((text) =>
 				text
 					.setPlaceholder("## workout")
-					.setValue(this.plugin.settings.dailyNoteHeading)
+					.setValue(settings.dailyNoteHeading)
 					.onChange(async (value) => {
-						this.plugin.settings.dailyNoteHeading =
-							value || "## Workout";
-						await this.plugin.saveSettings();
+						settings.dailyNoteHeading = value || "## Workout";
+						await this.gbPlugin.saveSettings();
 					})
 			);
+
+		new Setting(containerEl).setName("Save strategy").setHeading();
+
+		new Setting(containerEl)
+			.setName("Workout save mode")
+			.setDesc("How multiple workouts on the same day are handled")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption("daily-append", "Append to daily file")
+					.addOption(
+						"daily-timestamp",
+						"Create unique timestamp files"
+					)
+					.addOption("weekly", "Save to weekly note")
+					.setValue(settings.workoutSaveMode)
+					.onChange(async (value) => {
+						settings.workoutSaveMode = value as WorkoutSaveMode;
+						await this.gbPlugin.saveSettings();
+						this.display(); // Refresh to show/hide conditional settings
+					})
+			);
+
+		if (settings.workoutSaveMode === "weekly") {
+			new Setting(containerEl)
+				.setName("Weekly note path pattern")
+				.setDesc(
+					"Pattern for weekly note path. Uses moment.js formatting."
+				)
+				.addText((text) =>
+					text
+						.setPlaceholder("Weekly/{{year}}-W{{week}}.md")
+						.setValue(settings.weeklyNotePath)
+						.onChange(async (value) => {
+							settings.weeklyNotePath =
+								value || "Weekly/{{year}}-W{{week}}.md";
+							await this.gbPlugin.saveSettings();
+						})
+				);
+
+			new Setting(containerEl)
+				.setName("Weekly note heading")
+				.setDesc("Heading to insert workouts under in the weekly note")
+				.addText((text) =>
+					text
+						// eslint-disable-next-line obsidianmd/ui/sentence-case
+						.setPlaceholder("## Workouts")
+						.setValue(settings.weeklyNoteHeading)
+						.onChange(async (value) => {
+							settings.weeklyNoteHeading = value || "## Workouts";
+							await this.gbPlugin.saveSettings();
+						})
+				);
+		}
 
 		// Training Split Settings Section
 		new Setting(containerEl).setName("Training splits").setHeading();
@@ -174,14 +174,14 @@ export class GymBuddySettingTab extends PluginSettingTab {
 		// Show current template info
 		const allTemplates = [
 			...BUILT_IN_TEMPLATES,
-			...this.plugin.settings.customSplitTemplates,
+			...settings.customSplitTemplates,
 		];
 		const activeTemplate = allTemplates.find(
-			(t) => t.id === this.plugin.settings.activeSplitTemplateId
+			(t) => t.id === settings.activeSplitTemplateId
 		);
 
 		// Show weekly schedule if set
-		const schedule = this.plugin.settings.weeklySchedule;
+		const schedule = settings.weeklySchedule;
 		const hasSchedule = Object.values(schedule).some((v) => v);
 
 		let scheduleText = "";
@@ -223,7 +223,7 @@ export class GymBuddySettingTab extends PluginSettingTab {
 					.setButtonText("Configure")
 					.setCta()
 					.onClick(() => {
-						this.plugin.openTrainingSetup();
+						this.gbPlugin.openTrainingSetup();
 						// Close settings and let the modal take over
 					})
 			);
@@ -236,10 +236,10 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			)
 			.addToggle((toggle) =>
 				toggle
-					.setValue(this.plugin.settings.promptForSplitOnStart)
+					.setValue(settings.promptForSplitOnStart)
 					.onChange(async (value) => {
-						this.plugin.settings.promptForSplitOnStart = value;
-						await this.plugin.saveSettings();
+						settings.promptForSplitOnStart = value;
+						await this.gbPlugin.saveSettings();
 					})
 			);
 
@@ -254,13 +254,10 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			)
 			.addToggle((toggle) =>
 				toggle
-					.setValue(
-						this.plugin.settings.defaultRecentExercisesExpanded
-					)
+					.setValue(settings.defaultRecentExercisesExpanded)
 					.onChange(async (value) => {
-						this.plugin.settings.defaultRecentExercisesExpanded =
-							value;
-						await this.plugin.saveSettings();
+						settings.defaultRecentExercisesExpanded = value;
+						await this.gbPlugin.saveSettings();
 					})
 			);
 
@@ -272,11 +269,10 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			)
 			.addToggle((toggle) =>
 				toggle
-					.setValue(this.plugin.settings.defaultMuscleGroupsExpanded)
+					.setValue(settings.defaultMuscleGroupsExpanded)
 					.onChange(async (value) => {
-						this.plugin.settings.defaultMuscleGroupsExpanded =
-							value;
-						await this.plugin.saveSettings();
+						settings.defaultMuscleGroupsExpanded = value;
+						await this.gbPlugin.saveSettings();
 					})
 			);
 	}

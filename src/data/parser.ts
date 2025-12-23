@@ -23,30 +23,46 @@ export class WorkoutParser {
 	/**
 	 * Convert Workout object to Markdown string
 	 */
-	static workoutToMarkdown(workout: Workout): string {
+	static workoutToMarkdown(
+		workout: Workout,
+		includeFrontmatter = true
+	): string {
 		const lines: string[] = [];
 
-		// Frontmatter
-		lines.push("---");
-		lines.push("type: workout");
-		lines.push(`date: ${workout.date}`);
-		if (workout.duration !== undefined) {
-			lines.push(`duration: ${workout.duration}`);
+		if (includeFrontmatter) {
+			// Frontmatter
+			lines.push("---");
+			lines.push("type: workout");
+			lines.push(`date: ${workout.date}`);
+			if (workout.duration !== undefined) {
+				lines.push(`duration: ${workout.duration}`);
+			}
+			if (workout.muscles.length > 0) {
+				lines.push(`muscles: [${workout.muscles.join(", ")}]`);
+			}
+			if (workout.volume !== undefined) {
+				lines.push(`volume: ${workout.volume}`);
+			}
+			if (workout.prs !== undefined) {
+				lines.push(`prs: ${workout.prs}`);
+			}
+			if (workout.split) {
+				lines.push(`split: ${workout.split}`);
+			}
+			lines.push("---");
+			lines.push("");
+		} else {
+			// Minimal header for appended workouts
+			lines.push("---");
+			lines.push(`### Workout on ${workout.date}`);
+			if (workout.split) {
+				lines.push(`**Split: ${workout.split}**`);
+			}
+			if (workout.duration) {
+				lines.push(`**Duration: ${workout.duration}m**`);
+			}
+			lines.push("");
 		}
-		if (workout.muscles.length > 0) {
-			lines.push(`muscles: [${workout.muscles.join(", ")}]`);
-		}
-		if (workout.volume !== undefined) {
-			lines.push(`volume: ${workout.volume}`);
-		}
-		if (workout.prs !== undefined) {
-			lines.push(`prs: ${workout.prs}`);
-		}
-		if (workout.split) {
-			lines.push(`split: ${workout.split}`);
-		}
-		lines.push("---");
-		lines.push("");
 
 		// Exercises
 		for (const exercise of workout.exercises) {

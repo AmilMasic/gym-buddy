@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { SplitTemplate, TrainingSplit } from '../../types';
-	import type { WeeklySchedule } from '../../settings';
+	import type { SplitTemplate, TrainingSplit, WeeklySchedule } from '../../types';
 	import { Info, Pencil, Trash2, User, Plus } from '@lucide/svelte';
 	import { Button, Chip, IconButton } from '../../ui/components';
 

@@ -1,7 +1,8 @@
-import { TFile, TAbstractFile, TFolder } from "obsidian";
+import { TFile, TAbstractFile, TFolder, moment } from "obsidian";
 import { Workout, Exercise, PRRecord, SplitFavorites } from "../types";
 import GymBuddyPlugin from "../main";
 import { getExerciseDatabase } from "../features/exercises/exerciseDatabase";
+import { WorkoutParser } from "./parser";
 
 interface PluginData {
 	exercises?: Exercise[]; // Custom exercises only
@@ -224,8 +225,12 @@ export class Storage {
 	/**
 	 * Get workout file path for a given date
 	 */
-	getWorkoutFilePath(date: string): string {
+	getWorkoutFilePath(date: string, useTimestamp = false): string {
 		const folder = this.getWorkoutFolder();
+		if (useTimestamp) {
+			const time = moment().format("HH-mm");
+			return `${folder}/${date}-${time}.md`;
+		}
 		return `${folder}/${date}.md`;
 	}
 
@@ -233,17 +238,147 @@ export class Storage {
 	 * Save workout to markdown file
 	 */
 	async saveWorkout(workout: Workout, markdown: string): Promise<TFile> {
+		const saveMode = this.plugin.settings.workoutSaveMode;
+
+		if (saveMode === "weekly") {
+			return await this.saveToWeeklyNote(workout);
+		}
+
 		await this.ensureWorkoutFolder();
-		const filePath = this.getWorkoutFilePath(workout.date);
+
+		const useTimestamp = saveMode === "daily-timestamp";
+		const filePath = this.getWorkoutFilePath(workout.date, useTimestamp);
 
 		const existingFile =
 			this.plugin.app.vault.getAbstractFileByPath(filePath);
+
 		if (existingFile instanceof TFile) {
-			await this.plugin.app.vault.modify(existingFile, markdown);
-			return existingFile;
+			if (saveMode === "daily-append") {
+				const existingContent = await this.plugin.app.vault.read(
+					existingFile
+				);
+				// Generate append-friendly markdown (no frontmatter)
+				const appendMarkdown = WorkoutParser.workoutToMarkdown(
+					workout,
+					false
+				);
+				const newContent = `${existingContent}\n\n${appendMarkdown}`;
+				await this.plugin.app.vault.modify(existingFile, newContent);
+				return existingFile;
+			} else {
+				// Overwrite (default or if daily-timestamp somehow collisions)
+				await this.plugin.app.vault.modify(existingFile, markdown);
+				return existingFile;
+			}
 		} else {
 			return await this.plugin.app.vault.create(filePath, markdown);
 		}
+	}
+
+	/**
+	 * Save workout to a weekly note
+	 */
+	private async saveToWeeklyNote(workout: Workout): Promise<TFile> {
+		const config = this.getWeeklyNoteConfig();
+		const filePath = this.resolveWeeklyPath(config, workout.date);
+
+		// Ensure the parent folder exists
+		const lastSlash = filePath.lastIndexOf("/");
+		if (lastSlash !== -1) {
+			const folderPath = filePath.substring(0, lastSlash);
+			const folder =
+				this.plugin.app.vault.getAbstractFileByPath(folderPath);
+			if (!folder) {
+				await this.plugin.app.vault.createFolder(folderPath);
+			}
+		}
+
+		let file = this.plugin.app.vault.getAbstractFileByPath(filePath);
+		if (!(file instanceof TFile)) {
+			// Create file with the heading if it doesn't exist
+			const initialContent = `${this.plugin.settings.weeklyNoteHeading}\n\n`;
+			file = await this.plugin.app.vault.create(filePath, initialContent);
+		}
+
+		if (file instanceof TFile) {
+			const content = await this.plugin.app.vault.read(file);
+			const heading = this.plugin.settings.weeklyNoteHeading;
+			const workoutMarkdown = WorkoutParser.workoutToMarkdown(
+				workout,
+				false
+			);
+
+			let newContent: string;
+			if (content.includes(heading)) {
+				// Insert after heading
+				const lines = content.split("\n");
+				const headingIndex = lines.findIndex((l) =>
+					l.trim().startsWith(heading)
+				);
+				lines.splice(headingIndex + 1, 0, "", workoutMarkdown);
+				newContent = lines.join("\n");
+			} else {
+				// Append heading and workout at end
+				newContent = `${content}\n\n${heading}\n\n${workoutMarkdown}`;
+			}
+
+			await this.plugin.app.vault.modify(file, newContent);
+			return file;
+		}
+
+		throw new Error("Could not save to weekly note");
+	}
+
+	/**
+	 * Get weekly note configuration (Periodic Notes or manual)
+	 */
+	private getWeeklyNoteConfig(): { folder: string; format: string } {
+		// Try Periodic Notes first
+		const periodicConfig = this.getPeriodicNotesWeeklyConfig();
+		if (periodicConfig) return periodicConfig;
+
+		// Fallback to manual settings
+		const manualPath = this.plugin.settings.weeklyNotePath;
+		const lastSlash = manualPath.lastIndexOf("/");
+
+		if (lastSlash === -1) {
+			return { folder: "", format: manualPath.replace(".md", "") };
+		}
+
+		return {
+			folder: manualPath.substring(0, lastSlash),
+			format: manualPath.substring(lastSlash + 1).replace(".md", ""),
+		};
+	}
+
+	/**
+	 * Detect Periodic Notes weekly config
+	 */
+	private getPeriodicNotesWeeklyConfig(): {
+		folder: string;
+		format: string;
+	} | null {
+		const periodicNotes = (this.plugin.app as any).plugins?.getPlugin(
+			"periodic-notes"
+		);
+		if (!periodicNotes?.settings?.weekly?.enabled) return null;
+		return {
+			folder: periodicNotes.settings.weekly.folder || "",
+			format: periodicNotes.settings.weekly.format || "gggg-[W]ww",
+		};
+	}
+
+	/**
+	 * Resolve weekly path pattern to actual file path
+	 */
+	private resolveWeeklyPath(
+		config: { folder: string; format: string },
+		date: string
+	): string {
+		const m = moment(date);
+		const filename = m.format(config.format);
+		const folder = config.folder ? `${config.folder}/` : "";
+		return `${folder}${filename}.md`;
 	}
 
 	/**
