@@ -4,7 +4,7 @@ Mobile-first design with touch-friendly targets
 */
 
 /* ===========================================
-   Design Tokens
+   1. Design Tokens
    =========================================== */
 :root {
   /* Spacing Scale */
@@ -64,30 +64,11 @@ Mobile-first design with touch-friendly targets
   --gb-transition: 0.2s ease;
 }
 
-/* Mobile adjustments - larger touch targets */
-@media (max-width: 768px) {
-  :root {
-    --gb-btn-height-md: 48px;
-    --gb-btn-height-lg: 64px;
-    --gb-chip-height-md: 40px;
-    --gb-input-height-md: 48px;
-    --gb-icon-btn-md: 44px;
-  }
-}
-
-/* Touch device adjustments */
-@media (hover: none) and (pointer: coarse) {
-  :root {
-    --gb-icon-btn-sm: 36px;
-    --gb-icon-btn-md: 48px;
-  }
-}
-
 /* ===========================================
-   Legacy Styles (to be migrated)
+   2. Layout Containers
    =========================================== */
 
-/* Base mobile-first styles */
+/* Main View Containers */
 .gym-buddy-workout-view {
 	padding: 16px;
 	display: flex;
@@ -95,124 +76,67 @@ Mobile-first design with touch-friendly targets
 	gap: 16px;
 }
 
-.gym-buddy-add-exercise-btn {
-	width: 100%;
-	min-height: 56px;
-	padding: 16px;
-	font-size: 18px;
-	font-weight: bold;
-	border-radius: 8px;
-	border: 2px solid var(--interactive-accent);
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-	cursor: pointer;
-	transition: all 0.2s ease;
-	-webkit-tap-highlight-color: transparent;
-}
-
-.gym-buddy-add-exercise-btn:hover {
-	background: var(--interactive-accent-hover);
-	transform: translateY(-1px);
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.gym-buddy-add-exercise-btn:active {
-	transform: translateY(0);
-}
-
-.gym-buddy-exercises {
+/* Modal Containers */
+.gym-buddy-exercise-picker,
+.gym-buddy-split-picker,
+.gym-buddy-training-setup,
+.gym-buddy-custom-split-builder,
+.gym-buddy-custom-split-editor {
+	padding: 20px;
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 20px;
+	max-height: 80vh;
+	overflow-y: auto;
 }
 
-.gym-buddy-exercise {
-	padding: 16px;
-	background: var(--background-secondary);
-	border-radius: 12px;
-	border: 1px solid var(--background-modifier-border);
+.gym-buddy-training-setup,
+.gym-buddy-custom-split-editor {
+	min-width: 400px;
+	max-width: 600px;
 }
 
-.gym-buddy-exercise h3 {
-	margin: 0 0 12px 0;
-	font-size: 18px;
-	font-weight: 600;
-	color: var(--text-normal);
+.gym-buddy-custom-split-builder {
+	min-width: 500px;
+	max-width: 700px;
 }
 
-.gym-buddy-sets {
+/* Section Containers */
+.gym-buddy-section {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
-}
-
-.gym-buddy-set {
-	padding: 8px 12px;
-	background: var(--background-primary);
-	border-radius: 6px;
-	font-size: 14px;
-	color: var(--text-normal);
-}
-
-/* Stepper component styles */
-.gym-buddy-stepper {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.gym-buddy-stepper-label {
-	font-size: 14px;
-	font-weight: 500;
-	color: var(--text-normal);
-}
-
-.gym-buddy-stepper-controls {
-	display: flex;
-	align-items: center;
 	gap: 12px;
 }
 
-.gym-buddy-stepper-btn {
-	min-width: 48px;
-	min-height: 48px;
-	font-size: 24px;
-	font-weight: bold;
-	border-radius: 8px;
-	border: 2px solid var(--background-modifier-border);
-	background: var(--background-primary);
-	color: var(--text-normal);
-	cursor: pointer;
+.gym-buddy-section-header {
 	display: flex;
+	justify-content: space-between;
 	align-items: center;
-	justify-content: center;
-	transition: all 0.2s ease;
-	-webkit-tap-highlight-color: transparent;
+	margin-bottom: 8px;
 }
 
-.gym-buddy-stepper-btn:hover:not(:disabled) {
-	background: var(--background-modifier-hover);
-	border-color: var(--interactive-accent);
+.gym-buddy-section-header-content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
 }
 
-.gym-buddy-stepper-btn:active:not(:disabled) {
-	transform: scale(0.95);
+.gym-buddy-builder-content {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	max-height: 50vh;
+	overflow-y: auto;
 }
 
-.gym-buddy-stepper-btn:disabled {
-	opacity: 0.4;
-	cursor: not-allowed;
+.gym-buddy-setup-step {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
 }
 
-.gym-buddy-stepper-value {
-	min-width: 80px;
-	text-align: center;
-	font-size: 20px;
-	font-weight: 600;
-	color: var(--text-normal);
-}
-
-/* Set Input Component Styles */
+/* Component Containers */
 .gym-buddy-set-input {
 	display: flex;
 	flex-direction: column;
@@ -228,245 +152,70 @@ Mobile-first design with touch-friendly targets
 	flex-wrap: wrap;
 }
 
-/* Log button */
-.gym-buddy-log-btn {
-	width: 100%;
-	min-height: 56px;
-	font-size: 18px;
-	font-weight: bold;
-	border-radius: 8px;
-	border: none;
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-	cursor: pointer;
+.gym-buddy-stepper {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.gym-buddy-stepper-controls {
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	gap: 8px;
-	transition: all 0.2s ease;
-	-webkit-tap-highlight-color: transparent;
+	gap: 12px;
 }
 
-.gym-buddy-log-btn:hover:not(:disabled) {
-	background: var(--interactive-accent-hover);
-	transform: translateY(-1px);
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+/* Modal Helpers */
+.gym-buddy-modal-button-container {
+	display: flex;
+	gap: 10px;
+	justify-content: flex-end;
+	margin-top: 20px;
 }
 
-.gym-buddy-log-btn:active:not(:disabled) {
-	transform: translateY(0);
+.gym-buddy-modal-button-container-compact {
+	margin-top: 10px;
 }
 
-.gym-buddy-log-btn:disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
-}
-
-@media (max-width: 768px) {
-	.gym-buddy-log-btn {
-		height: 64px;
-		font-size: 20px;
-	}
-}
-
-/* Desktop: More compact UI */
-@media (min-width: 769px) {
-	.gym-buddy-workout-view {
-		padding: 12px;
-		gap: 12px;
-	}
-
-	.gym-buddy-add-exercise-btn {
-		min-height: 40px;
-		padding: 10px 14px;
-		font-size: 14px;
-	}
-
-	.gym-buddy-exercises {
-		gap: 10px;
-	}
-
-	.gym-buddy-exercise {
-		padding: 10px 12px;
-	}
-
-	.gym-buddy-exercise h3 {
-		font-size: 14px;
-		margin-bottom: 8px;
-	}
-
-	.gym-buddy-sets {
-		gap: 6px;
-	}
-
-	.gym-buddy-set {
-		padding: 6px 10px;
-		font-size: 12px;
-	}
-
-	.gym-buddy-stepper-btn {
-		min-width: 36px;
-		min-height: 36px;
-		font-size: 18px;
-	}
-
-	.gym-buddy-stepper-value {
-		font-size: 16px;
-		min-width: 60px;
-	}
-
-	.gym-buddy-log-btn {
-		min-height: 40px;
-		font-size: 14px;
-		padding: 10px 14px;
-	}
-
-	.gym-buddy-rest-timer {
-		padding: 8px;
-		font-size: 18px;
-	}
-}
-
-/* Mobile-specific enhancements */
-@media (max-width: 768px) {
-	.gym-buddy-workout-view {
-		padding: 12px;
-	}
-
-	.gym-buddy-add-exercise-btn {
-		min-height: 64px;
-		font-size: 20px;
-	}
-
-	.gym-buddy-stepper-btn {
-		min-width: 56px;
-		min-height: 56px;
-		font-size: 28px;
-	}
-
-	.gym-buddy-stepper-value {
-		font-size: 24px;
-		min-width: 100px;
-	}
-
-	.gym-buddy-log-btn {
-		min-height: 64px;
-		font-size: 20px;
-	}
-
-	.gym-buddy-exercise {
-		padding: 12px;
-	}
-
-	.gym-buddy-exercise h3 {
-		font-size: 20px;
-	}
-}
-
-/* Desktop-only elements (hidden on mobile) */
-.gym-buddy-desktop-only {
-	display: block;
-}
-
-@media (max-width: 768px) {
-	.gym-buddy-desktop-only {
-		display: none;
-	}
-}
-
-/* Mobile-only elements (hidden on desktop) */
-.gym-buddy-mobile-only {
-	display: none;
-}
-
-@media (max-width: 768px) {
-	.gym-buddy-mobile-only {
-		display: block;
-	}
-}
-
-/* Focus states for accessibility */
-.gym-buddy-stepper-btn:focus-visible,
-.gym-buddy-log-btn:focus-visible,
-.gym-buddy-add-exercise-btn:focus-visible {
-	outline: 2px solid var(--interactive-accent);
-	outline-offset: 2px;
-}
-
-/* Rest timer styles */
-.gym-buddy-rest-timer {
-	padding: 12px;
-	background: var(--background-modifier-border);
-	border-radius: 8px;
-	text-align: center;
-	font-size: 24px;
-	font-weight: bold;
-	color: var(--text-normal);
-}
-
-.gym-buddy-rest-timer.active {
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-}
-
-/* Exercise picker modal styles */
-.gym-buddy-exercise-picker {
-	padding: 16px;
+.gym-buddy-modal-input-container {
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
-	max-height: 80vh;
-	overflow-y: auto;
+	gap: 10px;
 }
 
-.gym-buddy-search-input {
+.gym-buddy-modal-input-full-width {
 	width: 100%;
-	padding: 12px 16px;
-	font-size: 16px;
-	border: 2px solid var(--background-modifier-border);
-	border-radius: 8px;
-	background: var(--background-primary);
-	color: var(--text-normal);
-	min-height: 48px;
 }
 
-.gym-buddy-search-input:focus {
-	outline: none;
-	border-color: var(--interactive-accent);
-}
-
-.gym-buddy-muscle-chips {
+.gym-buddy-divider {
 	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
+	align-items: center;
+	gap: 16px;
+	color: var(--text-muted);
+	font-size: 12px;
 }
 
-.gym-buddy-muscle-chip {
-	padding: 8px 16px;
-	font-size: 14px;
-	border-radius: 20px;
-	border: 2px solid var(--background-modifier-border);
-	background: var(--background-primary);
-	color: var(--text-normal);
-	cursor: pointer;
-	transition: all 0.2s ease;
-	min-height: 40px;
+.gym-buddy-divider::before,
+.gym-buddy-divider::after {
+	content: '';
+	flex: 1;
+	height: 1px;
+	background: var(--background-modifier-border);
 }
 
-.gym-buddy-muscle-chip:hover {
-	background: var(--background-modifier-hover);
-}
+/* ===========================================
+   3. Section Layouts (Grids & Lists)
+   =========================================== */
 
-.gym-buddy-muscle-chip.active {
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-	border-color: var(--interactive-accent);
-}
-
-.gym-buddy-exercise-list {
+/* Lists */
+.gym-buddy-exercises,
+.gym-buddy-exercise-list,
+.gym-buddy-split-list,
+.gym-buddy-template-grid,
+.gym-buddy-template-list,
+.gym-buddy-selected-splits {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 10px;
 }
 
 .gym-buddy-exercise-item {
@@ -492,596 +241,11 @@ Mobile-first design with touch-friendly targets
 	transform: scale(0.98);
 }
 
-.gym-buddy-exercise-name {
-	font-size: 16px;
-	font-weight: 600;
-	color: var(--text-normal);
-}
-
-.gym-buddy-exercise-muscles {
-	font-size: 12px;
-	color: var(--text-muted);
-}
-
-/* Desktop: More compact exercise picker */
-@media (min-width: 769px) {
-	.gym-buddy-exercise-picker {
-		padding: 12px;
-		gap: 16px;
-	}
-
-	.gym-buddy-search-input {
-		padding: 8px 12px;
-		font-size: 14px;
-		min-height: 36px;
-	}
-
-	.gym-buddy-muscle-chip {
-		padding: 6px 12px;
-		font-size: 12px;
-		min-height: 32px;
-	}
-
-	.gym-buddy-exercise-list {
-		gap: 6px;
-	}
-
-	.gym-buddy-exercise-item {
-		padding: 10px 12px;
-		min-height: 40px;
-		gap: 3px;
-	}
-
-	.gym-buddy-exercise-name {
-		font-size: 14px;
-	}
-
-	.gym-buddy-exercise-muscles {
-		font-size: 11px;
-	}
-}
-
-/* Touch-friendly spacing */
-@media (hover: none) and (pointer: coarse) {
-	/* Mobile touch devices */
-	.gym-buddy-stepper-btn,
-	.gym-buddy-log-btn,
-	.gym-buddy-add-exercise-btn,
-	.gym-buddy-exercise-item {
-		min-height: 56px;
-	}
-
-	.gym-buddy-muscle-chip {
-		min-height: 44px;
-		padding: 10px 18px;
-	}
-}
-
-/* Custom Split Builder Modal Styles */
-.gym-buddy-custom-split-builder {
-	padding: 24px;
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-	min-width: 500px;
-	max-width: 700px;
-	max-height: 80vh;
-}
-
-.gym-buddy-builder-header h2 {
-	margin: 0;
-	font-size: 20px;
-	font-weight: 700;
-	color: var(--text-normal);
-	text-align: center;
-}
-
-.gym-buddy-builder-subtitle {
-	margin: 8px 0 0 0;
-	font-size: 14px;
-	color: var(--text-muted);
-	text-align: center;
-}
-
-.gym-buddy-builder-content {
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-	max-height: 50vh;
-	overflow-y: auto;
-}
-
-.gym-buddy-section {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.gym-buddy-favorite-button {
-	background: transparent;
-	border: none;
-	padding: 8px;
-	cursor: pointer;
-	color: var(--text-muted);
-	transition: all 0.2s ease;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.gym-buddy-favorite-button.active {
-	color: var(--text-error);
-}
-
-.gym-buddy-section-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 8px;
-}
-
-.gym-buddy-collapse-button {
-	background: transparent;
-	border: none;
-	padding: 4px;
-	cursor: pointer;
-	color: var(--text-muted);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.gym-buddy-collapse-button:hover {
-	color: var(--text-normal);
-}
-
-.gym-buddy-section-header-content {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-}
-
-.gym-buddy-section-header h3 {
-	margin: 0;
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--text-muted);
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-}
-
-.gym-buddy-selected-count {
-	font-size: 12px;
-	color: var(--text-muted);
-	font-weight: 500;
-}
-
-.gym-buddy-collapse-toggle {
-	padding: 4px 8px;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: 4px;
-	background: var(--background-primary);
-	color: var(--text-muted);
-	cursor: pointer;
-	font-size: 12px;
-	transition: all 0.2s ease;
-	flex-shrink: 0;
-}
-
-.gym-buddy-collapse-toggle:hover {
-	background: var(--background-modifier-hover);
-	border-color: var(--interactive-accent);
-}
-
-.gym-buddy-split-chips {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-}
-
-.gym-buddy-split-chips .gym-buddy-split-chip {
-	padding: 8px 16px;
-	font-size: 14px;
-	border-radius: 20px;
-	border: 2px solid var(--background-modifier-border);
-	background: var(--background-primary);
-	color: var(--text-normal);
-	cursor: pointer;
-	transition: all 0.2s ease;
-	min-height: 40px;
-}
-
-.gym-buddy-split-chips .gym-buddy-split-chip:hover {
-	background: var(--background-modifier-hover);
-}
-
-.gym-buddy-split-chips .gym-buddy-split-chip.active {
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-	border-color: var(--interactive-accent);
-}
-
-.gym-buddy-selected-splits-chips {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-}
-
-.gym-buddy-selected-splits-chips .gym-buddy-split-chip {
-	padding: 8px 16px;
-	font-size: 14px;
-	border-radius: 20px;
-	border: 2px solid var(--interactive-accent);
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-	cursor: pointer;
-	transition: all 0.2s ease;
-	min-height: 40px;
-}
-
-.gym-buddy-selected-splits-chips .gym-buddy-split-chip:hover {
-	opacity: 0.9;
-}
-
-.gym-buddy-templates-list {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.gym-buddy-template-group {
-	border: 1px solid var(--background-modifier-border);
-	border-radius: 8px;
-	overflow: hidden;
-}
-
-.gym-buddy-template-group-header {
-	width: 100%;
-	padding: 12px 16px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+.gym-buddy-exercise {
+	padding: 16px;
 	background: var(--background-secondary);
-	border: none;
-	cursor: pointer;
-	transition: background 0.2s ease;
-}
-
-.gym-buddy-template-group-header:hover {
-	background: var(--background-modifier-hover);
-}
-
-.gym-buddy-template-group-name {
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--text-normal);
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
-.gym-buddy-template-badge {
-	padding: 2px 6px;
-	font-size: 10px;
-	font-weight: 600;
-	text-transform: uppercase;
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-	border-radius: 4px;
-}
-
-.gym-buddy-template-group-toggle {
-	font-size: 12px;
-	color: var(--text-muted);
-}
-
-.gym-buddy-template-splits {
-	display: flex;
-	flex-direction: column;
-	padding: 8px;
-	gap: 4px;
-	background: var(--background-primary);
-}
-
-.gym-buddy-split-option {
-	width: 100%;
-	padding: 10px 12px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	border: 2px solid var(--background-modifier-border);
-	border-radius: 6px;
-	background: var(--background-primary);
-	cursor: pointer;
-	transition: all 0.2s ease;
-	text-align: left;
-}
-
-.gym-buddy-split-option:hover {
-	border-color: var(--interactive-accent-hover);
-	background: var(--background-modifier-hover);
-}
-
-.gym-buddy-split-option.selected {
-	border-color: var(--interactive-accent);
-	background: var(--background-secondary);
-}
-
-.gym-buddy-split-option-content {
-	flex: 1;
-}
-
-.gym-buddy-split-option-name {
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--text-normal);
-	margin-bottom: 4px;
-}
-
-.gym-buddy-split-option-muscles {
-	font-size: 12px;
-	color: var(--text-muted);
-}
-
-.gym-buddy-split-option-check {
-	width: 20px;
-	height: 20px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border: 2px solid var(--background-modifier-border);
-	border-radius: 4px;
-	font-size: 14px;
-	color: var(--interactive-accent);
-	flex-shrink: 0;
-}
-
-.gym-buddy-split-option.selected .gym-buddy-split-option-check {
-	background: var(--interactive-accent);
-	border-color: var(--interactive-accent);
-	color: var(--text-on-accent);
-}
-
-.gym-buddy-selected-section {
-	padding-top: 16px;
-	border-top: 1px solid var(--background-modifier-border);
-}
-
-.gym-buddy-selected-splits {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.gym-buddy-selected-split {
-	padding: 10px 12px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	background: var(--background-secondary);
-	border: 1px solid var(--background-modifier-border);
-	border-radius: 6px;
-}
-
-.gym-buddy-selected-split-info {
-	flex: 1;
-}
-
-.gym-buddy-selected-split-name {
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--text-normal);
-	margin-bottom: 2px;
-}
-
-.gym-buddy-selected-split-source {
-	font-size: 12px;
-	color: var(--text-muted);
-}
-
-.gym-buddy-remove-split {
-	width: 24px;
-	height: 24px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border: none;
-	background: var(--text-error);
-	color: var(--text-on-accent);
-	border-radius: 4px;
-	cursor: pointer;
-	font-size: 18px;
-	line-height: 1;
-	transition: opacity 0.2s ease;
-}
-
-.gym-buddy-remove-split:hover {
-	opacity: 0.8;
-}
-
-.gym-buddy-save-option {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	padding: 12px;
-	background: var(--background-secondary);
-	border-radius: 8px;
-}
-
-.gym-buddy-save-toggle {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	font-size: 14px;
-	color: var(--text-normal);
-	cursor: pointer;
-}
-
-.gym-buddy-save-toggle input[type="checkbox"] {
-	cursor: pointer;
-}
-
-.gym-buddy-template-name-input {
-	padding: 8px 16px;
-	font-size: 12px;
-	border: 2px solid var(--background-modifier-border);
-	border-radius: 6px;
-	background: var(--background-primary);
-	color: var(--text-normal);
-}
-
-.gym-buddy-template-name-input:focus {
-	outline: none;
-	border-color: var(--interactive-accent);
-}
-
-.gym-buddy-builder-actions {
-	display: flex;
-	justify-content: flex-end;
-	gap: 12px;
-}
-
-.gym-buddy-btn-primary,
-.gym-buddy-btn-secondary {
-	padding: 12px 24px;
-	font-size: 15px;
-	font-weight: 600;
-	border: none;
-	border-radius: 8px;
-	cursor: pointer;
-	transition: all 0.2s ease;
-}
-
-.gym-buddy-btn-primary {
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-}
-
-.gym-buddy-btn-primary:hover:not(:disabled) {
-	filter: brightness(1.1);
-}
-
-.gym-buddy-btn-primary:disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
-}
-
-.gym-buddy-btn-secondary {
-	background: var(--background-modifier-border);
-	color: var(--text-normal);
-}
-
-	.gym-buddy-btn-secondary:hover {
-		background: var(--background-modifier-hover);
-	}
-
-/* Training Setup Modal Styles */
-.gym-buddy-training-setup {
-	padding: 24px;
-	display: flex;
-	flex-direction: column;
-	gap: 24px;
-	min-width: 400px;
-	max-width: 600px;
-}
-
-/* Split Picker Modal Styles */
-.gym-buddy-split-picker {
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-}
-
-.gym-buddy-split-picker-header {
-	text-align: center;
-}
-
-.gym-buddy-split-picker-header h2 {
-	margin: 0 0 8px 0;
-	font-size: 18px;
-	font-weight: 600;
-	color: var(--text-normal);
-}
-
-.gym-buddy-split-suggestion {
-	background: var(--background-secondary);
-	border: 2px solid var(--interactive-accent);
 	border-radius: 12px;
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-	text-align: center;
-}
-
-.gym-buddy-split-suggestion-header {
-	display: flex;
-	justify-content: center;
-}
-
-.gym-buddy-today-label {
-	font-size: 13px;
-	font-weight: 600;
-	color: var(--interactive-accent);
-	text-transform: uppercase;
-	letter-spacing: 1px;
-}
-
-.gym-buddy-split-suggestion-content {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-}
-
-.gym-buddy-suggested-split-name {
-	font-size: 24px;
-	font-weight: 700;
-	color: var(--text-normal);
-}
-
-.gym-buddy-suggested-split-muscles {
-	font-size: 14px;
-	color: var(--text-muted);
-}
-
-.gym-buddy-confirm-button {
-	padding: 14px 24px;
-	font-size: 16px;
-	font-weight: 600;
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-	border: none;
-	border-radius: 8px;
-	cursor: pointer;
-	transition: all 0.2s ease;
-}
-
-.gym-buddy-confirm-button:hover {
-	filter: brightness(1.1);
-}
-
-.gym-buddy-divider {
-	display: flex;
-	align-items: center;
-	gap: 16px;
-	color: var(--text-muted);
-	font-size: 12px;
-}
-
-.gym-buddy-divider::before,
-.gym-buddy-divider::after {
-	content: '';
-	flex: 1;
-	height: 1px;
-	background: var(--background-modifier-border);
-}
-
-.gym-buddy-split-list {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
+	border: 1px solid var(--background-modifier-border);
 }
 
 .gym-buddy-split-item {
@@ -1102,67 +266,129 @@ Mobile-first design with touch-friendly targets
 	border-color: var(--interactive-accent);
 }
 
-.gym-buddy-split-name {
-	font-size: 16px;
-	font-weight: 600;
+/* Selected Split Items */
+.gym-buddy-selected-split {
+	padding: 10px 12px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+}
+
+.gym-buddy-selected-split-info {
+	flex: 1;
+}
+
+/* Grids */
+.gym-buddy-schedule-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.gym-buddy-schedule-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.gym-buddy-schedule-day {
+	width: 100px;
+	font-size: 14px;
+	font-weight: 500;
 	color: var(--text-normal);
+	flex-shrink: 0;
+	padding-top: 8px;
 }
 
-.gym-buddy-split-muscles {
-	font-size: 13px;
-	color: var(--text-muted);
+.gym-buddy-schedule-splits {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	flex: 1;
 }
 
-.gym-buddy-no-template {
-	text-align: center;
-	color: var(--text-muted);
-	padding: 20px;
+/* Chip & Item Groups */
+.gym-buddy-muscle-chips,
+.gym-buddy-split-chips,
+.gym-buddy-selected-splits-chips,
+.gym-buddy-selected-muscles-chips,
+.gym-buddy-confirm-splits,
+.gym-buddy-confirm-schedule {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
 }
 
-/* Desktop: Split Picker Compact */
-@media (min-width: 769px) {
-	.gym-buddy-split-picker {
-		padding: 16px;
-		gap: 16px;
-	}
-
-	.gym-buddy-split-picker-header h2 {
-		font-size: 16px;
-	}
-
-	.gym-buddy-split-suggestion {
-		padding: 16px;
-		gap: 12px;
-	}
-
-	.gym-buddy-suggested-split-name {
-		font-size: 20px;
-	}
-
-	.gym-buddy-confirm-button {
-		padding: 12px 20px;
-		font-size: 14px;
-	}
-
-	.gym-buddy-split-list {
-		gap: 8px;
-	}
-
-	.gym-buddy-split-item {
-		padding: 12px;
-		gap: 4px;
-	}
-
-	.gym-buddy-split-name {
-		font-size: 14px;
-	}
-
-	.gym-buddy-split-muscles {
-		font-size: 12px;
-	}
+/* Template Card Items */
+.gym-buddy-template-card-wrapper {
+	position: relative;
+	border: 2px solid var(--background-modifier-border);
+	border-radius: 10px;
+	transition: all 0.2s ease;
 }
 
-/* Training Setup Modal Styles */
+.gym-buddy-template-card-wrapper.selected {
+	border-color: var(--interactive-accent);
+	background: var(--background-secondary);
+}
+
+.gym-buddy-template-card {
+	padding: 16px;
+	text-align: left;
+	border: none;
+	border-radius: 10px;
+	background: transparent;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	position: relative;
+	width: 100%;
+}
+
+.gym-buddy-template-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+/* Action Groups */
+.gym-buddy-builder-actions,
+.gym-buddy-setup-actions,
+.gym-buddy-form-actions,
+.gym-buddy-template-actions {
+	display: flex;
+	gap: 12px;
+}
+
+.gym-buddy-builder-actions,
+.gym-buddy-form-actions {
+	justify-content: flex-end;
+}
+
+.gym-buddy-setup-actions {
+	justify-content: center;
+}
+
+.gym-buddy-template-actions {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	gap: 4px;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	z-index: 10;
+}
+
+.gym-buddy-template-card-wrapper:hover .gym-buddy-template-actions {
+	opacity: 1;
+}
+
+/* ===========================================
+   4. Progress Indicators
+   =========================================== */
 .gym-buddy-setup-progress {
 	display: flex;
 	align-items: center;
@@ -1199,21 +425,10 @@ Mobile-first design with touch-friendly targets
 	transition: all 0.2s ease;
 }
 
-.gym-buddy-progress-step.active .gym-buddy-progress-number {
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-}
-
+.gym-buddy-progress-step.active .gym-buddy-progress-number,
 .gym-buddy-progress-step.completed .gym-buddy-progress-number {
 	background: var(--interactive-accent);
 	color: var(--text-on-accent);
-}
-
-.gym-buddy-progress-label {
-	font-size: 11px;
-	color: var(--text-muted);
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
 }
 
 .gym-buddy-progress-line {
@@ -1228,85 +443,96 @@ Mobile-first design with touch-friendly targets
 	background: var(--interactive-accent);
 }
 
-/* Step content */
-.gym-buddy-setup-step {
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-}
+/* ===========================================
+   5. Typography & Labels
+   =========================================== */
 
-.gym-buddy-setup-step h2 {
-	margin: 0;
-	font-size: 20px;
-	font-weight: 700;
+/* Headers */
+.gym-buddy-exercise h3,
+.gym-buddy-builder-header h2,
+.gym-buddy-setup-step h2,
+.gym-buddy-split-picker-header h2,
+.gym-buddy-editor-header h2 {
+	margin: 0 0 12px 0;
 	color: var(--text-normal);
-	text-align: center;
 }
 
-.gym-buddy-setup-subtitle {
-	margin: -12px 0 0 0;
-	font-size: 14px;
+.gym-buddy-section-header h3,
+.gym-buddy-confirm-section h3,
+.gym-buddy-template-list-header h3,
+.gym-buddy-splits-section h3 {
+	margin: 0;
+	font-size: 12px;
+	font-weight: 600;
 	color: var(--text-muted);
-	text-align: center;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
 }
 
-/* Template grid */
-.gym-buddy-template-grid {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
-.gym-buddy-template-card-wrapper {
-	position: relative;
-	border: 2px solid var(--background-modifier-border);
-	border-radius: 10px;
-	transition: all 0.2s ease;
-}
-
-.gym-buddy-template-card-wrapper.selected {
-	border-color: var(--interactive-accent);
-	background: var(--background-secondary);
-}
-
-.gym-buddy-template-card-wrapper:hover {
-	border-color: var(--interactive-accent-hover);
-}
-
-.gym-buddy-template-card {
-	padding: 16px;
-	text-align: left;
-	border: none;
-	border-radius: 10px;
-	background: transparent;
-	cursor: pointer;
-	transition: all 0.2s ease;
-	position: relative;
-	width: 100%;
-}
-
-.gym-buddy-template-card:hover {
-	background: var(--background-modifier-hover);
-}
-
-.gym-buddy-template-card-wrapper.selected .gym-buddy-template-card {
-	background: var(--background-secondary);
-}
-
-.gym-buddy-template-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 8px;
-}
-
-.gym-buddy-template-name {
-	font-size: 16px;
+/* Names & Values */
+.gym-buddy-exercise-name,
+.gym-buddy-split-name,
+.gym-buddy-suggested-split-name,
+.gym-buddy-template-name,
+.gym-buddy-confirm-value,
+.gym-buddy-selected-split-name {
 	font-weight: 600;
 	color: var(--text-normal);
-	flex: 1;
 }
 
+.gym-buddy-stepper-value {
+	min-width: 80px;
+	text-align: center;
+	font-size: 20px;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+/* Labels & Muted Text */
+.gym-buddy-stepper-label,
+.gym-buddy-progress-label,
+.gym-buddy-today-label,
+.gym-buddy-selected-muscles-label {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.gym-buddy-exercise-muscles,
+.gym-buddy-split-muscles,
+.gym-buddy-suggested-split-muscles,
+.gym-buddy-builder-subtitle,
+.gym-buddy-setup-subtitle,
+.gym-buddy-selected-count,
+.gym-buddy-selected-split-source,
+.gym-buddy-confirm-value.gym-buddy-muted {
+	font-size: 12px;
+	color: var(--text-muted);
+}
+
+/* ===========================================
+   6. Component Specific Styles
+   =========================================== */
+
+/* Rest Timer */
+.gym-buddy-rest-timer {
+	padding: 12px;
+	background: var(--background-modifier-border);
+	border-radius: 8px;
+	text-align: center;
+	font-size: 24px;
+	font-weight: bold;
+	color: var(--text-normal);
+}
+
+.gym-buddy-rest-timer.active {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+/* Tooltips & Info */
 .gym-buddy-template-info-wrapper {
 	position: relative;
 	flex-shrink: 0;
@@ -1364,19 +590,41 @@ Mobile-first design with touch-friendly targets
 	line-height: 1.4;
 }
 
+/* Form Elements */
+.gym-buddy-collapse-toggle {
+	padding: 4px 8px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	background: var(--background-primary);
+	color: var(--text-muted);
+	cursor: pointer;
+	font-size: 12px;
+	transition: all 0.2s ease;
+	flex-shrink: 0;
+}
+
+.gym-buddy-save-toggle {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	color: var(--text-normal);
+	cursor: pointer;
+}
+
+/* Special Items */
+.gym-buddy-template-badge {
+	padding: 2px 6px;
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-radius: 4px;
+}
+
 .gym-buddy-custom-builder-card {
 	border: 2px dashed var(--interactive-accent);
-	background: var(--background-secondary);
-}
-
-.gym-buddy-custom-builder-card:hover {
-	border-color: var(--interactive-accent-hover);
-	background: var(--background-modifier-hover);
-}
-
-.gym-buddy-custom-builder-card.selected {
-	border-color: var(--interactive-accent);
-	border-style: solid;
 	background: var(--background-secondary);
 }
 
@@ -1385,250 +633,22 @@ Mobile-first design with touch-friendly targets
 	color: var(--text-on-accent);
 }
 
-/* Template management actions */
-.gym-buddy-template-actions {
-	position: absolute;
-	top: 8px;
-	right: 8px;
-	display: flex;
-	gap: 4px;
-	opacity: 0;
-	transition: opacity 0.2s ease;
-	z-index: 10;
-}
-
-.gym-buddy-template-card-wrapper:hover .gym-buddy-template-actions {
-	opacity: 1;
-}
-
-.gym-buddy-template-action-btn {
-	width: 32px;
-	height: 32px;
-	padding: 0;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: 6px;
-	background: var(--background-primary);
-	cursor: pointer;
+.gym-buddy-split-option-check {
+	width: 20px;
+	height: 20px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 16px;
-	transition: all 0.2s ease;
-	-webkit-tap-highlight-color: transparent;
-}
-
-.gym-buddy-template-action-btn:hover {
-	background: var(--background-modifier-hover);
-	border-color: var(--interactive-accent);
-	transform: scale(1.05);
-}
-
-.gym-buddy-template-rename-btn:hover {
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-}
-
-.gym-buddy-template-delete-btn:hover {
-	background: var(--text-error);
-	color: var(--text-on-accent);
-	border-color: var(--text-error);
-}
-
-/* Mobile adjustments for template actions */
-@media (max-width: 768px) {
-	.gym-buddy-template-actions {
-		opacity: 1; /* Always visible on mobile */
-	}
-
-	.gym-buddy-template-action-btn {
-		width: 40px;
-		height: 40px;
-		font-size: 18px;
-	}
-}
-
-/* Schedule grid */
-.gym-buddy-schedule-grid {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.gym-buddy-schedule-row {
-	display: flex;
-	align-items: flex-start;
-	gap: 12px;
-}
-
-.gym-buddy-schedule-day {
-	width: 100px;
-	font-size: 14px;
-	font-weight: 500;
-	color: var(--text-normal);
-	flex-shrink: 0;
-	padding-top: 8px;
-}
-
-.gym-buddy-schedule-splits {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-	flex: 1;
-}
-
-.gym-buddy-schedule-select {
-	width: 100%;
-	height: 48px;
-	font-size: 12px;
-	font-weight: 500;
 	border: 2px solid var(--background-modifier-border);
-	border-radius: 6px;
-	background: var(--background-primary);
-	color: var(--text-normal);
-	cursor: pointer;
-	appearance: none;
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	transition: border-color 0.2s ease;
-	box-sizing: border-box;
-	overflow: visible !important;
-	vertical-align: middle !important;
-	text-overflow: clip !important;
-}
-
-.gym-buddy-schedule-select option {
-	color: var(--text-normal) !important;
-	background-color: var(--background-primary) !important;
-	-webkit-text-fill-color: var(--text-normal) !important;
-	padding: 12px;
-	font-size: 15px;
-	min-height: 40px;
-}
-
-.gym-buddy-schedule-select:hover {
-	border-color: var(--interactive-accent-hover);
-	color: var(--text-normal) !important;
-	-webkit-text-fill-color: var(--text-normal) !important;
-}
-
-.gym-buddy-schedule-select:focus {
-	outline: none;
-	border-color: var(--interactive-accent);
-	box-shadow: 0 0 0 2px var(--interactive-accent-rgb, rgba(var(--interactive-accent-rgb), 0.2));
-	color: var(--text-normal) !important;
-	-webkit-text-fill-color: var(--text-normal) !important;
-}
-
-/* Selected option styling */
-.gym-buddy-schedule-select option:checked {
-	background: var(--interactive-accent) !important;
-	color: var(--text-on-accent) !important;
-	-webkit-text-fill-color: var(--text-on-accent) !important;
-}
-
-.gym-buddy-schedule-select-arrow {
-	position: absolute;
-	right: 14px;
-	top: 50%;
-	transform: translateY(-50%);
-	pointer-events: none;
-	font-size: 12px;
-	color: var(--text-muted);
-	line-height: 1;
-}
-
-/* Force text color for dropdown options */
-.gym-buddy-schedule-select option:checked,
-.gym-buddy-schedule-select option:focus {
-	background: var(--interactive-accent) !important;
-	color: var(--text-on-accent) !important;
-}
-
-/* Ensure selected value is visible */
-.gym-buddy-schedule-select:not([value=""]) {
-	color: var(--text-normal);
-	font-weight: 500;
-}
-
-/* Confirm summary */
-.gym-buddy-confirm-summary {
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-	background: var(--background-secondary);
-	padding: 20px;
-	border-radius: 10px;
-}
-
-.gym-buddy-confirm-section h3 {
-	margin: 0 0 8px 0;
-	font-size: 12px;
-	font-weight: 600;
-	color: var(--text-muted);
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-}
-
-.gym-buddy-confirm-value {
-	font-size: 18px;
-	font-weight: 600;
-	color: var(--text-normal);
-}
-
-.gym-buddy-confirm-value.gym-buddy-muted {
+	border-radius: 4px;
 	font-size: 14px;
-	font-weight: 400;
-	color: var(--text-muted);
+	color: var(--interactive-accent);
 }
 
-.gym-buddy-confirm-splits {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-	margin-top: 8px;
-}
-
-.gym-buddy-confirm-splits .gym-buddy-split-chip {
-	padding: 4px 10px;
-	font-size: 12px;
-	background: var(--background-modifier-border);
-	color: var(--text-normal);
-	border-radius: 12px;
-	border: none;
-	min-height: unset;
-	cursor: default;
-}
-
-.gym-buddy-confirm-splits .gym-buddy-split-chip:hover {
-	background: var(--background-modifier-border);
-}
-
-.gym-buddy-split-chip {
-	padding: 8px 16px;
-	font-size: 14px;
-	border-radius: 20px;
-	border: 2px solid var(--background-modifier-border);
-	background: var(--background-primary);
-	color: var(--text-normal);
-	cursor: pointer;
-	transition: all 0.2s ease;
-	min-height: 40px;
-}
-
-.gym-buddy-split-chip:hover {
-	background: var(--background-modifier-hover);
-}
-
-.gym-buddy-split-chip.active {
+.gym-buddy-split-option.selected .gym-buddy-split-option-check {
 	background: var(--interactive-accent);
-	color: var(--text-on-accent);
 	border-color: var(--interactive-accent);
-}
-
-.gym-buddy-confirm-schedule {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
+	color: var(--text-on-accent);
 }
 
 .gym-buddy-schedule-item {
@@ -1640,369 +660,73 @@ Mobile-first design with touch-friendly targets
 	border-radius: 6px;
 }
 
-.gym-buddy-schedule-item-day {
-	font-size: 12px;
-	font-weight: 600;
-	color: var(--text-muted);
-}
-
-.gym-buddy-schedule-item-split {
-	font-size: 13px;
-	font-weight: 500;
-	color: var(--text-normal);
-}
-
-/* Actions */
-.gym-buddy-setup-actions {
-	display: flex;
-	justify-content: center;
-	gap: 12px;
-	margin-top: 8px;
-}
-
-/* Mobile adjustments for Training Setup */
-@media (max-width: 500px) {
-	.gym-buddy-training-setup {
-		padding: 16px;
-		min-width: unset;
-	}
-
-	.gym-buddy-progress-line {
-		width: 24px;
-	}
-
-	.gym-buddy-schedule-day {
-		width: 80px;
-		font-size: 13px;
-	}
-
-	.gym-buddy-schedule-splits {
-		gap: 6px;
-	}
-
-	.gym-buddy-split-chip {
-		padding: 6px 12px;
-		font-size: 12px;
-		min-height: 36px;
-	}
-}
-
-/* Modal button containers */
-.gym-buddy-modal-button-container {
-	display: flex;
-	gap: 10px;
-	justify-content: flex-end;
-	margin-top: 20px;
-}
-
-.gym-buddy-modal-button-container-compact {
-	margin-top: 10px;
-}
-
-/* Modal input containers */
-.gym-buddy-modal-input-container {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
-.gym-buddy-modal-input-full-width {
-	width: 100%;
-}
-
 /* ===========================================
-   Exercise Picker - Selected Muscles Preview
+   7. Media Queries & Desktop Adjustments
    =========================================== */
-.gym-buddy-selected-muscles-preview {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	flex-wrap: wrap;
-	margin-top: 4px;
+
+/* Desktop adjustments */
+@media (min-width: 769px) {
+	.gym-buddy-workout-view {
+		padding: 12px;
+		gap: 12px;
+	}
+
+	.gym-buddy-exercise {
+		padding: 10px 12px;
+	}
+
+	.gym-buddy-exercise h3 {
+		font-size: 14px;
+	}
+
+	.gym-buddy-stepper-value {
+		font-size: 16px;
+		min-width: 60px;
+	}
+
+	.gym-buddy-exercise-picker {
+		padding: 12px;
+		gap: 16px;
+	}
 }
 
-.gym-buddy-selected-muscles-label {
-	font-size: 12px;
-	color: var(--text-muted);
-	font-weight: 500;
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+	.gym-buddy-stepper-value {
+		font-size: 24px;
+		min-width: 100px;
+	}
+
+	.gym-buddy-exercise h3 {
+		font-size: 20px;
+	}
+
+	.gym-buddy-template-actions {
+		opacity: 1; /* Always visible on mobile */
+	}
 }
 
-.gym-buddy-selected-muscles-chips {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 4px;
+/* Touch device adjustments */
+@media (hover: none) and (pointer: coarse) {
+	.gym-buddy-exercise-item {
+		min-height: 56px;
+	}
 }
 
-.gym-buddy-selected-muscle-chip {
-	padding: 2px 8px;
-	font-size: 11px;
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-	border-radius: 12px;
+/* Mobile-first Tokens (moved from :root to keep structure) */
+@media (max-width: 768px) {
+  :root {
+    --gb-btn-height-md: 48px;
+    --gb-btn-height-lg: 64px;
+    --gb-chip-height-md: 40px;
+    --gb-input-height-md: 48px;
+    --gb-icon-btn-md: 44px;
+  }
 }
 
-.gym-buddy-current-split-badge {
-	padding: 8px 12px;
-	background: var(--background-secondary);
-	border: 1px solid var(--interactive-accent);
-	border-radius: 8px;
-	font-size: 14px;
-	font-weight: 500;
-	color: var(--interactive-accent);
-	text-align: center;
-}
-
-.gym-buddy-exercise-content {
-	flex: 1;
-	cursor: pointer;
-}
-
-/* ===========================================
-   Custom Split Editor Modal
-   =========================================== */
-.gym-buddy-custom-split-editor {
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-	min-width: 400px;
-	max-width: 600px;
-}
-
-.gym-buddy-editor-header {
-	text-align: center;
-	padding-bottom: 12px;
-	border-bottom: 1px solid var(--background-modifier-border);
-}
-
-.gym-buddy-editor-header h2 {
-	margin: 0;
-	font-size: 18px;
-	font-weight: 600;
-	color: var(--text-normal);
-}
-
-.gym-buddy-empty-state {
-	text-align: center;
-	padding: 40px 20px;
-	color: var(--text-muted);
-}
-
-.gym-buddy-empty-state p {
-	margin-bottom: 16px;
-}
-
-/* Generic button styles */
-.gym-buddy-button-primary {
-	padding: 10px 20px;
-	font-size: 14px;
-	font-weight: 600;
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-	border: none;
-	border-radius: 6px;
-	cursor: pointer;
-	transition: all 0.2s ease;
-}
-
-.gym-buddy-button-primary:hover:not(:disabled) {
-	filter: brightness(1.1);
-}
-
-.gym-buddy-button-primary:disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
-}
-
-.gym-buddy-button-secondary {
-	padding: 10px 20px;
-	font-size: 14px;
-	font-weight: 500;
-	background: var(--background-modifier-border);
-	color: var(--text-normal);
-	border: none;
-	border-radius: 6px;
-	cursor: pointer;
-	transition: all 0.2s ease;
-}
-
-.gym-buddy-button-secondary:hover {
-	background: var(--background-modifier-hover);
-}
-
-.gym-buddy-button-danger {
-	padding: 10px 20px;
-	font-size: 14px;
-	font-weight: 500;
-	background: var(--text-error);
-	color: var(--text-on-accent);
-	border: none;
-	border-radius: 6px;
-	cursor: pointer;
-	transition: all 0.2s ease;
-}
-
-.gym-buddy-button-danger:hover {
-	opacity: 0.9;
-}
-
-.gym-buddy-button-danger-small {
-	padding: 4px 8px;
-	font-size: 12px;
-	font-weight: 500;
-	background: var(--text-error);
-	color: var(--text-on-accent);
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-	transition: all 0.2s ease;
-}
-
-.gym-buddy-button-danger-small:hover {
-	opacity: 0.9;
-}
-
-/* Template list */
-.gym-buddy-template-list {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.gym-buddy-template-list-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 8px;
-}
-
-.gym-buddy-template-list-header h3 {
-	margin: 0;
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--text-normal);
-}
-
-.gym-buddy-template-item {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 12px 16px;
-	background: var(--background-secondary);
-	border: 1px solid var(--background-modifier-border);
-	border-radius: 8px;
-}
-
-.gym-buddy-template-info {
-	flex: 1;
-}
-
-.gym-buddy-template-info h4 {
-	margin: 0 0 4px 0;
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--text-normal);
-}
-
-.gym-buddy-template-info p {
-	margin: 0;
-	font-size: 12px;
-	color: var(--text-muted);
-}
-
-/* Editor form */
-.gym-buddy-editor-form {
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-}
-
-.gym-buddy-form-group {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-}
-
-.gym-buddy-form-group label {
-	font-size: 13px;
-	font-weight: 500;
-	color: var(--text-muted);
-}
-
-.gym-buddy-form-group input,
-.gym-buddy-form-group select {
-	padding: 10px 12px;
-	font-size: 14px;
-	border: 2px solid var(--background-modifier-border);
-	border-radius: 6px;
-	background: var(--background-primary);
-	color: var(--text-normal);
-}
-
-.gym-buddy-form-group input:focus,
-.gym-buddy-form-group select:focus {
-	outline: none;
-	border-color: var(--interactive-accent);
-}
-
-.gym-buddy-splits-section {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.gym-buddy-splits-section h3 {
-	margin: 0;
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--text-normal);
-}
-
-.gym-buddy-split-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.gym-buddy-add-split {
-	padding: 16px;
-	background: var(--background-secondary);
-	border: 2px dashed var(--background-modifier-border);
-	border-radius: 8px;
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.gym-buddy-form-actions {
-	display: flex;
-	justify-content: flex-end;
-	gap: 12px;
-	padding-top: 16px;
-	border-top: 1px solid var(--background-modifier-border);
-}
-
-/* Training Setup - Text button */
-.gym-buddy-btn-text {
-	padding: 10px 16px;
-	font-size: 14px;
-	font-weight: 500;
-	background: transparent;
-	color: var(--text-muted);
-	border: none;
-	cursor: pointer;
-	transition: color 0.2s ease;
-}
-
-.gym-buddy-btn-text:hover {
-	color: var(--text-normal);
-}
-
-/* Stepper button variants */
-.gym-buddy-stepper-btn-minus {
-	/* Inherits from .gym-buddy-stepper-btn */
-}
-
-.gym-buddy-stepper-btn-plus {
-	/* Inherits from .gym-buddy-stepper-btn */
+@media (hover: none) and (pointer: coarse) {
+  :root {
+    --gb-icon-btn-sm: 36px;
+    --gb-icon-btn-md: 48px;
+  }
 }

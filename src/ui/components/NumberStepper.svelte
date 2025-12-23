@@ -1,11 +1,24 @@
 <script lang="ts">
 	import { Minus, Plus } from '@lucide/svelte';
-	export let value: number;
-	export let min: number = 0;
-	export let max: number = 1000;
-	export let step: number = 1;
-	export let label: string = '';
-	export let unit: string = '';
+	import { IconButton } from './index';
+
+	interface Props {
+		value: number;
+		min?: number;
+		max?: number;
+		step?: number;
+		label?: string;
+		unit?: string;
+	}
+
+	let {
+		value = $bindable(),
+		min = 0,
+		max = 1000,
+		step = 1,
+		label = '',
+		unit = ''
+	}: Props = $props();
 
 	function decrement() {
 		if (value > min) {
@@ -25,25 +38,25 @@
 		<div class="gym-buddy-stepper-label">{label}</div>
 	{/if}
 	<div class="gym-buddy-stepper-controls" role="group" aria-label={label || undefined}>
-		<button
-			class="gym-buddy-stepper-btn gym-buddy-stepper-btn-minus"
+		<IconButton
+			icon={Minus}
+			variant="ghost"
+			size="md"
 			onclick={decrement}
 			disabled={value <= min}
-			aria-label="Decrease {label}"
-		>
-			<Minus size={18} />
-		</button>
+			ariaLabel="Decrease {label}"
+		/>
 		<div class="gym-buddy-stepper-value">
 			{value}{#if unit} {unit}{/if}
 		</div>
-		<button
-			class="gym-buddy-stepper-btn gym-buddy-stepper-btn-plus"
+		<IconButton
+			icon={Plus}
+			variant="ghost"
+			size="md"
 			onclick={increment}
 			disabled={value >= max}
-			aria-label="Increase {label}"
-		>
-			<Plus size={18} />
-		</button>
+			ariaLabel="Increase {label}"
+		/>
 	</div>
 </div>
 

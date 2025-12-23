@@ -2,6 +2,7 @@
 	import NumberStepper from './NumberStepper.svelte';
 	import type {WorkoutSet} from '../../types';
 	import { Check } from '@lucide/svelte';
+	import { Button } from './index';
 
 	interface Props {
 		set: WorkoutSet;
@@ -74,12 +75,15 @@
 		</div>
 	{/if}
 
-	<button
-		class="gym-buddy-log-btn"
+	<Button
+		variant="primary"
+		size="lg"
+		fullWidth
 		onclick={logSet}
 		disabled={weight <= 0 || reps <= 0}
+		icon={Check}
 	>
-		<Check size={16} /> LOG SET
-	</button>
+		LOG SET
+	</Button>
 </div>
 

@@ -44,7 +44,7 @@ export class ActiveWorkoutView extends ItemView {
 
 		const addExerciseBtn = content.createEl("button", {
 			text: "Add exercise",
-			cls: "gym-buddy-add-exercise-btn",
+			cls: "gb-btn gb-btn--primary gb-btn--lg gb-btn--full-width",
 		});
 
 		addExerciseBtn.addEventListener("click", () => {
