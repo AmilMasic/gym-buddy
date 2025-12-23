@@ -2,6 +2,7 @@
 	import type { SplitTemplate, TrainingSplit } from '../../types';
 	import type { WeeklySchedule } from '../../settings';
 	import { Info, Pencil, Trash2 } from '@lucide/svelte';
+	import { Button, Chip, IconButton } from '../../ui/components';
 
 	interface Props {
 		templates?: SplitTemplate[];
@@ -9,8 +10,8 @@
 		currentSchedule?: WeeklySchedule;
 	}
 
-	let { 
-		templates: initialTemplates = [], 
+	let {
+		templates: initialTemplates = [],
 		currentTemplateId = "",
 		currentSchedule = {}
 	}: Props = $props();
@@ -35,7 +36,7 @@
 			selectedTemplateId = currentTemplateId;
 		}
 	});
-	
+
 	$effect(() => {
 		if (currentSchedule && Object.keys(currentSchedule).length > 0 && Object.keys(schedule).length === 0) {
 			schedule = { ...currentSchedule };
@@ -44,14 +45,14 @@
 
 	// Handle custom template created from builder
 	let customTemplate: SplitTemplate | null = $state(null);
-	
+
 	$effect(() => {
 		const handler = (event: CustomEvent) => {
 			const { template } = event.detail as { template: SplitTemplate };
 			customTemplate = template;
 			selectedTemplateId = template.id;
 			// Add to custom templates list if not already there
-			if (!customTemplates.find(t => t.id === template.id) && 
+			if (!customTemplates.find(t => t.id === template.id) &&
 			    !initialTemplates.find(t => t.id === template.id)) {
 				customTemplates = [...customTemplates, template];
 			}
@@ -119,9 +120,9 @@
 	function confirmSetup() {
 		const finalTemplateId = customTemplate?.id || selectedTemplateId;
 		const event = new CustomEvent('confirm-setup', {
-			detail: { 
-				templateId: finalTemplateId, 
-				schedule 
+			detail: {
+				templateId: finalTemplateId,
+				schedule
 			},
 		});
 		document.dispatchEvent(event);
@@ -202,8 +203,11 @@
 						</button>
 						{#if template.isCustom}
 							<div class="gym-buddy-template-actions">
-								<button
-									class="gym-buddy-template-action-btn gym-buddy-template-rename-btn"
+								<IconButton
+									icon={Pencil}
+									variant="ghost"
+									size="sm"
+									ariaLabel="Rename template"
 									onclick={(e) => {
 										e.stopPropagation();
 										const event = new CustomEvent('rename-template', {
@@ -211,12 +215,12 @@
 										});
 										document.dispatchEvent(event);
 									}}
-									title="Rename template"
-								>
-									<Pencil size={14} />
-								</button>
-								<button
-									class="gym-buddy-template-action-btn gym-buddy-template-delete-btn"
+								/>
+								<IconButton
+									icon={Trash2}
+									variant="danger"
+									size="sm"
+									ariaLabel="Delete template"
 									onclick={(e) => {
 										e.stopPropagation();
 										const event = new CustomEvent('delete-template', {
@@ -224,10 +228,7 @@
 										});
 										document.dispatchEvent(event);
 									}}
-									title="Delete template"
-								>
-									<Trash2 size={14} />
-								</button>
+								/>
 							</div>
 						{/if}
 					</div>
@@ -257,13 +258,13 @@
 			</div>
 
 			<div class="gym-buddy-setup-actions">
-				<button 
-					class="gym-buddy-btn-primary" 
+				<Button
+					variant="primary"
 					onclick={nextStep}
 					disabled={!selectedTemplateId && !customTemplate}
 				>
 					Continue
-				</button>
+				</Button>
 			</div>
 		</div>
 	{/if}
@@ -280,21 +281,19 @@
 						<div class="gym-buddy-schedule-row">
 							<span class="gym-buddy-schedule-day">{day.label}</span>
 							<div class="gym-buddy-schedule-splits">
-								<button
-									class="gym-buddy-split-chip"
-									class:active={!schedule[day.key as keyof WeeklySchedule]}
+								<Chip
+									active={!schedule[day.key as keyof WeeklySchedule]}
 									onclick={() => setDaySplit(day.key, null)}
 								>
 									Rest / Off
-								</button>
+								</Chip>
 								{#each selectedTemplate.splits as split}
-									<button
-										class="gym-buddy-split-chip"
-										class:active={schedule[day.key as keyof WeeklySchedule] === split.id}
+									<Chip
+										active={schedule[day.key as keyof WeeklySchedule] === split.id}
 										onclick={() => setDaySplit(day.key, split.id)}
 									>
 										{split.name}
-									</button>
+									</Chip>
 								{/each}
 							</div>
 						</div>
@@ -303,15 +302,15 @@
 			{/if}
 
 			<div class="gym-buddy-setup-actions">
-				<button class="gym-buddy-btn-secondary" onclick={prevStep}>
+				<Button variant="ghost" onclick={prevStep}>
 					Back
-				</button>
-				<button class="gym-buddy-btn-text" onclick={skipSchedule}>
+				</Button>
+				<Button variant="ghost" onclick={skipSchedule}>
 					Skip
-				</button>
-				<button class="gym-buddy-btn-primary" onclick={nextStep}>
+				</Button>
+				<Button variant="primary" onclick={nextStep}>
 					Continue
-				</button>
+				</Button>
 			</div>
 		</div>
 	{/if}
@@ -329,7 +328,7 @@
 					{#if selectedTemplate}
 						<div class="gym-buddy-confirm-splits">
 							{#each selectedTemplate.splits as split}
-								<span class="gym-buddy-split-chip">{split.name}</span>
+								<Chip size="sm" active={false}>{split.name}</Chip>
 							{/each}
 						</div>
 					{/if}
@@ -355,12 +354,12 @@
 			</div>
 
 			<div class="gym-buddy-setup-actions">
-				<button class="gym-buddy-btn-secondary" onclick={prevStep}>
+				<Button variant="ghost" onclick={prevStep}>
 					Back
-				</button>
-				<button class="gym-buddy-btn-primary" onclick={confirmSetup}>
+				</Button>
+				<Button variant="primary" onclick={confirmSetup}>
 					Save Configuration
-				</button>
+				</Button>
 			</div>
 		</div>
 	{/if}

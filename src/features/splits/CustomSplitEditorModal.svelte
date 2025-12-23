@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { SplitTemplate, TrainingSplit } from '../../types';
+	import { Button, Input } from '../../ui/components';
 
 	interface Props {
 		customTemplates?: SplitTemplate[];
@@ -38,7 +39,7 @@
 
 	function addSplit() {
 		if (!currentSplitName.trim()) return;
-		
+
 		const muscleGroups = currentMuscleGroups
 			.split(',')
 			.map(m => m.trim())
@@ -101,17 +102,17 @@
 	{#if !editingTemplate && customTemplates.length === 0}
 		<div class="gym-buddy-empty-state">
 			<p>No custom splits yet. Create your first one!</p>
-			<button class="gym-buddy-button-primary" onclick={startNewTemplate}>
+			<Button variant="primary" onclick={startNewTemplate}>
 				Create New Split Template
-			</button>
+			</Button>
 		</div>
 	{:else if !editingTemplate}
 		<div class="gym-buddy-template-list">
 			<div class="gym-buddy-template-list-header">
 				<h3>Your Custom Splits</h3>
-				<button class="gym-buddy-button-primary" onclick={startNewTemplate}>
+				<Button variant="primary" size="sm" onclick={startNewTemplate}>
 					+ New Template
-				</button>
+				</Button>
 			</div>
 			{#each customTemplates as template}
 				<div class="gym-buddy-template-item">
@@ -120,27 +121,24 @@
 						<p>{template.splits.length} split{template.splits.length !== 1 ? 's' : ''}</p>
 					</div>
 					<div class="gym-buddy-template-actions">
-						<button class="gym-buddy-button-secondary" onclick={() => startEditTemplate(template)}>
+						<Button variant="ghost" size="sm" onclick={() => startEditTemplate(template)}>
 							Edit
-						</button>
-						<button class="gym-buddy-button-danger" onclick={() => deleteTemplate(template.id)}>
+						</Button>
+						<Button variant="danger" size="sm" onclick={() => deleteTemplate(template.id)}>
 							Delete
-						</button>
+						</Button>
 					</div>
 				</div>
 			{/each}
 		</div>
 	{:else}
 		<div class="gym-buddy-editor-form">
-			<div class="gym-buddy-form-group">
-				<label for="template-name-input">Template Name</label>
-				<input
-					id="template-name-input"
-					type="text"
-					bind:value={templateName}
-					placeholder="e.g., My Custom Split"
-				/>
-			</div>
+			<Input
+				bind:value={templateName}
+				label="Template Name"
+				placeholder="e.g., My Custom Split"
+				id="template-name-input"
+			/>
 
 			<div class="gym-buddy-splits-section">
 				<h3>Splits</h3>
@@ -148,9 +146,9 @@
 					<div class="gym-buddy-split-item">
 						<div class="gym-buddy-split-header">
 							<span class="gym-buddy-split-name">{split.name}</span>
-							<button class="gym-buddy-button-danger-small" onclick={() => removeSplit(index)}>
+							<Button variant="danger" size="sm" onclick={() => removeSplit(index)}>
 								Remove
-							</button>
+							</Button>
 						</div>
 						<div class="gym-buddy-split-muscles">
 							{split.muscleGroups.join(', ')}
@@ -159,40 +157,35 @@
 				{/each}
 
 				<div class="gym-buddy-add-split">
+					<Input
+						bind:value={currentSplitName}
+						label="Split Name"
+						placeholder="e.g., Push Day"
+						id="split-name-input"
+					/>
 					<div class="gym-buddy-form-group">
-						<label for="split-name-input">Split Name</label>
-						<input
-							id="split-name-input"
-							type="text"
-							bind:value={currentSplitName}
-							placeholder="e.g., Push Day"
-						/>
-					</div>
-					<div class="gym-buddy-form-group">
-						<label for="muscle-groups-input">Muscle Groups (comma-separated)</label>
-						<input
-							id="muscle-groups-input"
-							type="text"
+						<Input
 							bind:value={currentMuscleGroups}
+							label="Muscle Groups (comma-separated)"
 							placeholder="e.g., Chest, Shoulders, Triceps"
+							id="muscle-groups-input"
 						/>
 						<small>Available: {availableMuscles.join(', ')}</small>
 					</div>
-					<button class="gym-buddy-button-secondary" onclick={addSplit}>
+					<Button variant="ghost" onclick={addSplit}>
 						Add Split
-					</button>
+					</Button>
 				</div>
 			</div>
 
 			<div class="gym-buddy-form-actions">
-				<button class="gym-buddy-button-secondary" onclick={cancelEdit}>
+				<Button variant="ghost" onclick={cancelEdit}>
 					Cancel
-				</button>
-				<button class="gym-buddy-button-primary" onclick={saveTemplate} disabled={!templateName.trim() || splits.length === 0}>
+				</Button>
+				<Button variant="primary" onclick={saveTemplate} disabled={!templateName.trim() || splits.length === 0}>
 					Save Template
-				</button>
+				</Button>
 			</div>
 		</div>
 	{/if}
 </div>
-

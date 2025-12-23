@@ -1,6 +1,6 @@
 <script lang="ts">
 	import NumberStepper from './NumberStepper.svelte';
-	import {WorkoutSet} from '../../types';
+	import type {WorkoutSet} from '../../types';
 	import { Check } from '@lucide/svelte';
 
 	interface Props {

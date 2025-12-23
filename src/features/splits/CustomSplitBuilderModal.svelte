@@ -1,7 +1,9 @@
 <script lang="ts">
-	import type { SplitTemplate, TrainingSplit } from '../../types';
+	import type { SplitTemplate } from '../../types';
 	import type { AvailableSplit } from './splitTemplates';
 	import { getAllAvailableSplits, createCompositeTemplate } from './splitTemplates';
+	import { Button, Chip, Input, IconButton } from '../../ui/components';
+	import { ChevronDown, ChevronRight } from '@lucide/svelte';
 
 	interface Props {
 		builtInTemplates?: SplitTemplate[];
@@ -19,7 +21,7 @@
 
 	// Selected splits (using unique IDs)
 	let selectedSplitIds = $state<Set<string>>(new Set());
-	
+
 	// Template name for saving (optional)
 	let templateName = $state('');
 	let showSaveOption = $state(false);
@@ -30,13 +32,13 @@
 	function toggleSplit(availableSplit: AvailableSplit) {
 		const uniqueId = `${availableSplit.templateId}-${availableSplit.split.id}`;
 		const newSelected = new Set(selectedSplitIds);
-		
+
 		if (newSelected.has(uniqueId)) {
 			newSelected.delete(uniqueId);
 		} else {
 			newSelected.add(uniqueId);
 		}
-		
+
 		selectedSplitIds = newSelected;
 	}
 
@@ -94,25 +96,23 @@
 						{selectedSplits.length} selected
 					</span>
 				</div>
-				<button
-					class="gym-buddy-collapse-toggle"
+				<IconButton
+					icon={splitsExpanded ? ChevronDown : ChevronRight}
+					variant="ghost"
+					size="sm"
+					ariaLabel={splitsExpanded ? "Collapse" : "Expand"}
 					onclick={() => splitsExpanded = !splitsExpanded}
-					title={splitsExpanded ? "Collapse" : "Expand"}
-				>
-					{splitsExpanded ? '▼' : '▶'}
-				</button>
+				/>
 			</div>
 			{#if splitsExpanded}
 			<div class="gym-buddy-split-chips">
 				{#each allSplits as availableSplit}
-					<button
-						class="gym-buddy-split-chip"
-						class:active={isSplitSelected(availableSplit)}
+					<Chip
+						active={isSplitSelected(availableSplit)}
 						onclick={() => toggleSplit(availableSplit)}
-						title={availableSplit.split.muscleGroups.join(', ')}
 					>
 						{availableSplit.split.name}
-					</button>
+					</Chip>
 				{/each}
 			</div>
 			{/if}
@@ -126,13 +126,12 @@
 				</div>
 				<div class="gym-buddy-selected-splits-chips">
 					{#each selectedSplits as availableSplit}
-						<button
-							class="gym-buddy-split-chip active"
+						<Chip
+							active={true}
 							onclick={() => toggleSplit(availableSplit)}
-							title={availableSplit.split.muscleGroups.join(', ')}
 						>
 							{availableSplit.split.name}
-						</button>
+						</Chip>
 					{/each}
 				</div>
 			</div>
@@ -149,26 +148,25 @@
 			<span>Save as custom template</span>
 		</label>
 		{#if showSaveOption}
-			<input
-				type="text"
-				class="gym-buddy-template-name-input"
-				placeholder="Template name (e.g., My Custom Split)"
+			<Input
 				bind:value={templateName}
+				placeholder="Template name (e.g., My Custom Split)"
+				size="sm"
 			/>
 		{/if}
 	</div>
 
 	<!-- Actions -->
 	<div class="gym-buddy-builder-actions">
-		<button class="gym-buddy-btn-secondary" onclick={cancel}>
+		<Button variant="ghost" onclick={cancel}>
 			Cancel
-		</button>
-		<button
-			class="gym-buddy-btn-primary"
+		</Button>
+		<Button
+			variant="primary"
 			onclick={confirmSelection}
 			disabled={selectedSplits.length === 0}
 		>
 			Continue
-		</button>
+		</Button>
 	</div>
 </div>

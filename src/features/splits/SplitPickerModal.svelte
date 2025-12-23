@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { SplitTemplate, TrainingSplit } from '../../types';
+	import { Button, Card } from '../../ui/components';
 
 	interface Props {
 		template?: SplitTemplate;
@@ -37,12 +38,9 @@
 						{suggestedSplit.muscleGroups.join(', ')}
 					</div>
 				</div>
-				<button
-					class="gym-buddy-confirm-button"
-					onclick={confirmSuggested}
-				>
+				<Button variant="primary" size="lg" fullWidth onclick={confirmSuggested}>
 					Start {suggestedSplit.name} Workout
-				</button>
+				</Button>
 			</div>
 
 			<div class="gym-buddy-divider">
@@ -58,15 +56,12 @@
 		<div class="gym-buddy-split-list">
 			{#each template.splits as split}
 				{#if !suggestedSplit || split.id !== suggestedSplit.id}
-					<button
-						class="gym-buddy-split-item"
-						onclick={() => selectSplit(split)}
-					>
+					<Card clickable onclick={() => selectSplit(split)}>
 						<div class="gym-buddy-split-name">{split.name}</div>
 						<div class="gym-buddy-split-muscles">
 							{split.muscleGroups.join(', ')}
 						</div>
-					</button>
+					</Card>
 				{/if}
 			{/each}
 		</div>

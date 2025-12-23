@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type {Exercise, TrainingSplit} from '../../types';
 	import { Heart, ChevronDown, ChevronRight } from '@lucide/svelte';
+	import { Input, Chip, IconButton } from '../../ui/components';
 
 	interface Props {
 		exercises?: Exercise[];
@@ -119,11 +120,10 @@
 		</div>
 	{/if}
 
-	<input
-		type="text"
-		class="gym-buddy-search-input"
-		placeholder="Search exercises..."
+	<Input
 		bind:value={searchQuery}
+		placeholder="Search exercises..."
+		size="md"
 	/>
 
 	{#if favoriteExercises.length > 0}
@@ -149,13 +149,13 @@
 								{exercise.muscles.join(', ')}
 							</div>
 						</div>
-						<button
-							class="gym-buddy-favorite-button active"
+						<IconButton
+							icon={Heart}
+							variant="favorite"
+							active={true}
+							ariaLabel="Remove from favorites"
 							onclick={(e) => toggleFavorite(exercise.id, e)}
-							title="Remove from favorites"
-						>
-							<Heart size={16} fill="currentColor" />
-						</button>
+						/>
 					</div>
 				{/each}
 			</div>
@@ -166,17 +166,13 @@
 		<div class="gym-buddy-section">
 			<div class="gym-buddy-section-header">
 				<h3>Recent</h3>
-				<button
-					class="gym-buddy-collapse-button"
+				<IconButton
+					icon={recentExpandedState ? ChevronDown : ChevronRight}
+					variant="ghost"
+					size="sm"
+					ariaLabel={recentExpandedState ? "Collapse" : "Expand"}
 					onclick={toggleRecentExpanded}
-					title={recentExpandedState ? "Collapse" : "Expand"}
-				>
-					{#if recentExpandedState}
-						<ChevronDown size={16} />
-					{:else}
-						<ChevronRight size={16} />
-					{/if}
-				</button>
+				/>
 			</div>
 			{#if recentExpandedState}
 			<div class="gym-buddy-exercise-list">
@@ -199,18 +195,13 @@
 								{exercise.muscles.join(', ')}
 							</div>
 						</div>
-						<button
-							class="gym-buddy-favorite-button"
-							class:active={isFavorite(exercise.id)}
+						<IconButton
+							icon={Heart}
+							variant="favorite"
+							active={isFavorite(exercise.id)}
+							ariaLabel={isFavorite(exercise.id) ? "Remove from favorites" : "Add to favorites"}
 							onclick={(e) => toggleFavorite(exercise.id, e)}
-							title={isFavorite(exercise.id) ? "Remove from favorites" : "Add to favorites"}
-						>
-							{#if isFavorite(exercise.id)}
-								<Heart size={16} fill="currentColor" />
-							{:else}
-								<Heart size={16} />
-							{/if}
-						</button>
+						/>
 					</div>
 				{/each}
 			</div>
@@ -233,28 +224,23 @@
 					</div>
 				{/if}
 			</div>
-			<button
-				class="gym-buddy-collapse-button"
+			<IconButton
+				icon={muscleGroupsExpandedState ? ChevronDown : ChevronRight}
+				variant="ghost"
+				size="sm"
+				ariaLabel={muscleGroupsExpandedState ? "Collapse" : "Expand"}
 				onclick={toggleMuscleGroupsExpanded}
-				title={muscleGroupsExpandedState ? "Collapse" : "Expand"}
-			>
-				{#if muscleGroupsExpandedState}
-					<ChevronDown size={16} />
-				{:else}
-					<ChevronRight size={16} />
-				{/if}
-			</button>
+			/>
 		</div>
 		{#if muscleGroupsExpandedState}
 		<div class="gym-buddy-muscle-chips">
 			{#each allMuscles as muscle}
-				<button
-					class="gym-buddy-muscle-chip"
-					class:active={selectedMuscles.includes(muscle)}
+				<Chip
+					active={selectedMuscles.includes(muscle)}
 					onclick={() => toggleMuscle(muscle)}
 				>
 					{muscle}
-				</button>
+				</Chip>
 			{/each}
 		</div>
 		{/if}
@@ -282,18 +268,13 @@
 							{exercise.muscles.join(', ')}
 						</div>
 					</div>
-					<button
-						class="gym-buddy-favorite-button"
-						class:active={isFavorite(exercise.id)}
+					<IconButton
+						icon={Heart}
+						variant="favorite"
+						active={isFavorite(exercise.id)}
+						ariaLabel={isFavorite(exercise.id) ? "Remove from favorites" : "Add to favorites"}
 						onclick={(e) => toggleFavorite(exercise.id, e)}
-						title={isFavorite(exercise.id) ? "Remove from favorites" : "Add to favorites"}
-					>
-						{#if isFavorite(exercise.id)}
-							<Heart size={16} fill="currentColor" />
-						{:else}
-							<Heart size={16} />
-						{/if}
-					</button>
+					/>
 				</div>
 			{/each}
 		</div>
