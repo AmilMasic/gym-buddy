@@ -26,3 +26,6 @@ data.json
 .cursor
 .debug.log
 .claude
+
+# Product planning 
+.planning
