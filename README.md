@@ -2,6 +2,8 @@
 
 Mobile-first Obsidian plugin for logging workouts with lightning-fast UX, markdown-native storage, and progress visualization.
 
+<a href="https://www.buymeacoffee.com/amilmasic"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=amilmasic&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" /></a>
+
 ## Features
 
 - **1-2 tap logging** - No typing required during sets
