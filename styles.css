@@ -1182,3 +1182,14 @@ Mobile-first design with touch-friendly targets
     --gb-icon-btn-md: 48px;
   }
 }
+
+/* ===========================================
+   Settings Validation
+   =========================================== */
+.gb-validation-error {
+  color: var(--text-error);
+}
+
+.gb-input-error {
+  border-color: var(--text-error);
+}

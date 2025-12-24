@@ -150,7 +150,7 @@ Planned:
 
 ## Development
 ```bash
-git clone https://github.com/yourusername/gym-buddy
+git clone https://github.com/AmilMasic/gym-buddy
 cd gym-buddy
 npm install
 cp .env.example .env

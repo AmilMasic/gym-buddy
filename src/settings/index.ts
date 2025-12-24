@@ -138,7 +138,7 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			.setName("Workout folder")
 			.setDesc("Folder where individual workout notes are saved");
 
-		let workoutFolderValidationTimeout: NodeJS.Timeout;
+		let workoutFolderValidationTimeout: ReturnType<typeof setTimeout>;
 
 		workoutFolderSetting.addText((text) => {
 			const validateAndUpdate = (value: string) => {
@@ -147,14 +147,14 @@ export class GymBuddySettingTab extends PluginSettingTab {
 
 				if (!validation.valid || validation.error) {
 					const errorMessage = validation.error || "Invalid path";
-					descEl.innerHTML = `Folder where individual workout notes are saved<br><span style="color: var(--text-error);">${errorMessage}</span>`;
-					text.inputEl.style.borderColor = validation.valid
-						? ""
-						: "var(--text-error)";
+					descEl.empty();
+					descEl.appendText("Folder where individual workout notes are saved");
+					descEl.createEl("br");
+					descEl.createSpan({ text: errorMessage, cls: "gb-validation-error" });
+					text.inputEl.toggleClass("gb-input-error", !validation.valid);
 				} else {
-					descEl.textContent =
-						"Folder where individual workout notes are saved";
-					text.inputEl.style.borderColor = "";
+					descEl.setText("Folder where individual workout notes are saved");
+					text.inputEl.removeClass("gb-input-error");
 				}
 			};
 
@@ -217,7 +217,7 @@ export class GymBuddySettingTab extends PluginSettingTab {
 				.setName("Weekly note folder")
 				.setDesc("Folder where weekly summary notes are saved");
 
-			let weeklyFolderValidationTimeout: NodeJS.Timeout;
+			let weeklyFolderValidationTimeout: ReturnType<typeof setTimeout>;
 
 			weeklyFolderSetting.addText((text) => {
 				const validateAndUpdate = (value: string) => {
@@ -226,14 +226,14 @@ export class GymBuddySettingTab extends PluginSettingTab {
 
 					if (!validation.valid || validation.error) {
 						const errorMessage = validation.error || "Invalid path";
-						descEl.innerHTML = `Folder where weekly summary notes are saved<br><span style="color: var(--text-error);">${errorMessage}</span>`;
-						text.inputEl.style.borderColor = validation.valid
-							? ""
-							: "var(--text-error)";
+						descEl.empty();
+						descEl.appendText("Folder where weekly summary notes are saved");
+						descEl.createEl("br");
+						descEl.createSpan({ text: errorMessage, cls: "gb-validation-error" });
+						text.inputEl.toggleClass("gb-input-error", !validation.valid);
 					} else {
-						descEl.textContent =
-							"Folder where weekly summary notes are saved";
-						text.inputEl.style.borderColor = "";
+						descEl.setText("Folder where weekly summary notes are saved");
+						text.inputEl.removeClass("gb-input-error");
 					}
 				};
 
