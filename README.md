@@ -40,8 +40,6 @@ Gym Buddy is an Obsidian plugin designed for logging weight training workouts on
 
 - Filterable by muscle group
 
-- Custom exercise support
-
 - Recent/favorites tracking
 
 ### Training Splits
@@ -113,7 +111,7 @@ volume: 15420
 | 3   | 185    | 6    | 9   |
 ```
 
-Dataview Example
+## Dataview Example
 ```dataview
 TABLE duration, volume, split
 FROM "Workouts"
@@ -136,17 +134,14 @@ SORT date DESC
 
 ## Roadmap
 
-
-Current: Mobile stability and performance
-
 Planned:
 
-- PR tracking and notifications
-- Progress charts
-- Workout templates
+- Add custom exercises
+- Rename exercises
 - Exercise history view
-- Superset support
-- Import from other apps
+- Periodization support
+
+Open to suggestions — [open an issue](https://github.com/AmilMasic/gym-buddy/issues)!
 
 ## Development
 ```bash
