@@ -1283,3 +1283,55 @@ Mobile-first design with touch-friendly targets
 .gb-input-error {
   border-color: var(--text-error);
 }
+
+/* ===========================================
+   Training Setup Mobile Fixes (GB-20)
+   =========================================== */
+@media (max-width: 768px) {
+  /* Fix modal widths - prevent horizontal scroll on mobile */
+  .gb-training-setup,
+  .gb-custom-split-editor,
+  .gb-custom-split-builder {
+    min-width: 0;
+    width: 100%;
+  }
+
+  /* Fix schedule step - stack day labels above chips */
+  .gb-schedule-row {
+    flex-direction: column;
+    gap: var(--gb-space-sm);
+  }
+
+  .gb-schedule-day {
+    width: 100%;
+    padding-top: 0;
+    font-weight: 600;
+  }
+
+  .gb-schedule-splits {
+    width: 100%;
+    gap: var(--gb-space-sm);
+  }
+
+  /* Fix confirm step - improve spacing and readability */
+  .gb-confirm-section h3 {
+    margin-bottom: var(--gb-space-md);
+  }
+
+  .gb-schedule-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--gb-space-xs);
+    padding: var(--gb-space-sm) var(--gb-space-md);
+  }
+
+  .gb-schedule-item-day {
+    font-weight: 600;
+    font-size: var(--gb-font-md);
+  }
+
+  .gb-schedule-item-split {
+    padding-left: var(--gb-space-md);
+    font-size: var(--gb-font-sm);
+  }
+}
