@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ExerciseCardProps } from "./types";
 	import type { WorkoutExercise, WorkoutSet, Exercise } from "../../types";
-	import { ChevronDown, ChevronRight, Trash2, Check } from "@lucide/svelte";
+	import { ChevronDown, ChevronRight, Trash2, Check, CheckCircle, Circle } from "@lucide/svelte";
 	import { IconButton, SetInput } from "../../ui/components";
 
 	let {
@@ -10,6 +10,7 @@
 		exerciseInfo = null,
 		showRPE = true,
 		unit = "lbs",
+		onToggleComplete,
 	}: ExerciseCardProps = $props();
 
 	let expanded = $state(true);
@@ -26,8 +27,35 @@
 		currentSet.setNumber = nextSetNumber;
 	});
 
+	// Collapse when exercise is completed
+	$effect(() => {
+		if (exercise.isCompleted) {
+			expanded = false;
+		}
+	});
+
 	function toggleExpanded() {
 		expanded = !expanded;
+	}
+
+	function toggleCompletion(e: MouseEvent) {
+		e.stopPropagation();
+		const newCompletedState = !exercise.isCompleted;
+
+		// Dispatch event to parent
+		if (onToggleComplete) {
+			onToggleComplete(exerciseIndex, newCompletedState);
+		}
+
+		// Also use custom event for backwards compatibility
+		document.dispatchEvent(
+			new CustomEvent("exercise-toggle-complete", {
+				detail: {
+					index: exerciseIndex,
+					isCompleted: newCompletedState
+				},
+			})
+		);
 	}
 
 	function removeExercise(e: MouseEvent) {
@@ -60,13 +88,25 @@
 	}
 </script>
 
-<div class="gb-exercise-card" class:gb-exercise-card--collapsed={!expanded}>
-	<button
-		type="button"
-		class="gb-exercise-card-header"
-		onclick={toggleExpanded}
-	>
-		<div class="gb-exercise-card-title">
+<div class="gb-exercise-card" class:gb-exercise-card--collapsed={!expanded} class:gb-exercise-card--completed={exercise.isCompleted}>
+	<div class="gb-exercise-card-header">
+		<button
+			type="button"
+			class="gb-completion-toggle"
+			onclick={toggleCompletion}
+			aria-label={exercise.isCompleted ? "Mark as incomplete" : "Mark as complete"}
+		>
+			{#if exercise.isCompleted}
+				<CheckCircle size={24} />
+			{:else}
+				<Circle size={24} />
+			{/if}
+		</button>
+		<button
+			type="button"
+			class="gb-exercise-card-title"
+			onclick={toggleExpanded}
+		>
 			{#if expanded}
 				<ChevronDown size={16} />
 			{:else}
@@ -79,7 +119,7 @@
 					{exercise.sets.length === 1 ? "set" : "sets"}</span
 				>
 			</div>
-		</div>
+		</button>
 		<IconButton
 			icon={Trash2}
 			variant="danger"
@@ -87,7 +127,7 @@
 			ariaLabel="Remove exercise"
 			onclick={removeExercise}
 		/>
-	</button>
+	</div>
 
 	{#if expanded}
 		<div class="gb-exercise-card-content">

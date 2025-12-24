@@ -850,6 +850,15 @@ Mobile-first design with touch-friendly targets
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--gb-radius-lg);
 	overflow: hidden;
+	transition: opacity 0.2s ease;
+}
+
+.gb-exercise-card--completed {
+	opacity: 0.6;
+}
+
+.gb-exercise-card--completed .gb-exercise-card-header {
+	background: var(--background-secondary);
 }
 
 .gb-exercise-card-header {
@@ -867,6 +876,35 @@ Mobile-first design with touch-friendly targets
 	transition: background 0.2s ease;
 }
 
+.gb-completion-toggle {
+	width: 44px;
+	height: 44px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	color: var(--text-muted);
+	transition: all 0.2s ease;
+	flex-shrink: 0;
+	padding: 0;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.gb-completion-toggle:hover {
+	color: var(--interactive-accent);
+	transform: scale(1.1);
+}
+
+.gb-completion-toggle:active {
+	transform: scale(0.95);
+}
+
+.gb-exercise-card--completed .gb-completion-toggle {
+	color: var(--interactive-accent);
+}
+
 .gb-exercise-card-header:hover {
 	background: var(--background-modifier-hover);
 }
@@ -877,6 +915,17 @@ Mobile-first design with touch-friendly targets
 	gap: var(--gb-space-sm);
 	flex: 1;
 	min-width: 0; /* Allow text truncation if needed */
+	/* Button reset for clickable title */
+	background: transparent;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	color: inherit;
+	text-align: left;
+}
+
+.gb-exercise-card-title:focus {
+	outline: none;
 }
 
 .gb-exercise-card-info {
@@ -963,6 +1012,7 @@ Mobile-first design with touch-friendly targets
 	display: flex;
 	flex-direction: column;
 	gap: var(--gb-space-sm);
+	margin-top: var(--gb-space-lg);
 }
 
 .gb-next-set-label {
@@ -989,6 +1039,32 @@ Mobile-first design with touch-friendly targets
 }
 
 .gb-template-info-icon:hover {
+	opacity: 1;
+}
+
+/* Info button - 44x44px touch target for mobile */
+.gb-info-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	margin: -14px;
+	padding: 0;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	opacity: 0.6;
+	transition: opacity 0.2s ease;
+	color: inherit;
+}
+
+.gb-info-btn:hover {
+	opacity: 1;
+}
+
+.gb-info-btn:focus {
+	outline: none;
 	opacity: 1;
 }
 

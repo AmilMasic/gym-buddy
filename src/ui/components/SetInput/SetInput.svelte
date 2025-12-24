@@ -63,6 +63,7 @@
 			max={100}
 			step={1}
 			label="Reps"
+			quickIncrements={[5, 10]}
 		/>
 	</div>
 

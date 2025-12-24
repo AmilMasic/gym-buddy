@@ -147,6 +147,7 @@
 				bind:value={templateName}
 				placeholder="Template name (e.g., My Custom Split)"
 				size="sm"
+				onsubmit={confirmSelection}
 			/>
 		{/if}
 	</div>

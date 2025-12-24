@@ -14,6 +14,7 @@ export type ExerciseCardProps = {
   exerciseInfo?: Exercise | null;
   showRPE?: boolean;
   unit?: string;
+  onToggleComplete?: (exerciseIndex: number, isCompleted: boolean) => void;
 };
 
 export type WorkoutTimerProps = {

@@ -35,6 +35,7 @@ export type WorkoutExercise = {
 	name: string;
 	exerciseId?: string;
 	sets: WorkoutSet[];
+	isCompleted?: boolean;
 };
 
 export type Workout = {

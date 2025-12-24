@@ -11,8 +11,16 @@
     id,
     fullWidth = true,
     class: className = '',
-    oninput
+    oninput,
+    onsubmit
   }: InputProps = $props();
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && onsubmit) {
+      event.preventDefault();
+      onsubmit();
+    }
+  }
 </script>
 
 <div class="gb-input-wrapper {className}" class:gb-input-wrapper--full-width={fullWidth}>
@@ -27,6 +35,7 @@
     {disabled}
     bind:value
     {oninput}
+    onkeydown={handleKeydown}
   />
 </div>
 

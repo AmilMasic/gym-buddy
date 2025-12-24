@@ -60,9 +60,14 @@
 								<span class="gb-split-name">{split.name}</span>
 								{#if !split.name.toLowerCase().includes('total body') && !split.name.toLowerCase().includes('full body')}
 									<div class="gb-template-info-wrapper">
-										<span class="gb-template-info-icon" title={split.muscleGroups.join(', ')}>
-											<Info size={14} />
-										</span>
+										<button
+											type="button"
+											class="gb-info-btn"
+											title={split.muscleGroups.join(', ')}
+											onclick={(e) => e.stopPropagation()}
+										>
+											<Info size={16} />
+										</button>
 										<div class="gb-template-tooltip">
 											<div class="gb-tooltip-title">Muscle Groups:</div>
 											<div class="gb-tooltip-content">

@@ -26,6 +26,7 @@ export class ActiveWorkoutView extends ItemView {
 	private openPickerHandler: (() => void) | null = null;
 	private logSetHandler: ((e: Event) => void) | null = null;
 	private removeExerciseHandler: ((e: Event) => void) | null = null;
+	private toggleCompleteHandler: ((e: Event) => void) | null = null;
 	private finishHandler: (() => void) | null = null;
 	private cancelHandler: (() => void) | null = null;
 
@@ -119,6 +120,8 @@ export class ActiveWorkoutView extends ItemView {
 		this.logSetHandler = (e) => this.handleLogSet(e as CustomEvent);
 		this.removeExerciseHandler = (e) =>
 			this.handleRemoveExercise(e as CustomEvent);
+		this.toggleCompleteHandler = (e) =>
+			this.handleToggleComplete(e as CustomEvent);
 		this.finishHandler = () => void this.finishWorkout();
 		this.cancelHandler = () => this.cancelWorkout();
 
@@ -130,6 +133,10 @@ export class ActiveWorkoutView extends ItemView {
 		document.addEventListener(
 			"remove-exercise",
 			this.removeExerciseHandler
+		);
+		document.addEventListener(
+			"exercise-toggle-complete",
+			this.toggleCompleteHandler
 		);
 		document.addEventListener("finish-workout", this.finishHandler);
 		document.addEventListener("cancel-workout", this.cancelHandler);
@@ -156,6 +163,13 @@ export class ActiveWorkoutView extends ItemView {
 				this.removeExerciseHandler
 			);
 			this.removeExerciseHandler = null;
+		}
+		if (this.toggleCompleteHandler) {
+			document.removeEventListener(
+				"exercise-toggle-complete",
+				this.toggleCompleteHandler
+			);
+			this.toggleCompleteHandler = null;
 		}
 		if (this.finishHandler) {
 			document.removeEventListener("finish-workout", this.finishHandler);
@@ -214,6 +228,21 @@ export class ActiveWorkoutView extends ItemView {
 
 		this.plugin.activeWorkout.exercises.splice(index, 1);
 		this.mountComponent();
+	}
+
+	private handleToggleComplete(event: CustomEvent) {
+		const { index, isCompleted } = event.detail as {
+			index: number;
+			isCompleted: boolean;
+		};
+
+		if (!this.plugin.activeWorkout) return;
+
+		const exercise = this.plugin.activeWorkout.exercises[index];
+		if (exercise) {
+			exercise.isCompleted = isCompleted;
+			this.mountComponent();
+		}
 	}
 
 	private async finishWorkout() {

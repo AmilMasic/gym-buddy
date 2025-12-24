@@ -21,4 +21,6 @@ export type InputProps = {
   class?: string;
   /** Input event handler */
   oninput?: (event: Event) => void;
+  /** Submit handler (called on Enter key) */
+  onsubmit?: () => void;
 }
