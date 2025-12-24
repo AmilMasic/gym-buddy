@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { ActiveWorkoutViewProps } from "./types";
 	import type { ActiveWorkout, Exercise } from "../../types";
-	import { Plus, X, Flag } from "@lucide/svelte";
 	import { Button } from "../../ui/components";
 	import WorkoutTimer from "./WorkoutTimer.svelte";
 	import ExerciseCard from "./ExerciseCard.svelte";
@@ -65,7 +64,7 @@
 	{/if}
 
 	<!-- Add Exercise Button -->
-	<Button variant="ghost" size="lg" fullWidth icon={Plus} onclick={addExercise}>
+	<Button variant="ghost" size="lg" fullWidth icon="plus" onclick={addExercise}>
 		Add Exercise
 	</Button>
 
@@ -76,7 +75,7 @@
 				variant="primary"
 				size="lg"
 				fullWidth
-				icon={Flag}
+				icon="flag"
 				onclick={finishWorkout}
 			>
 				Finish Workout
@@ -86,7 +85,7 @@
 
 	<!-- Cancel Option -->
 	<div class="gb-workout-cancel">
-		<Button variant="ghost" size="sm" icon={X} onclick={cancelWorkout}>
+		<Button variant="ghost" size="sm" icon="x" onclick={cancelWorkout}>
 			Cancel Workout
 		</Button>
 	</div>

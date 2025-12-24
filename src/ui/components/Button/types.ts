@@ -1,4 +1,4 @@
-import type { Snippet, Component } from 'svelte';
+import type { Snippet } from 'svelte';
 
 export type ButtonVariant = 'primary' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -12,8 +12,8 @@ export type ButtonProps = {
   disabled?: boolean;
   /** Full width button */
   fullWidth?: boolean;
-  /** Lucide icon component to show before text */
-  icon?: Component<{ size?: number }>;
+  /** Obsidian icon name to show before text */
+  icon?: string;
   /** Icon size (defaults based on button size) */
   iconSize?: number;
   /** Button type attribute */

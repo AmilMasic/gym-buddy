@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { TrainingSetupProps } from './types';
 	import type { SplitTemplate, TrainingSplit, WeeklySchedule } from '../../types';
-	import { Info, Pencil, Trash2, User, Plus } from '@lucide/svelte';
-	import { Button, Chip, IconButton } from '../../ui/components';
+	import { Button, Chip, IconButton, Icon } from '../../ui/components';
 
 	let {
 		templates: initialTemplates = [],
@@ -182,12 +181,12 @@
 									<div class="gb-template-name">{template.name}</div>
 									{#if template.isCustom}
 										<div class="gb-custom-icon" title="Custom Template">
-											<User size={14} />
+											<Icon name="user" size={14} />
 										</div>
 									{/if}
 									<div class="gb-template-info-wrapper">
 										<span class="gb-template-info-icon" title={template.splits.map(s => s.name).join(' • ')}>
-											<Info size={14} />
+											<Icon name="info" size={14} />
 										</span>
 										<div class="gb-template-tooltip">
 											<div class="gb-tooltip-title">Splits:</div>
@@ -202,7 +201,7 @@
 						{#if template.isCustom}
 							<div class="gb-template-actions">
 								<IconButton
-									icon={Pencil}
+									icon="pencil"
 									variant="ghost"
 									size="sm"
 									ariaLabel="Rename template"
@@ -215,7 +214,7 @@
 									}}
 								/>
 								<IconButton
-									icon={Trash2}
+									icon="trash-2"
 									variant="danger"
 									size="sm"
 									ariaLabel="Delete template"
@@ -241,11 +240,11 @@
 						<div class="gb-template-name-group">
 							<div class="gb-template-name">Custom</div>
 							<div class="gb-custom-icon" title="Build Your Own">
-								<Plus size={14} />
+								<Icon name="plus" size={14} />
 							</div>
 							<div class="gb-template-info-wrapper">
 								<span class="gb-template-info-icon" title="Mix and match splits from any template">
-									<Info size={14} />
+									<Icon name="info" size={14} />
 								</span>
 								<div class="gb-template-tooltip">
 									<div class="gb-tooltip-title">Custom Builder:</div>

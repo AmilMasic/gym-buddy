@@ -31,7 +31,6 @@
 		"vitest": "^2.1.9"
 	},
 	"dependencies": {
-		"@lucide/svelte": "^0.562.0",
 		"obsidian": "latest"
 	}
 }

@@ -1,11 +1,9 @@
-import type { Component } from 'svelte';
-
 export type IconButtonVariant = 'ghost' | 'danger' | 'favorite';
 export type IconButtonSize = 'sm' | 'md' | 'lg';
 
 export type IconButtonProps = {
-  /** Lucide icon component */
-  icon: Component<{ size?: number; fill?: string }>;
+  /** Obsidian icon name (e.g., 'heart', 'plus', 'minus') */
+  icon: string;
   /** Visual variant */
   variant?: IconButtonVariant;
   /** Size preset */

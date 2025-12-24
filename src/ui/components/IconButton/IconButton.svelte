@@ -1,8 +1,9 @@
 <script lang="ts">
   import type { IconButtonProps } from './types';
+  import Icon from '../Icon/Icon.svelte';
 
   let {
-    icon: Icon,
+    icon,
     variant = 'ghost',
     size = 'md',
     active = false,
@@ -22,10 +23,7 @@
   {disabled}
   {onclick}
 >
-  <Icon
-    size={sizeToIconSize[size]}
-    fill={active && variant === 'favorite' ? 'currentColor' : 'none'}
-  />
+  <Icon name={icon} size={sizeToIconSize[size]} />
 </button>
 
 <style>
@@ -99,5 +97,9 @@
 
   .gb-icon-btn--favorite.gb-icon-btn--active {
     color: var(--text-error);
+  }
+
+  .gb-icon-btn--favorite.gb-icon-btn--active :global(svg) {
+    fill: currentColor;
   }
 </style>

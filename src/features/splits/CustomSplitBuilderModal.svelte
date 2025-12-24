@@ -3,7 +3,6 @@
 	import { getAllAvailableSplits, createCompositeTemplate } from './splitTemplates';
 	import type { SplitTemplate } from '../../types';
 	import { Button, Chip, Input, IconButton } from '../../ui/components';
-	import { ChevronDown, ChevronRight } from '@lucide/svelte';
 
 	let { builtInTemplates = [], customTemplates = [] }: CustomSplitBuilderProps = $props();
 
@@ -92,7 +91,7 @@
 					</span>
 				</div>
 				<IconButton
-					icon={splitsExpanded ? ChevronDown : ChevronRight}
+					icon={splitsExpanded ? "chevron-down" : "chevron-right"}
 					variant="ghost"
 					size="sm"
 					ariaLabel={splitsExpanded ? "Collapse" : "Expand"}

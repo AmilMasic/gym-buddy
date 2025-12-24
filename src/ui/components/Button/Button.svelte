@@ -1,12 +1,13 @@
 <script lang="ts">
   import type { ButtonProps } from './types';
+  import Icon from '../Icon/Icon.svelte';
 
   let {
     variant = 'primary',
     size = 'md',
     disabled = false,
     fullWidth = false,
-    icon: Icon,
+    icon,
     iconSize,
     type = 'button',
     onclick,
@@ -25,8 +26,8 @@
   {disabled}
   {onclick}
 >
-  {#if Icon}
-    <Icon size={resolvedIconSize} />
+  {#if icon}
+    <Icon name={icon} size={resolvedIconSize} />
   {/if}
   {@render children()}
 </button>

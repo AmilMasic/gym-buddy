@@ -1,4 +1,6 @@
 // Primitive UI Components
+export { default as Icon } from "./Icon/Icon.svelte";
+
 export { default as Button } from "./Button/Button.svelte";
 export type { ButtonProps, ButtonVariant, ButtonSize } from "./Button/types";
 

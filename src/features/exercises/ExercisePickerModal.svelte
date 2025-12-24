@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { ExercisePickerProps } from './types';
 	import type { Exercise, TrainingSplit } from '../../types';
-	import { Heart, ChevronDown, ChevronRight } from '@lucide/svelte';
 	import { Input, Chip, IconButton } from '../../ui/components';
 
 	let {
@@ -130,7 +129,7 @@
 			<div class="gb-section-header">
 				<h3>Favorites</h3>
 				<IconButton
-					icon={favoritesExpandedState ? ChevronDown : ChevronRight}
+					icon={favoritesExpandedState ? "chevron-down" : "chevron-right"}
 					variant="ghost"
 					size="sm"
 					ariaLabel={favoritesExpandedState ? "Collapse" : "Expand"}
@@ -159,7 +158,7 @@
 							</div>
 						</div>
 						<IconButton
-							icon={Heart}
+							icon="heart"
 							variant="favorite"
 							active={true}
 							ariaLabel="Remove from favorites"
@@ -177,7 +176,7 @@
 			<div class="gb-section-header">
 				<h3>Recent</h3>
 				<IconButton
-					icon={recentExpandedState ? ChevronDown : ChevronRight}
+					icon={recentExpandedState ? "chevron-down" : "chevron-right"}
 					variant="ghost"
 					size="sm"
 					ariaLabel={recentExpandedState ? "Collapse" : "Expand"}
@@ -206,7 +205,7 @@
 							</div>
 						</div>
 						<IconButton
-							icon={Heart}
+							icon="heart"
 							variant="favorite"
 							active={isFavorite(exercise.id)}
 							ariaLabel={isFavorite(exercise.id) ? "Remove from favorites" : "Add to favorites"}
@@ -235,7 +234,7 @@
 				{/if}
 			</div>
 			<IconButton
-				icon={muscleGroupsExpandedState ? ChevronDown : ChevronRight}
+				icon={muscleGroupsExpandedState ? "chevron-down" : "chevron-right"}
 				variant="ghost"
 				size="sm"
 				ariaLabel={muscleGroupsExpandedState ? "Collapse" : "Expand"}
@@ -279,7 +278,7 @@
 						</div>
 					</div>
 					<IconButton
-						icon={Heart}
+						icon="heart"
 						variant="favorite"
 						active={isFavorite(exercise.id)}
 						ariaLabel={isFavorite(exercise.id) ? "Remove from favorites" : "Add to favorites"}

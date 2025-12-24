@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Clock } from "@lucide/svelte";
+	import { Icon } from "../../ui/components";
 	import { formatDuration } from "./workoutUtils";
 	import type { WorkoutTimerProps } from "./types";
 
@@ -23,6 +23,6 @@
 </script>
 
 <div class="gb-workout-timer">
-	<Clock size={16} />
+	<Icon name="clock" size={16} />
 	<span>{elapsed}</span>
 </div>

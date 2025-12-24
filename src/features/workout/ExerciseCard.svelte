@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { ExerciseCardProps } from "./types";
 	import type { WorkoutExercise, WorkoutSet, Exercise } from "../../types";
-	import { ChevronDown, ChevronRight, Trash2, Check, CheckCircle, Circle } from "@lucide/svelte";
-	import { IconButton, SetInput } from "../../ui/components";
+	import { IconButton, SetInput, Icon } from "../../ui/components";
 
 	let {
 		exercise,
@@ -97,9 +96,9 @@
 			aria-label={exercise.isCompleted ? "Mark as incomplete" : "Mark as complete"}
 		>
 			{#if exercise.isCompleted}
-				<CheckCircle size={24} />
+				<Icon name="check-circle" size={24} />
 			{:else}
-				<Circle size={24} />
+				<Icon name="circle" size={24} />
 			{/if}
 		</button>
 		<button
@@ -108,9 +107,9 @@
 			onclick={toggleExpanded}
 		>
 			{#if expanded}
-				<ChevronDown size={16} />
+				<Icon name="chevron-down" size={16} />
 			{:else}
-				<ChevronRight size={16} />
+				<Icon name="chevron-right" size={16} />
 			{/if}
 			<div class="gb-exercise-card-info">
 				<span class="gb-exercise-name">{exercise.name}</span>
@@ -121,7 +120,7 @@
 			</div>
 		</button>
 		<IconButton
-			icon={Trash2}
+			icon="trash-2"
 			variant="danger"
 			size="lg"
 			ariaLabel="Remove exercise"
@@ -150,7 +149,7 @@
 										@ RPE {set.rpe}</span
 									>{/if}
 							</div>
-							<Check size={16} class="gb-set-check" />
+							<Icon name="check" size={16} class="gb-set-check" />
 						</div>
 					{/each}
 				</div>

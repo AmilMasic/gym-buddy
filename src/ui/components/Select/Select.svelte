@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { SelectProps } from './types';
-  import { ChevronDown } from '@lucide/svelte';
+  import Icon from '../Icon/Icon.svelte';
 
   let {
     value = $bindable(''),
@@ -36,7 +36,7 @@
       {/each}
     </select>
     <span class="gb-select-arrow">
-      <ChevronDown size={14} />
+      <Icon name="chevron-down" size={14} />
     </span>
   </div>
 </div>

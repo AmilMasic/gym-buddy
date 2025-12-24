@@ -1,7 +1,6 @@
 <script lang="ts">
 	import NumberStepper from '../NumberStepper';
 	import type { WorkoutSet } from '../../../types';
-	import { Check } from '@lucide/svelte';
 	import { Button } from '../index';
 	import type { SetInputProps } from './types';
 
@@ -85,7 +84,7 @@
 		fullWidth
 		onclick={logSet}
 		disabled={reps <= 0}
-		icon={Check}
+		icon="check"
 	>
 		LOG SET
 	</Button>

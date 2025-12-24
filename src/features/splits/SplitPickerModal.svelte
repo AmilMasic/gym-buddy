@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { SplitPickerProps } from './types';
 	import type { SplitTemplate, TrainingSplit } from '../../types';
-	import { Info } from '@lucide/svelte';
 	import { Button, Card, IconButton } from '../../ui/components';
 
 	let { template, suggestedSplit = null, todayName = "" }: SplitPickerProps = $props();
@@ -61,7 +60,7 @@
 								{#if !split.name.toLowerCase().includes('total body') && !split.name.toLowerCase().includes('full body')}
 									<div class="gb-template-info-wrapper">
 										<IconButton
-											icon={Info}
+											icon="info"
 											variant="ghost"
 											size="sm"
 											ariaLabel={split.muscleGroups.join(', ')}

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Minus, Plus } from '@lucide/svelte';
 	import { IconButton } from '../index';
 	import type { NumberStepperProps } from './types';
 
@@ -71,7 +70,7 @@
 	{/if}
 	<div class="gb-stepper-controls" role="group" aria-label={label || undefined}>
 		<IconButton
-			icon={Minus}
+			icon="minus"
 			variant="ghost"
 			size="md"
 			onclick={decrement}
@@ -103,7 +102,7 @@
 		{/if}
 
 		<IconButton
-			icon={Plus}
+			icon="plus"
 			variant="ghost"
 			size="md"
 			onclick={increment}
