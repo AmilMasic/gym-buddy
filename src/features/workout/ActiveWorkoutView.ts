@@ -243,14 +243,27 @@ export class ActiveWorkoutView extends ItemView {
 
 		// Save to file
 		try {
-			const file = await this.plugin.storage.saveWorkout(
+			const result = await this.plugin.storage.saveWorkout(
 				workout,
 				markdown
 			);
-			new Notice(`Workout saved to ${file.path}`);
+
+			// Show appropriate notice based on result
+			if (result.weeklyNoteError) {
+				new Notice(
+					"Workout saved, but weekly note update failed",
+					5000
+				);
+			} else {
+				new Notice(`Workout saved to ${result.file.path}`);
+			}
 
 			// Open the saved file
-			await this.plugin.app.workspace.openLinkText(file.path, "", false);
+			await this.plugin.app.workspace.openLinkText(
+				result.file.path,
+				"",
+				false
+			);
 
 			// Clear active workout
 			this.plugin.activeWorkout = null;
@@ -259,7 +272,7 @@ export class ActiveWorkoutView extends ItemView {
 			this.mountComponent();
 		} catch (error) {
 			console.error("Failed to save workout:", error);
-			new Notice("Failed to save workout. Please try again.");
+			new Notice("Failed to save workout. Please try again.", 5000);
 		}
 	}
 

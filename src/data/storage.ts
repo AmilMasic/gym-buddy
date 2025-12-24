@@ -1,9 +1,10 @@
-import { TFile, TAbstractFile, TFolder, moment } from "obsidian";
+import { TFile, TAbstractFile, TFolder, moment, Notice } from "obsidian";
 import { Workout, Exercise, PRRecord, SplitFavorites } from "../types";
 import GymBuddyPlugin from "../main";
 import { getExerciseDatabase } from "../features/exercises/exerciseDatabase";
 import { WorkoutParser } from "./parser";
 import { BUILT_IN_TEMPLATES } from "../features/splits/splitTemplates";
+import { DailyNotesIntegration } from "../integrations/dailyNotes";
 
 type PluginData = {
 	exercises?: Exercise[]; // Custom exercises only
@@ -554,12 +555,17 @@ export class Storage {
 	 * Save workout to markdown file
 	 * Always saves individual note, optionally updates weekly note
 	 */
-	async saveWorkout(workout: Workout, markdown: string): Promise<TFile> {
+	async saveWorkout(workout: Workout, markdown: string): Promise<{
+		file: TFile;
+		weeklyNoteError?: boolean;
+	}> {
 		// Always save individual workout note
 		const individualFile = await this.saveIndividualWorkout(
 			workout,
 			markdown
 		);
+
+		let weeklyNoteError = false;
 
 		// Optionally update weekly note with link
 		if (this.plugin.settings.weeklyNotesEnabled) {
@@ -567,11 +573,115 @@ export class Storage {
 				await this.updateWeeklyNote(workout, individualFile.path);
 			} catch (error) {
 				console.error("Failed to update weekly note:", error);
+				weeklyNoteError = true;
 				// Don't fail the whole save if weekly note update fails
 			}
 		}
 
-		return individualFile;
+		// Optionally append to daily note
+		if (this.plugin.settings.dailyNoteIntegration) {
+			try {
+				await this.appendToDailyNote(workout);
+			} catch (error) {
+				console.error("Failed to append to daily note:", error);
+				// Don't fail the whole save if daily note append fails
+			}
+		}
+
+		return {
+			file: individualFile,
+			weeklyNoteError: weeklyNoteError || undefined,
+		};
+	}
+
+	/**
+	 * Append workout summary to daily note
+	 */
+	async appendToDailyNote(workout: Workout): Promise<void> {
+		const integration = new DailyNotesIntegration(this.plugin);
+		const dailyNote = await integration.getDailyNoteFile(workout.date);
+
+		if (!dailyNote) {
+			new Notice(
+				"Daily note not found for " +
+					workout.date +
+					". Create it first, then log your workout."
+			);
+			return;
+		}
+
+		// Generate workout summary
+		const summary = this.generateDailyNoteSummary(workout);
+
+		// Get configured heading
+		const heading = this.plugin.settings.dailyNoteHeading;
+
+		// Try to append under the configured heading
+		const appendedUnderHeading = await integration.appendToHeading(
+			dailyNote,
+			heading,
+			summary
+		);
+
+		if (!appendedUnderHeading) {
+			// Heading not found, append to end with heading
+			const normalizedHeading = heading.trim().replace(/^#+\s*/, "");
+			const headingLevel = heading.match(/^#+/)?.[0] || "##";
+			const fullSummary = `${headingLevel} ${normalizedHeading}\n\n${summary}`;
+			await integration.appendToEnd(dailyNote, fullSummary);
+			new Notice(
+				`Workout added to daily note (heading "${normalizedHeading}" created)`
+			);
+		} else {
+			new Notice("Workout added to daily note");
+		}
+	}
+
+	/**
+	 * Generate a concise workout summary for daily notes
+	 */
+	private generateDailyNoteSummary(workout: Workout): string {
+		const lines: string[] = [];
+
+		// Calculate stats
+		const totalExercises = workout.exercises.length;
+		const totalSets = workout.exercises.reduce(
+			(sum, ex) => sum + ex.sets.length,
+			0
+		);
+		const totalVolume = workout.volume || 0;
+
+		// Format time (use current time since workout.date is just YYYY-MM-DD)
+		const time = moment().format("HH:mm");
+
+		// Summary line
+		const volumeStr =
+			totalVolume > 0 ? ` • ${totalVolume.toLocaleString()} total volume` : "";
+		lines.push(
+			`Logged at ${time} • ${totalExercises} exercises • ${totalSets} sets${volumeStr}`
+		);
+		lines.push("");
+
+		// Table header
+		lines.push("| Exercise | Sets | Volume |");
+		lines.push("|----------|------|--------|");
+
+		// Table rows
+		for (const exercise of workout.exercises) {
+			const exerciseSets = exercise.sets.length;
+			// Calculate volume for this exercise
+			const exerciseVolume = exercise.sets.reduce((sum, set) => {
+				const weight = set.weight || 0;
+				const reps = set.reps || 0;
+				return sum + weight * reps;
+			}, 0);
+
+			const volumeCell =
+				exerciseVolume > 0 ? exerciseVolume.toLocaleString() : "-";
+			lines.push(`| ${exercise.name} | ${exerciseSets} | ${volumeCell} |`);
+		}
+
+		return lines.join("\n");
 	}
 
 	/**

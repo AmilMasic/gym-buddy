@@ -1,3 +1,4 @@
+import { moment } from "obsidian";
 import type {
 	ActiveWorkout,
 	Workout,
@@ -69,9 +70,8 @@ export function activeWorkoutToWorkout(
 	activeWorkout: ActiveWorkout,
 	exerciseLibrary: Exercise[]
 ): Workout {
-	const now = new Date();
 	return {
-		date: now.toISOString().split("T")[0] || "",
+		date: moment().format("YYYY-MM-DD"),
 		duration: calculateDuration(activeWorkout.startTime),
 		muscles: deriveMuscles(activeWorkout.exercises, exerciseLibrary),
 		volume: calculateVolume(activeWorkout.exercises),
