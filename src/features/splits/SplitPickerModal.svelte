@@ -2,7 +2,7 @@
 	import type { SplitPickerProps } from './types';
 	import type { SplitTemplate, TrainingSplit } from '../../types';
 	import { Info } from '@lucide/svelte';
-	import { Button, Card } from '../../ui/components';
+	import { Button, Card, IconButton } from '../../ui/components';
 
 	let { template, suggestedSplit = null, todayName = "" }: SplitPickerProps = $props();
 
@@ -60,14 +60,13 @@
 								<span class="gb-split-name">{split.name}</span>
 								{#if !split.name.toLowerCase().includes('total body') && !split.name.toLowerCase().includes('full body')}
 									<div class="gb-template-info-wrapper">
-										<button
-											type="button"
-											class="gb-info-btn"
-											title={split.muscleGroups.join(', ')}
+										<IconButton
+											icon={Info}
+											variant="ghost"
+											size="sm"
+											ariaLabel={split.muscleGroups.join(', ')}
 											onclick={(e) => e.stopPropagation()}
-										>
-											<Info size={16} />
-										</button>
+										/>
 										<div class="gb-template-tooltip">
 											<div class="gb-tooltip-title">Muscle Groups:</div>
 											<div class="gb-tooltip-content">

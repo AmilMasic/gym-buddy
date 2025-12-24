@@ -249,6 +249,38 @@ Mobile-first design with touch-friendly targets
 	margin-top: 10px;
 }
 
+.gb-modal-buttons {
+	display: flex;
+	gap: var(--gb-space-md);
+	margin-top: var(--gb-space-lg);
+}
+
+.gb-modal-buttons button {
+	transition: all 0.15s ease;
+	cursor: pointer;
+}
+
+.gb-modal-buttons button:hover {
+	transform: translateY(-1px);
+	filter: brightness(1.1);
+}
+
+.gb-modal-buttons button:active {
+	transform: translateY(0);
+	filter: brightness(0.95);
+}
+
+/* Modal close button (X) hover */
+.modal-close-button {
+	transition: all 0.15s ease;
+	cursor: pointer;
+}
+
+.modal-close-button:hover {
+	color: var(--text-error);
+	transform: scale(1.1);
+}
+
 .gb-modal-input-container {
 	display: flex;
 	flex-direction: column;
@@ -864,7 +896,6 @@ Mobile-first design with touch-friendly targets
 .gb-exercise-card-header {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
 	padding: var(--gb-space-md) var(--gb-space-lg);
 	gap: var(--gb-space-md);
 	/* Reset button styles */
@@ -874,6 +905,9 @@ Mobile-first design with touch-friendly targets
 	cursor: pointer;
 	text-align: left;
 	transition: background 0.2s ease;
+	/* Allow children to truncate */
+	min-width: 0;
+	overflow: hidden;
 }
 
 .gb-completion-toggle {
@@ -933,13 +967,18 @@ Mobile-first design with touch-friendly targets
 	flex-direction: column;
 	gap: 2px;
 	flex: 1;
-	min-width: 0; /* Allow text truncation if needed */
+	min-width: 0;
+	overflow: hidden; /* Allow text truncation */
 }
 
 .gb-exercise-name {
 	font-size: var(--gb-font-md);
 	font-weight: 600;
 	color: var(--text-normal);
+	/* Truncate long names */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .gb-exercise-sets-count {
@@ -951,6 +990,7 @@ Mobile-first design with touch-friendly targets
 	padding: 0 var(--gb-space-lg) var(--gb-space-lg) var(--gb-space-lg);
 	display: flex;
 	flex-direction: column;
+	align-items: center;
 	gap: var(--gb-space-lg);
 }
 
@@ -1039,32 +1079,6 @@ Mobile-first design with touch-friendly targets
 }
 
 .gb-template-info-icon:hover {
-	opacity: 1;
-}
-
-/* Info button - 44x44px touch target for mobile */
-.gb-info-btn {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 44px;
-	height: 44px;
-	margin: -14px;
-	padding: 0;
-	background: transparent;
-	border: none;
-	cursor: pointer;
-	opacity: 0.6;
-	transition: opacity 0.2s ease;
-	color: inherit;
-}
-
-.gb-info-btn:hover {
-	opacity: 1;
-}
-
-.gb-info-btn:focus {
-	outline: none;
 	opacity: 1;
 }
 

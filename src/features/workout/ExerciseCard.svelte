@@ -123,7 +123,7 @@
 		<IconButton
 			icon={Trash2}
 			variant="danger"
-			size="sm"
+			size="lg"
 			ariaLabel="Remove exercise"
 			onclick={removeExercise}
 		/>
