@@ -53,7 +53,6 @@ export class WorkoutParser {
 			lines.push("");
 		} else {
 			// Minimal header for appended workouts
-			lines.push("---");
 			lines.push(`### Workout on ${workout.date}`);
 			if (workout.split) {
 				lines.push(`**Split: ${workout.split}**`);
@@ -165,7 +164,7 @@ export class WorkoutParser {
 					.map((c) => c.trim())
 					.filter((c) => c);
 
-				if (!inTable && cells[0] !== "Set" && cells[0] !== "-----") {
+				if (!inTable && cells[0] === "Set") {
 					// This is a header row
 					tableHeaders = cells;
 					inTable = true;

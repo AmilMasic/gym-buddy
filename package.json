@@ -10,13 +10,15 @@
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json",
 		"lint": "eslint .",
-		"lint:css": "bash scripts/check-css-classes.sh"
+		"lint:css": "bash scripts/check-css-classes.sh",
+		"test": "vitest run",
+		"test:watch": "vitest"
 	},
 	"keywords": [],
 	"license": "0-BSD",
 	"devDependencies": {
 		"@eslint/js": "9.30.1",
-		"@types/node": "^16.11.6",
+		"@types/node": "^20.0.0",
 		"esbuild": "0.25.5",
 		"esbuild-svelte": "^0.9.0",
 		"eslint-plugin-obsidianmd": "0.1.9",
@@ -25,7 +27,8 @@
 		"svelte": "^5.0.0",
 		"tslib": "2.4.0",
 		"typescript": "^5.8.3",
-		"typescript-eslint": "8.35.1"
+		"typescript-eslint": "8.35.1",
+		"vitest": "^2.0.0"
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.562.0",
