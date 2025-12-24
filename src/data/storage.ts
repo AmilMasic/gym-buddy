@@ -232,6 +232,7 @@ export class Storage {
 		const folder = this.plugin.app.vault.getAbstractFileByPath(folderPath);
 		if (!folder) {
 			await this.plugin.app.vault.createFolder(folderPath);
+			new Notice(`Created folder: ${folderPath}`, 8000);
 		}
 	}
 
@@ -420,6 +421,7 @@ export class Storage {
 				this.plugin.app.vault.getAbstractFileByPath(folderPath);
 			if (!folder) {
 				await this.plugin.app.vault.createFolder(folderPath);
+				new Notice(`Created folder: ${folderPath}`, 8000);
 			}
 		}
 

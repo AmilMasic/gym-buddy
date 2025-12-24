@@ -3,6 +3,35 @@ import type GymBuddyPlugin from "../main";
 import { WeightUnit } from "../types";
 import { BUILT_IN_TEMPLATES } from "../features/splits/splitTemplates";
 
+/**
+ * Validates a folder path for Obsidian
+ * @param path - The folder path to validate
+ * @returns Object with validation result and optional error message
+ */
+function validateFolderPath(path: string): { valid: boolean; error?: string } {
+	if (!path || path.trim() === "") {
+		return { valid: true }; // Empty uses default, which is fine
+	}
+	if (path.startsWith("/")) {
+		return { valid: false, error: "Path should not start with /" };
+	}
+	const invalidChars = /[<>:"|?*]/;
+	if (invalidChars.test(path)) {
+		return {
+			valid: false,
+			error: "Path contains invalid characters (< > : \" | ? *)",
+		};
+	}
+	const depth = path.split("/").filter((p) => p).length;
+	if (depth > 3) {
+		return {
+			valid: true,
+			error: "Warning: Deeply nested path (3+ levels)",
+		};
+	}
+	return { valid: true };
+}
+
 export class GymBuddySettingTab extends PluginSettingTab {
 	gbPlugin: GymBuddyPlugin;
 
@@ -18,19 +47,6 @@ export class GymBuddySettingTab extends PluginSettingTab {
 		const settings = this.gbPlugin.settings;
 
 		containerEl.empty();
-
-		new Setting(containerEl)
-			.setName("Workout folder")
-			.setDesc("Folder where workout logs are stored")
-			.addText((text) =>
-				text
-					.setPlaceholder("Workouts")
-					.setValue(settings.workoutFolder)
-					.onChange(async (value) => {
-						settings.workoutFolder = value || "Workouts";
-						await this.gbPlugin.saveSettings();
-					})
-			);
 
 		new Setting(containerEl)
 			.setName("Default unit")
@@ -118,18 +134,49 @@ export class GymBuddySettingTab extends PluginSettingTab {
 		// Individual Workouts Section
 		new Setting(containerEl).setName("Individual workouts").setHeading();
 
-		new Setting(containerEl)
+		const workoutFolderSetting = new Setting(containerEl)
 			.setName("Workout folder")
-			.setDesc("Folder where individual workout notes are saved")
-			.addText((text) =>
-				text
-					.setPlaceholder("Workouts")
-					.setValue(settings.workoutFolder)
-					.onChange(async (value) => {
+			.setDesc("Folder where individual workout notes are saved");
+
+		let workoutFolderValidationTimeout: NodeJS.Timeout;
+
+		workoutFolderSetting.addText((text) => {
+			const validateAndUpdate = (value: string) => {
+				const validation = validateFolderPath(value);
+				const descEl = workoutFolderSetting.descEl;
+
+				if (!validation.valid || validation.error) {
+					const errorMessage = validation.error || "Invalid path";
+					descEl.innerHTML = `Folder where individual workout notes are saved<br><span style="color: var(--text-error);">${errorMessage}</span>`;
+					text.inputEl.style.borderColor = validation.valid
+						? ""
+						: "var(--text-error)";
+				} else {
+					descEl.textContent =
+						"Folder where individual workout notes are saved";
+					text.inputEl.style.borderColor = "";
+				}
+			};
+
+			text.setPlaceholder("Workouts")
+				.setValue(settings.workoutFolder)
+				.onChange(async (value) => {
+					// Debounce validation
+					clearTimeout(workoutFolderValidationTimeout);
+					workoutFolderValidationTimeout = setTimeout(() => {
+						validateAndUpdate(value);
+					}, 300);
+
+					const validation = validateFolderPath(value);
+					if (validation.valid) {
 						settings.workoutFolder = value || "Workouts";
 						await this.gbPlugin.saveSettings();
-					})
-			);
+					}
+				});
+
+			// Initial validation
+			validateAndUpdate(settings.workoutFolder);
+		});
 
 		new Setting(containerEl)
 			.setName("Workout filename format")
@@ -166,20 +213,52 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			);
 
 		if (settings.weeklyNotesEnabled) {
-			new Setting(containerEl)
+			const weeklyFolderSetting = new Setting(containerEl)
 				.setName("Weekly note folder")
-				.setDesc("Folder where weekly summary notes are saved")
-				.addText((text) =>
-					text
-						// eslint-disable-next-line obsidianmd/ui/sentence-case
-						.setPlaceholder("Workouts/Weeks")
-						.setValue(settings.weeklyNoteFolder)
-						.onChange(async (value) => {
+				.setDesc("Folder where weekly summary notes are saved");
+
+			let weeklyFolderValidationTimeout: NodeJS.Timeout;
+
+			weeklyFolderSetting.addText((text) => {
+				const validateAndUpdate = (value: string) => {
+					const validation = validateFolderPath(value);
+					const descEl = weeklyFolderSetting.descEl;
+
+					if (!validation.valid || validation.error) {
+						const errorMessage = validation.error || "Invalid path";
+						descEl.innerHTML = `Folder where weekly summary notes are saved<br><span style="color: var(--text-error);">${errorMessage}</span>`;
+						text.inputEl.style.borderColor = validation.valid
+							? ""
+							: "var(--text-error)";
+					} else {
+						descEl.textContent =
+							"Folder where weekly summary notes are saved";
+						text.inputEl.style.borderColor = "";
+					}
+				};
+
+				text
+					// eslint-disable-next-line obsidianmd/ui/sentence-case
+					.setPlaceholder("Workouts/Weeks")
+					.setValue(settings.weeklyNoteFolder)
+					.onChange(async (value) => {
+						// Debounce validation
+						clearTimeout(weeklyFolderValidationTimeout);
+						weeklyFolderValidationTimeout = setTimeout(() => {
+							validateAndUpdate(value);
+						}, 300);
+
+						const validation = validateFolderPath(value);
+						if (validation.valid) {
 							settings.weeklyNoteFolder =
 								value || "Workouts/Weeks";
 							await this.gbPlugin.saveSettings();
-						})
-				);
+						}
+					});
+
+				// Initial validation
+				validateAndUpdate(settings.weeklyNoteFolder);
+			});
 
 			new Setting(containerEl)
 				.setName("Weekly note filename")
