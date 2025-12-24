@@ -333,8 +333,9 @@ Mobile-first design with touch-friendly targets
 	transition: all 0.2s ease;
 	min-height: 48px;
 	display: flex;
-	flex-direction: column;
-	gap: 4px;
+	flex-direction: row;
+	align-items: center;
+	gap: 12px;
 }
 
 .gb-exercise-item:hover {
@@ -739,7 +740,6 @@ Mobile-first design with touch-friendly targets
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
-	cursor: pointer;
 }
 
 .gb-form-group {

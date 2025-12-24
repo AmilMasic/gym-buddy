@@ -140,19 +140,19 @@
 			{#if favoritesExpandedState}
 			<div class="gb-exercise-list">
 				{#each favoriteExercises as exercise}
-					<div class="gb-exercise-item">
-						<div
-							class="gb-exercise-content"
-							onclick={() => selectExercise(exercise)}
-							role="button"
-							tabindex="0"
-							onkeydown={(e) => {
-								if (e.key === 'Enter' || e.key === ' ') {
-									e.preventDefault();
-									selectExercise(exercise);
-								}
-							}}
-						>
+					<div
+						class="gb-exercise-item"
+						onclick={() => selectExercise(exercise)}
+						role="button"
+						tabindex="0"
+						onkeydown={(e) => {
+							if (e.key === 'Enter' || e.key === ' ') {
+								e.preventDefault();
+								selectExercise(exercise);
+							}
+						}}
+					>
+						<div class="gb-exercise-content">
 							<div class="gb-exercise-name">{exercise.name}</div>
 							<div class="gb-exercise-muscles">
 								{exercise.muscles.join(', ')}
@@ -187,19 +187,19 @@
 			{#if recentExpandedState}
 			<div class="gb-exercise-list">
 				{#each recentExercises as exercise}
-					<div class="gb-exercise-item">
-						<div
-							class="gb-exercise-content"
-							onclick={() => selectExercise(exercise)}
-							role="button"
-							tabindex="0"
-							onkeydown={(e) => {
-								if (e.key === 'Enter' || e.key === ' ') {
-									e.preventDefault();
-									selectExercise(exercise);
-								}
-							}}
-						>
+					<div
+						class="gb-exercise-item"
+						onclick={() => selectExercise(exercise)}
+						role="button"
+						tabindex="0"
+						onkeydown={(e) => {
+							if (e.key === 'Enter' || e.key === ' ') {
+								e.preventDefault();
+								selectExercise(exercise);
+							}
+						}}
+					>
+						<div class="gb-exercise-content">
 							<div class="gb-exercise-name">{exercise.name}</div>
 							<div class="gb-exercise-muscles">
 								{exercise.muscles.join(', ')}
@@ -260,19 +260,19 @@
 		<h3>All Exercises ({filteredExercises.length})</h3>
 		<div class="gb-exercise-list">
 			{#each filteredExercises as exercise}
-				<div class="gb-exercise-item">
-					<div
-						class="gb-exercise-content"
-						onclick={() => selectExercise(exercise)}
-						role="button"
-						tabindex="0"
-						onkeydown={(e) => {
-							if (e.key === 'Enter' || e.key === ' ') {
-								e.preventDefault();
-								selectExercise(exercise);
-							}
-						}}
-					>
+				<div
+					class="gb-exercise-item"
+					onclick={() => selectExercise(exercise)}
+					role="button"
+					tabindex="0"
+					onkeydown={(e) => {
+						if (e.key === 'Enter' || e.key === ' ') {
+							e.preventDefault();
+							selectExercise(exercise);
+						}
+					}}
+				>
+					<div class="gb-exercise-content">
 						<div class="gb-exercise-name">{exercise.name}</div>
 						<div class="gb-exercise-muscles">
 							{exercise.muscles.join(', ')}
