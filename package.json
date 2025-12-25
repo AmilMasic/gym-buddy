@@ -1,7 +1,7 @@
 {
 	"name": "obsidian-gym-buddy",
 	"version": "1.0.0",
-	"description": "Mobile-first Obsidian plugin for logging workouts with lightning-fast UX, markdown-native storage, and progress visualization.",
+	"description": "Log workouts with lightning-fast mobile UX. Markdown-native storage with Dataview compatibility and progress visualization.",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {

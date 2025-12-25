@@ -3,7 +3,7 @@
 	"name": "Gym Buddy",
 	"version": "1.0.0",
 	"minAppVersion": "1.0.0",
-	"description": "Mobile-first Obsidian plugin for logging workouts with lightning-fast UX, markdown-native storage, and progress visualization.",
+	"description": "Log workouts with lightning-fast mobile UX. Markdown-native storage with Dataview compatibility and progress visualization.",
 	"author": "Amil Masic",
 	"authorUrl": "https://amilmasic.com",
 	"fundingUrl": "https://buymeacoffee.com/amilmasic",
