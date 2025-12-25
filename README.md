@@ -140,6 +140,7 @@ Planned:
 - Rename exercises
 - Exercise history view
 - Periodization support
+- Streak tracker & badges
 
 Open to suggestions — [open an issue](https://github.com/AmilMasic/gym-buddy/issues)!
 
