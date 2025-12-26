@@ -28,10 +28,15 @@ export default tseslint.config(
 	// Stricter rules to match Obsidian plugin submission requirements
 	{
 		files: ["**/*.ts", "**/*.mts"],
+		plugins: {
+			obsidianmd,
+		},
 		rules: {
 			// Prevent disabling rules that Obsidian submission blocks
 			"@typescript-eslint/no-explicit-any": "error",
 			"@typescript-eslint/require-await": "error",
+			// Sentence case with mode set to loose for flexibility
+			"obsidianmd/ui/sentence-case": ["error", { mode: "loose" }],
 		},
 	},
 	globalIgnores([

@@ -73,9 +73,9 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Use rest interval")
+			.setName("Automatic timer between sets")
 			.setDesc(
-				"Automatically start rest interval timer after logging a set"
+				"Show a countdown timer after logging a set"
 			)
 			.addToggle((toggle) =>
 				toggle
@@ -87,8 +87,8 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Rest timer duration")
-			.setDesc("Rest timer duration in seconds")
+			.setName("Timer duration")
+			.setDesc("Countdown duration in seconds")
 			.addText((text) =>
 				text
 					.setPlaceholder("90")
