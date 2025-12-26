@@ -13,6 +13,7 @@ export default tseslint.config(
 				projectService: {
 					allowDefaultProject: [
 						'eslint.config.js',
+						'eslint.config.mts',
 						'manifest.json'
 					]
 				},
@@ -21,7 +22,23 @@ export default tseslint.config(
 			},
 		},
 	},
+	// TypeScript recommended rules
+	...tseslint.configs.recommended,
 	...obsidianmd.configs.recommended,
+	// Stricter rules to match Obsidian plugin submission requirements
+	{
+		files: ["**/*.ts", "**/*.mts"],
+		plugins: {
+			obsidianmd,
+		},
+		rules: {
+			// Prevent disabling rules that Obsidian submission blocks
+			"@typescript-eslint/no-explicit-any": "error",
+			"@typescript-eslint/require-await": "error",
+			// Sentence case with mode set to loose for flexibility
+			"obsidianmd/ui/sentence-case": ["error", { mode: "loose" }],
+		},
+	},
 	globalIgnores([
 		"node_modules",
 		"dist",

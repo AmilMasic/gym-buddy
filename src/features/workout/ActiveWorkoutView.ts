@@ -53,10 +53,10 @@ export class ActiveWorkoutView extends ItemView {
 		this.setupEventListeners();
 	}
 
-	async onClose() {
+	async onClose(): Promise<void> {
 		this.cleanupEventListeners();
 		if (this.component) {
-			void unmount(this.component);
+			await unmount(this.component);
 			this.component = null;
 		}
 	}

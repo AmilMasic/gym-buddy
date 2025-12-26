@@ -163,7 +163,7 @@ export default class GymBuddyPlugin extends Plugin {
 							.replace(/\{\{year\}\}/g, "{{year}}")
 							.replace(/\{\{week\}\}/g, "{{week}}");
 						this.settings.weeklyNoteFilename = filename;
-						this.settings.weeklyNoteFolder = "Workouts/Weeks";
+						this.settings.weeklyNoteFolder = "Workouts/weeks";
 					}
 					needsSave = true;
 				}
@@ -192,7 +192,7 @@ export default class GymBuddyPlugin extends Plugin {
 		}
 
 		if (!this.settings.weeklyNoteFolder) {
-			this.settings.weeklyNoteFolder = "Workouts/Weeks";
+			this.settings.weeklyNoteFolder = "Workouts/weeks";
 			needsSave = true;
 		}
 

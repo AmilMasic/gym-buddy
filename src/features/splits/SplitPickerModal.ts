@@ -24,7 +24,7 @@ export class SplitPickerModal extends Modal {
 		this.onSelect = onSelect;
 	}
 
-	async onOpen() {
+	onOpen() {
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.addClass("gb-modal");

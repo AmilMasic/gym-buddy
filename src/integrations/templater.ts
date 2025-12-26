@@ -55,17 +55,17 @@ export class TemplaterIntegration {
 			}
 
 			// Register the token
-			templaterPlugin.functionsObject.gymBuddyWeeklyLinks = async (
+			templaterPlugin.functionsObject.gymBuddyWeeklyLinks = (
 				date?: string
-			): Promise<string> => {
-				return await this.getWeeklyLinks(date);
+			): string => {
+				return this.getWeeklyLinks(date);
 			};
 
 			// Also register as a user function for easier access
-			templaterPlugin.functionsObject.gbWeeklyLinks = async (
+			templaterPlugin.functionsObject.gbWeeklyLinks = (
 				date?: string
-			): Promise<string> => {
-				return await this.getWeeklyLinks(date);
+			): string => {
+				return this.getWeeklyLinks(date);
 			};
 		} catch (error) {
 			console.error("Failed to register Templater token:", error);
@@ -75,7 +75,7 @@ export class TemplaterIntegration {
 	/**
 	 * Get weekly workout links for a given date (or current date)
 	 */
-	async getWeeklyLinks(date?: string): Promise<string> {
+	getWeeklyLinks(date?: string): string {
 		const targetDate = date || moment().format("YYYY-MM-DD");
 		const weekStart = moment(targetDate).startOf("week");
 		const weekEnd = moment(targetDate).endOf("week");
@@ -140,7 +140,7 @@ export class TemplaterIntegration {
 	/**
 	 * Get workout count for a given week
 	 */
-	async getWeeklyWorkoutCount(date?: string): Promise<number> {
+	getWeeklyWorkoutCount(date?: string): number {
 		const targetDate = date || moment().format("YYYY-MM-DD");
 		const weekStart = moment(targetDate).startOf("week");
 		const weekEnd = moment(targetDate).endOf("week");
