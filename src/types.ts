@@ -124,7 +124,7 @@ export type GymBuddySettings = {
 
 	// Weekly aggregation (optional)
 	weeklyNotesEnabled: boolean; // false by default
-	weeklyNoteFolder: string; // "Workouts/Weeks"
+	weeklyNoteFolder: string; // "Workouts/weeks"
 	weeklyNoteFilename: string; // "{{year}}-W{{week}}" or "{{year}}-W{{week}}.md"
 
 	// Integration
@@ -162,7 +162,7 @@ export const DEFAULT_SETTINGS: GymBuddySettings = {
 
 	// Weekly aggregation (optional)
 	weeklyNotesEnabled: false,
-	weeklyNoteFolder: "Workouts/Weeks",
+	weeklyNoteFolder: "Workouts/weeks",
 	weeklyNoteFilename: "{{year}}-W{{week}}",
 
 	// Integration

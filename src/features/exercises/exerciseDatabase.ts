@@ -161,7 +161,7 @@ export class ExerciseDatabase {
 	/**
 	 * Initialize database by loading and mapping exercises
 	 */
-	async initialize(): Promise<void> {
+	initialize(): void {
 		if (this.initialized) return;
 
 		const externalExercises = exercisesData as ExternalExercise[];
