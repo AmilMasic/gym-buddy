@@ -24,7 +24,7 @@ export class CustomSplitEditorModal extends Modal {
 		this.onDelete = onDelete;
 	}
 
-	async onOpen() {
+	onOpen() {
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.addClass("gb-modal");

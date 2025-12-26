@@ -4,18 +4,18 @@ import { ExerciseDatabase } from './exerciseDatabase';
 describe('ExerciseDatabase', () => {
 	let database: ExerciseDatabase;
 
-	beforeEach(async () => {
+	beforeEach(() => {
 		database = new ExerciseDatabase();
-		await database.initialize();
+		database.initialize();
 	});
 
 	describe('initialize', () => {
-		it('should load exercises from database', async () => {
+		it('should load exercises from database', () => {
 			const exercises = database.getAllExercises();
 			expect(exercises.length).toBeGreaterThan(0);
 		});
 
-		it('should map external exercises to internal format', async () => {
+		it('should map external exercises to internal format', () => {
 			const exercises = database.getAllExercises();
 			const exercise = exercises[0];
 
@@ -31,9 +31,9 @@ describe('ExerciseDatabase', () => {
 			expect(exercise).toHaveProperty('unit');
 		});
 
-		it('should not reinitialize if already initialized', async () => {
+		it('should not reinitialize if already initialized', () => {
 			const exercises1 = database.getAllExercises();
-			await database.initialize();
+			database.initialize();
 			const exercises2 = database.getAllExercises();
 
 			expect(exercises1).toBe(exercises2); // Same reference

@@ -73,10 +73,8 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			// eslint-disable-next-line obsidianmd/ui/sentence-case
 			.setName("Use rest interval")
 			.setDesc(
-				// eslint-disable-next-line obsidianmd/ui/sentence-case
 				"Automatically start rest interval timer after logging a set"
 			)
 			.addToggle((toggle) =>
@@ -89,9 +87,7 @@ export class GymBuddySettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			// eslint-disable-next-line obsidianmd/ui/sentence-case
 			.setName("Rest timer duration")
-			// eslint-disable-next-line obsidianmd/ui/sentence-case
 			.setDesc("Rest timer duration in seconds")
 			.addText((text) =>
 				text
@@ -238,8 +234,7 @@ export class GymBuddySettingTab extends PluginSettingTab {
 				};
 
 				text
-					// eslint-disable-next-line obsidianmd/ui/sentence-case
-					.setPlaceholder("Workouts/Weeks")
+					.setPlaceholder("Workouts/weeks")
 					.setValue(settings.weeklyNoteFolder)
 					.onChange(async (value) => {
 						// Debounce validation
@@ -251,7 +246,7 @@ export class GymBuddySettingTab extends PluginSettingTab {
 						const validation = validateFolderPath(value);
 						if (validation.valid) {
 							settings.weeklyNoteFolder =
-								value || "Workouts/Weeks";
+								value || "Workouts/weeks";
 							await this.gbPlugin.saveSettings();
 						}
 					});
@@ -283,8 +278,7 @@ export class GymBuddySettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Use periodic notes configuration")
 			.setDesc(
-				// eslint-disable-next-line obsidianmd/ui/sentence-case
-				"Automatically detect and use Periodic Notes plugin settings for weekly notes"
+				"Automatically detect and use periodic notes plugin settings for weekly notes"
 			)
 			.addToggle((toggle) =>
 				toggle

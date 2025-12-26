@@ -81,7 +81,7 @@ export class TrainingSetupModal extends Modal {
 		});
 	}
 
-	async onOpen() {
+	onOpen() {
 		this.mountComponent();
 
 		// Listen for custom builder selection

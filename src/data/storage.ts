@@ -136,7 +136,7 @@ export class Storage {
 	async loadExerciseLibrary(): Promise<Exercise[]> {
 		// Initialize database
 		const database = getExerciseDatabase();
-		await database.initialize();
+		database.initialize();
 
 		// Get all exercises from database
 		const databaseExercises = database.getAllExercises();
@@ -601,7 +601,7 @@ export class Storage {
 	 */
 	async appendToDailyNote(workout: Workout): Promise<void> {
 		const integration = new DailyNotesIntegration(this.plugin);
-		const dailyNote = await integration.getDailyNoteFile(workout.date);
+		const dailyNote = integration.getDailyNoteFile(workout.date);
 
 		if (!dailyNote) {
 			new Notice(
@@ -698,7 +698,7 @@ export class Storage {
 
 		// Fallback to manual settings
 		const folder =
-			this.plugin.settings.weeklyNoteFolder || "Workouts/Weeks";
+			this.plugin.settings.weeklyNoteFolder || "Workouts/weeks";
 		let format =
 			this.plugin.settings.weeklyNoteFilename || "{{year}}-W{{week}}";
 
@@ -729,8 +729,7 @@ export class Storage {
 				};
 			};
 
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const app = this.plugin.app as any as AppWithPlugins;
+			const app = this.plugin.app as unknown as AppWithPlugins;
 
 			// Safely check if plugins API exists
 			if (

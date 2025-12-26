@@ -29,7 +29,7 @@ export class CustomSplitBuilderModal extends Modal {
 		this.onCancel = onCancel || null;
 	}
 
-	async onOpen() {
+	onOpen() {
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.addClass("gb-modal");

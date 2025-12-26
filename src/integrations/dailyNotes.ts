@@ -16,9 +16,9 @@ export class DailyNotesIntegration {
 	 * Get the daily note file for a given date
 	 * Checks both Daily Notes core plugin and Periodic Notes plugin
 	 */
-	async getDailyNoteFile(date: string): Promise<TFile | null> {
+	getDailyNoteFile(date: string): TFile | null {
 		// Try Periodic Notes plugin first
-		const periodicNote = await this.getPeriodicDailyNote(date);
+		const periodicNote = this.getPeriodicDailyNote(date);
 		if (periodicNote) {
 			return periodicNote;
 		}
@@ -30,7 +30,7 @@ export class DailyNotesIntegration {
 	/**
 	 * Get daily note from Periodic Notes plugin
 	 */
-	private async getPeriodicDailyNote(date: string): Promise<TFile | null> {
+	private getPeriodicDailyNote(date: string): TFile | null {
 		try {
 			type PeriodicNotesPlugin = {
 				settings?: {
@@ -48,8 +48,7 @@ export class DailyNotesIntegration {
 				};
 			};
 
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const app = this.plugin.app as any as AppWithPlugins;
+			const app = this.plugin.app as unknown as AppWithPlugins;
 
 			if (
 				!app ||
@@ -106,8 +105,7 @@ export class DailyNotesIntegration {
 				};
 			};
 
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const app = this.plugin.app as any as AppInternalConfig;
+			const app = this.plugin.app as unknown as AppInternalConfig;
 
 			const dailyNotesPlugin =
 				app.internalPlugins?.plugins?.["daily-notes"];
