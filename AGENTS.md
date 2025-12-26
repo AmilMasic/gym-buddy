@@ -50,6 +50,68 @@ npm run lint:css
 
 This catches missing class definitions that would result in unstyled elements. Run this after adding new CSS classes to Svelte components.
 
+### Plugin Submission Linting
+
+The Obsidian community plugin submission process runs an automated validator that is **stricter than the default eslint config**. Before submitting:
+
+```bash
+npm run lint
+```
+
+This runs with `--max-warnings 0` to catch all issues.
+
+#### Rules enforced by submission validator
+
+| Rule | What it means |
+|------|---------------|
+| `@typescript-eslint/no-explicit-any` | Cannot use `any` type. Use `unknown` with type guards or proper types. |
+| `@typescript-eslint/require-await` | Async functions must contain `await`. Remove `async` if not needed. |
+| `obsidianmd/ui/sentence-case` | UI text must use sentence case. Watch for words like "rest" that trigger false positives. |
+| No undescribed `eslint-disable` | Cannot disable rules without explanation, and some rules cannot be disabled at all. |
+
+#### Common fixes
+
+**Instead of `any`:**
+```typescript
+// Bad
+const app = this.plugin.app as any as CustomType;
+
+// Good
+const app = this.plugin.app as unknown as CustomType;
+```
+
+**Async without await:**
+```typescript
+// Bad - async but no await
+async onOpen() {
+  this.doSyncStuff();
+}
+
+// Good - remove async if not needed
+onOpen() {
+  this.doSyncStuff();
+}
+
+// Good - or add await if it should be async
+async onOpen() {
+  await this.doAsyncStuff();
+}
+```
+
+**Sentence case quirks:**
+The `obsidianmd/ui/sentence-case` rule can flag certain words unexpectedly (e.g., "rest" is parsed as a verb). Rephrase if needed:
+```typescript
+// May be flagged
+.setName("Use rest interval")
+
+// Works
+.setName("Automatic timer between sets")
+```
+
+#### CI enforcement
+
+The GitHub Actions CI workflow runs lint on all PRs to `master`. Branch protection rules require CI to pass before merging. This prevents submission issues from reaching the Obsidian validator.
+
 ## File & folder conventions
 
 - **Organize code into multiple files**: Split functionality across separate modules rather than putting everything in `main.ts`.
@@ -166,6 +228,38 @@ When adding new features, create a new folder under `src/features/` and export f
 - Create a GitHub release whose tag exactly matches `manifest.json`'s `version`. Do not use a leading `v`.
 - Attach `manifest.json`, `main.js`, and `styles.css` (if present) to the release as individual assets.
 - After the initial release, follow the process to add/update your plugin in the community catalog as required.
+
+## Community plugin submission
+
+To submit a plugin to the Obsidian community catalog:
+
+1. **Create a GitHub release** with `main.js`, `manifest.json`, and `styles.css` attached
+2. **Fork** [obsidianmd/obsidian-releases](https://github.com/obsidianmd/obsidian-releases)
+3. **Add your plugin** to `community-plugins.json` in alphabetical order by `id`
+4. **Open a PR** to the upstream repo
+
+### Submission process notes
+
+- An automated bot scans your plugin code and validates against strict rules (see "Plugin Submission Linting" above)
+- **Do not open a new PR** if the bot finds issues - push fixes to your plugin repo and wait up to 6 hours for rescan
+- **Do not rebase** the PR - the reviewer handles that after approval
+- If you need to resolve merge conflicts (others merged before you), use GitHub's web editor:
+  1. Click "Resolve conflicts" on the PR
+  2. Keep all plugin entries in alphabetical order by `id`
+  3. Remove conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`)
+  4. Mark as resolved and commit
+
+### PR entry format
+
+```json
+{
+  "id": "your-plugin-id",
+  "name": "Your Plugin Name",
+  "author": "Your Name",
+  "description": "Brief description of what your plugin does.",
+  "repo": "YourGitHubUsername/your-plugin-repo"
+}
+```
 
 ## Security, privacy, and compliance
 
