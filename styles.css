@@ -742,6 +742,44 @@ Mobile-first design with touch-friendly targets
 	gap: 4px;
 }
 
+.gb-exercise-actions {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.gb-search-row {
+	display: flex;
+	align-items: center;
+	gap: var(--gb-space-sm);
+}
+
+.gb-search-input-wrapper {
+	flex: 1;
+}
+
+.gb-custom-badge {
+	display: inline-block;
+	padding: 2px 6px;
+	margin-left: var(--gb-space-sm);
+	font-size: var(--gb-font-xs);
+	font-weight: 500;
+	color: var(--interactive-accent);
+	background: var(--background-modifier-hover);
+	border-radius: var(--gb-radius-sm);
+	vertical-align: middle;
+}
+
+.gb-empty-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: var(--gb-space-xl);
+	gap: var(--gb-space-md);
+	text-align: center;
+}
+
 .gb-form-group {
 	display: flex;
 	flex-direction: column;

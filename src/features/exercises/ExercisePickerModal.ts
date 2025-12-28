@@ -1,9 +1,10 @@
 import ExercisePickerModalComponent from "./ExercisePickerModal.svelte";
-import { Modal } from "obsidian";
+import { Modal, Notice } from "obsidian";
 import { mount, unmount } from "svelte";
 import { Exercise, TrainingSplit } from "../../types";
 import GymBuddyPlugin from "../../main";
 import { BUILT_IN_TEMPLATES } from "../splits/splitTemplates";
+import { CustomExerciseModal } from "./CustomExerciseModal";
 
 export class ExercisePickerModal extends Modal {
 	private component: ReturnType<typeof mount> | null = null;
@@ -14,6 +15,9 @@ export class ExercisePickerModal extends Modal {
 	private collapseHandler: ((event: CustomEvent) => void) | null = null;
 	private muscleSelectionHandler: ((event: CustomEvent) => void) | null =
 		null;
+	private createExerciseHandler: (() => void) | null = null;
+	private editExerciseHandler: ((event: CustomEvent) => void) | null = null;
+	private deleteExerciseHandler: ((event: CustomEvent) => void) | null = null;
 
 	// Store current state for remounting
 	private exercises: Exercise[] = [];
@@ -302,6 +306,133 @@ export class ExercisePickerModal extends Modal {
 			"muscle-selection-change",
 			this.muscleSelectionHandler as EventListener
 		);
+
+		// Listen for create exercise request
+		this.createExerciseHandler = () => {
+			const createModal = new CustomExerciseModal(this.plugin, {
+				onSave: () => {
+					void this.refreshExercises();
+					new Notice("Exercise created");
+				},
+			});
+			createModal.open();
+		};
+		document.addEventListener(
+			"open-create-exercise",
+			this.createExerciseHandler
+		);
+
+		// Listen for edit exercise request
+		this.editExerciseHandler = (event: CustomEvent) => {
+			const { exercise } = event.detail as { exercise: Exercise };
+			const editModal = new CustomExerciseModal(this.plugin, {
+				exercise,
+				onSave: () => {
+					void this.refreshExercises();
+					new Notice("Exercise updated");
+				},
+			});
+			editModal.open();
+		};
+		document.addEventListener(
+			"open-edit-exercise",
+			this.editExerciseHandler as EventListener
+		);
+
+		// Listen for delete exercise request
+		this.deleteExerciseHandler = (event: CustomEvent) => {
+			void (async () => {
+				const { exerciseId } = event.detail as { exerciseId: string };
+				try {
+					await this.plugin.storage.deleteCustomExercise(exerciseId);
+					await this.refreshExercises();
+					new Notice("Exercise deleted");
+				} catch (error) {
+					console.error("Failed to delete exercise:", error);
+					new Notice("Failed to delete exercise");
+				}
+			})();
+		};
+		document.addEventListener(
+			"delete-exercise",
+			this.deleteExerciseHandler as EventListener
+		);
+	}
+
+	/**
+	 * Refresh exercise list and remount component
+	 */
+	private async refreshExercises(): Promise<void> {
+		// Reload exercises from storage
+		this.exercises = await this.plugin.storage.loadExerciseLibrary();
+
+		// Reload favorites
+		const splitIdForFavorites = this.currentSplit?.id || "global";
+		this.favoriteExercises =
+			await this.plugin.storage.getFavoriteExercises(splitIdForFavorites);
+		this.favoriteIds = new Set(this.favoriteExercises.map((e) => e.id));
+
+		// Get recent exercises
+		const recentExercises: Exercise[] = [];
+		if (this.plugin.activeWorkout) {
+			const recentIds = new Set<string>();
+			for (const workoutEx of this.plugin.activeWorkout.exercises
+				.slice(-5)
+				.reverse()) {
+				if (
+					workoutEx.exerciseId &&
+					!recentIds.has(workoutEx.exerciseId)
+				) {
+					const ex = this.exercises.find(
+						(e) => e.id === workoutEx.exerciseId
+					);
+					if (ex) {
+						recentExercises.push(ex);
+						recentIds.add(workoutEx.exerciseId);
+					}
+				}
+			}
+		}
+
+		// Determine selected muscles
+		let selectedMuscles: string[] = [];
+		if (this.currentSplit && this.currentSplit.muscleGroups.length > 0) {
+			const allMajorMuscles = [
+				"Chest",
+				"Back",
+				"Shoulders",
+				"Biceps",
+				"Triceps",
+				"Quadriceps",
+				"Hamstrings",
+				"Glutes",
+				"Calves",
+				"Abs",
+			];
+			const splitMuscles = this.currentSplit.muscleGroups;
+			const isFullBody = allMajorMuscles.every((m) =>
+				splitMuscles.includes(m)
+			);
+			if (!isFullBody) {
+				selectedMuscles = [...this.currentSplit.muscleGroups];
+			}
+		} else {
+			selectedMuscles = this.plugin.settings.selectedMuscleGroups || [];
+		}
+
+		// Remount with updated data
+		this.mountComponent({
+			exercises: this.exercises,
+			recentExercises,
+			favoriteExercises: this.favoriteExercises,
+			favoriteIds: new Set(this.favoriteIds),
+			currentSplit: this.currentSplit,
+			selectedMuscles,
+			recentExpanded:
+				this.plugin.settings.recentExercisesExpanded ?? true,
+			muscleGroupsExpanded:
+				this.plugin.settings.muscleGroupsExpanded ?? true,
+		});
 	}
 
 	onClose() {
@@ -338,6 +469,27 @@ export class ExercisePickerModal extends Modal {
 				this.muscleSelectionHandler as EventListener
 			);
 			this.muscleSelectionHandler = null;
+		}
+		if (this.createExerciseHandler) {
+			document.removeEventListener(
+				"open-create-exercise",
+				this.createExerciseHandler
+			);
+			this.createExerciseHandler = null;
+		}
+		if (this.editExerciseHandler) {
+			document.removeEventListener(
+				"open-edit-exercise",
+				this.editExerciseHandler as EventListener
+			);
+			this.editExerciseHandler = null;
+		}
+		if (this.deleteExerciseHandler) {
+			document.removeEventListener(
+				"delete-exercise",
+				this.deleteExerciseHandler as EventListener
+			);
+			this.deleteExerciseHandler = null;
 		}
 	}
 }

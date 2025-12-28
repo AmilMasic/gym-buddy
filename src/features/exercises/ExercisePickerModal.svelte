@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ExercisePickerProps } from './types';
 	import type { Exercise, TrainingSplit } from '../../types';
-	import { Input, Chip, IconButton } from '../../ui/components';
+	import { Input, Chip, IconButton, Button } from '../../ui/components';
 
 	let {
 		exercises = [],
@@ -108,6 +108,46 @@
 		});
 		document.dispatchEvent(event);
 	}
+
+	function openCreateExercise() {
+		const event = new CustomEvent('open-create-exercise');
+		document.dispatchEvent(event);
+	}
+
+	function openEditExercise(exercise: Exercise, e: MouseEvent) {
+		e.stopPropagation();
+		const event = new CustomEvent('open-edit-exercise', {
+			detail: { exercise }
+		});
+		document.dispatchEvent(event);
+	}
+
+	function deleteExercise(exerciseId: string, e: MouseEvent) {
+		e.stopPropagation();
+		// Show confirmation state
+		if (deleteConfirmId === exerciseId) {
+			// Second click - actually delete
+			const event = new CustomEvent('delete-exercise', {
+				detail: { exerciseId }
+			});
+			document.dispatchEvent(event);
+			deleteConfirmId = null;
+		} else {
+			// First click - show confirmation
+			deleteConfirmId = exerciseId;
+			// Auto-reset after 3 seconds
+			setTimeout(() => {
+				deleteConfirmId = null;
+			}, 3000);
+		}
+	}
+
+	// Track which exercise is in delete confirmation state
+	let deleteConfirmId = $state<string | null>(null);
+
+	function isCustomExercise(exercise: Exercise): boolean {
+		return exercise.source === 'custom';
+	}
 </script>
 
 <div class="gb-exercise-picker">
@@ -118,11 +158,23 @@
 		</div>
 	{/if}
 
-	<Input
-		bind:value={searchQuery}
-		placeholder="Search exercises..."
-		size="md"
-	/>
+	<!-- Search + Create button row -->
+	<div class="gb-search-row">
+		<div class="gb-search-input-wrapper">
+			<Input
+				bind:value={searchQuery}
+				placeholder="Search exercises..."
+				size="md"
+			/>
+		</div>
+		<IconButton
+			icon="plus"
+			variant="ghost"
+			size="md"
+			ariaLabel="Create custom exercise"
+			onclick={openCreateExercise}
+		/>
+	</div>
 
 	{#if favoriteExercises.length > 0}
 		<div class="gb-section">
@@ -257,35 +309,67 @@
 
 	<div class="gb-section">
 		<h3>All Exercises ({filteredExercises.length})</h3>
-		<div class="gb-exercise-list">
-			{#each filteredExercises as exercise}
-				<div
-					class="gb-exercise-item"
-					onclick={() => selectExercise(exercise)}
-					role="button"
-					tabindex="0"
-					onkeydown={(e) => {
-						if (e.key === 'Enter' || e.key === ' ') {
-							e.preventDefault();
-							selectExercise(exercise);
-						}
-					}}
-				>
-					<div class="gb-exercise-content">
-						<div class="gb-exercise-name">{exercise.name}</div>
-						<div class="gb-exercise-muscles">
-							{exercise.muscles.join(', ')}
+		{#if filteredExercises.length === 0}
+			<div class="gb-empty-state">
+				<p class="gb-text-muted">No exercises found</p>
+				<Button variant="ghost" onclick={openCreateExercise}>
+					Create custom exercise
+				</Button>
+			</div>
+		{:else}
+			<div class="gb-exercise-list">
+				{#each filteredExercises as exercise}
+					<div
+						class="gb-exercise-item"
+						onclick={() => selectExercise(exercise)}
+						role="button"
+						tabindex="0"
+						onkeydown={(e) => {
+							if (e.key === 'Enter' || e.key === ' ') {
+								e.preventDefault();
+								selectExercise(exercise);
+							}
+						}}
+					>
+						<div class="gb-exercise-content">
+							<div class="gb-exercise-name">
+								{exercise.name}
+								{#if isCustomExercise(exercise)}
+									<span class="gb-custom-badge">Custom</span>
+								{/if}
+							</div>
+							<div class="gb-exercise-muscles">
+								{exercise.muscles.join(', ')}
+							</div>
+						</div>
+						<div class="gb-exercise-actions">
+							{#if isCustomExercise(exercise)}
+								<IconButton
+									icon="pencil"
+									variant="ghost"
+									size="sm"
+									ariaLabel="Edit exercise"
+									onclick={(e) => openEditExercise(exercise, e)}
+								/>
+								<IconButton
+									icon={deleteConfirmId === exercise.id ? "check" : "trash-2"}
+									variant={deleteConfirmId === exercise.id ? "danger" : "ghost"}
+									size="sm"
+									ariaLabel={deleteConfirmId === exercise.id ? "Confirm delete" : "Delete exercise"}
+									onclick={(e) => deleteExercise(exercise.id, e)}
+								/>
+							{/if}
+							<IconButton
+								icon="heart"
+								variant="favorite"
+								active={isFavorite(exercise.id)}
+								ariaLabel={isFavorite(exercise.id) ? "Remove from favorites" : "Add to favorites"}
+								onclick={(e) => toggleFavorite(exercise.id, e)}
+							/>
 						</div>
 					</div>
-					<IconButton
-						icon="heart"
-						variant="favorite"
-						active={isFavorite(exercise.id)}
-						ariaLabel={isFavorite(exercise.id) ? "Remove from favorites" : "Add to favorites"}
-						onclick={(e) => toggleFavorite(exercise.id, e)}
-					/>
-				</div>
-			{/each}
-		</div>
+				{/each}
+			</div>
+		{/if}
 	</div>
 </div>
