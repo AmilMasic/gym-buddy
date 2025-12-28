@@ -225,6 +225,15 @@ Mobile-first design with touch-friendly targets
 	flex-wrap: wrap;
 }
 
+.gb-set-input-row--time {
+	/* Time row: minutes and seconds side by side */
+}
+
+.gb-set-input-row--time .gb-stepper {
+	flex: 1;
+	min-width: 120px;
+}
+
 .gb-stepper {
 	display: flex;
 	flex-direction: column;
@@ -1040,6 +1049,17 @@ Mobile-first design with touch-friendly targets
 .gb-set-rpe {
 	font-size: var(--gb-font-sm);
 	color: var(--text-muted);
+}
+
+.gb-set-time {
+	font-size: var(--gb-font-md);
+	color: var(--text-normal);
+}
+
+.gb-set-distance {
+	font-size: var(--gb-font-md);
+	color: var(--text-normal);
+	margin-left: 4px;
 }
 
 .gb-set-check {

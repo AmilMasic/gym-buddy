@@ -22613,5 +22613,162 @@
       "Zottman_Preacher_Curl/1.jpg"
     ],
     "id": "Zottman_Preacher_Curl"
+  },
+  {
+    "name": "Running (Outdoor)",
+    "force": null,
+    "level": "beginner",
+    "mechanic": null,
+    "equipment": null,
+    "primaryMuscles": [
+      "quadriceps"
+    ],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings",
+      "calves"
+    ],
+    "instructions": [
+      "Choose a safe outdoor route with good footing.",
+      "Start with a light warm-up walk or jog for 5 minutes.",
+      "Maintain an upright posture with relaxed shoulders.",
+      "Land on your midfoot and push off with your toes.",
+      "Keep a steady breathing rhythm throughout.",
+      "Track your distance and time for consistent progress."
+    ],
+    "category": "cardio",
+    "images": [],
+    "id": "Running_Outdoor"
+  },
+  {
+    "name": "Walking (Outdoor)",
+    "force": null,
+    "level": "beginner",
+    "mechanic": null,
+    "equipment": null,
+    "primaryMuscles": [
+      "quadriceps"
+    ],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings",
+      "calves"
+    ],
+    "instructions": [
+      "Choose a safe route with even terrain.",
+      "Maintain good posture with shoulders back and head up.",
+      "Swing your arms naturally as you walk.",
+      "Take comfortable strides at a brisk pace.",
+      "Track your distance and time for consistent progress."
+    ],
+    "category": "cardio",
+    "images": [],
+    "id": "Walking_Outdoor"
+  },
+  {
+    "name": "Hiking",
+    "force": null,
+    "level": "intermediate",
+    "mechanic": null,
+    "equipment": null,
+    "primaryMuscles": [
+      "quadriceps"
+    ],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings",
+      "calves"
+    ],
+    "instructions": [
+      "Choose an appropriate trail for your fitness level.",
+      "Wear proper hiking boots with good ankle support.",
+      "Bring water and nutrition for longer hikes.",
+      "Maintain a steady pace, especially on inclines.",
+      "Use trekking poles for added stability on rough terrain.",
+      "Track elevation gain, distance, and time."
+    ],
+    "category": "cardio",
+    "images": [],
+    "id": "Hiking"
+  },
+  {
+    "name": "Rucking",
+    "force": null,
+    "level": "intermediate",
+    "mechanic": null,
+    "equipment": "other",
+    "primaryMuscles": [
+      "quadriceps"
+    ],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings",
+      "calves",
+      "traps",
+      "lower back"
+    ],
+    "instructions": [
+      "Load a backpack with weight (start with 10-20 lbs).",
+      "Ensure the weight is distributed evenly and sits high on your back.",
+      "Maintain upright posture throughout the ruck.",
+      "Start with shorter distances and gradually increase.",
+      "Track pack weight, distance, and time.",
+      "Progress by increasing weight or distance, not both at once."
+    ],
+    "category": "cardio",
+    "images": [],
+    "id": "Rucking"
+  },
+  {
+    "name": "Swimming",
+    "force": null,
+    "level": "intermediate",
+    "mechanic": null,
+    "equipment": null,
+    "primaryMuscles": [
+      "lats"
+    ],
+    "secondaryMuscles": [
+      "shoulders",
+      "chest",
+      "triceps",
+      "quadriceps"
+    ],
+    "instructions": [
+      "Warm up with easy laps to get your body ready.",
+      "Choose your stroke: freestyle, breaststroke, backstroke, or butterfly.",
+      "Focus on proper form and breathing technique.",
+      "Swim at a steady pace for endurance, or do intervals for intensity.",
+      "Track laps, distance, and total time."
+    ],
+    "category": "cardio",
+    "images": [],
+    "id": "Swimming"
+  },
+  {
+    "name": "Cycling (Outdoor)",
+    "force": null,
+    "level": "beginner",
+    "mechanic": null,
+    "equipment": "other",
+    "primaryMuscles": [
+      "quadriceps"
+    ],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings",
+      "calves"
+    ],
+    "instructions": [
+      "Ensure your bike is properly fitted to your body.",
+      "Wear a helmet and appropriate cycling gear.",
+      "Start with a warm-up at an easy pace.",
+      "Maintain a steady cadence (pedal rotation speed).",
+      "Use gears appropriately for hills and flat sections.",
+      "Track distance, time, and average speed."
+    ],
+    "category": "cardio",
+    "images": [],
+    "id": "Cycling_Outdoor"
   }
 ]
