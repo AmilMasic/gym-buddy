@@ -2,7 +2,6 @@
 	import type { Exercise, ExerciseType, WeightUnit } from '../../types';
 	import { Button, Chip, Input, Select, IconButton } from '../../ui/components';
 
-	// Props for editing existing exercise
 	type CustomExerciseModalProps = {
 		exercise?: Exercise | null;
 		defaultUnit?: WeightUnit;
@@ -10,7 +9,6 @@
 
 	let { exercise = null, defaultUnit = 'lbs' }: CustomExerciseModalProps = $props();
 
-	// Form state
 	let name = $state(exercise?.name || '');
 	let selectedMuscles = $state<string[]>(exercise?.muscles || []);
 	let exerciseType = $state<ExerciseType>(exercise?.type || 'weight');
@@ -18,18 +16,14 @@
 	let equipment = $state(exercise?.equipment || '');
 	let force = $state<'push' | 'pull' | 'static' | ''>(exercise?.force || '');
 	let instructions = $state(exercise?.instructions?.join('\n') || '');
-
-	// UI state
 	let showAdvanced = $state(false);
 
-	// Available muscles (standard list for consistency with filters)
 	const AVAILABLE_MUSCLES = [
 		'Chest', 'Back', 'Shoulders', 'Biceps', 'Triceps',
 		'Quadriceps', 'Hamstrings', 'Glutes', 'Calves',
 		'Abs', 'Forearms', 'Traps', 'Lats'
 	];
 
-	// Exercise type options
 	const EXERCISE_TYPES: { value: ExerciseType; label: string }[] = [
 		{ value: 'weight', label: 'Weight training' },
 		{ value: 'bodyweight', label: 'Bodyweight' },
@@ -37,7 +31,6 @@
 		{ value: 'cardio', label: 'Cardio' }
 	];
 
-	// Force options
 	const FORCE_OPTIONS: { value: string; label: string }[] = [
 		{ value: '', label: 'None' },
 		{ value: 'push', label: 'Push' },
@@ -45,10 +38,7 @@
 		{ value: 'static', label: 'Static' }
 	];
 
-	// Validation
 	const isValid = $derived(name.trim().length > 0 && selectedMuscles.length > 0);
-
-	// Check if we're editing
 	const isEditing = $derived(exercise !== null);
 
 	function toggleMuscle(muscle: string) {
@@ -86,8 +76,6 @@
 		if (!isValid) return;
 
 		const tracking = getTrackingFlags(exerciseType);
-
-		// Generate ID for new exercises, keep existing for edits
 		const id = exercise?.id || `custom-${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
 
 		const newExercise: Exercise = {
@@ -98,7 +86,6 @@
 			...tracking,
 			unit: defaultUnit,
 			source: 'custom',
-			// Optional fields - only include if set
 			...(secondaryMuscles.length > 0 && { secondaryMuscles }),
 			...(equipment.trim() && { equipment: equipment.trim() }),
 			...(force && { force: force as 'push' | 'pull' | 'static' }),

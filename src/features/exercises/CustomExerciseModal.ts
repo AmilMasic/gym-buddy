@@ -38,7 +38,6 @@ export class CustomExerciseModal extends Modal {
 		contentEl.empty();
 		contentEl.addClass("gb-modal");
 
-		// Mount Svelte component
 		this.component = mount(CustomExerciseModalComponent, {
 			target: contentEl,
 			props: {
@@ -47,20 +46,14 @@ export class CustomExerciseModal extends Modal {
 			},
 		});
 
-		// Listen for save
 		this.saveHandler = (event: CustomEvent) => {
 			void (async () => {
 				const { exercise, isNew } = event.detail as SaveExerciseResult;
-
 				try {
-					// Save the exercise
 					await this.plugin.storage.saveCustomExercise(exercise);
-
-					// Call callback if provided
 					if (this.onSave) {
 						this.onSave({ exercise, isNew });
 					}
-
 					this.close();
 				} catch (error) {
 					console.error("Failed to save custom exercise:", error);
@@ -68,7 +61,6 @@ export class CustomExerciseModal extends Modal {
 			})();
 		};
 
-		// Listen for cancel
 		this.cancelHandler = () => {
 			if (this.onCancel) {
 				this.onCancel();

@@ -307,7 +307,6 @@ export class ExercisePickerModal extends Modal {
 			this.muscleSelectionHandler as EventListener
 		);
 
-		// Listen for create exercise request
 		this.createExerciseHandler = () => {
 			const createModal = new CustomExerciseModal(this.plugin, {
 				onSave: () => {
@@ -322,7 +321,6 @@ export class ExercisePickerModal extends Modal {
 			this.createExerciseHandler
 		);
 
-		// Listen for edit exercise request
 		this.editExerciseHandler = (event: CustomEvent) => {
 			const { exercise } = event.detail as { exercise: Exercise };
 			const editModal = new CustomExerciseModal(this.plugin, {
@@ -339,7 +337,6 @@ export class ExercisePickerModal extends Modal {
 			this.editExerciseHandler as EventListener
 		);
 
-		// Listen for delete exercise request
 		this.deleteExerciseHandler = (event: CustomEvent) => {
 			void (async () => {
 				const { exerciseId } = event.detail as { exerciseId: string };
@@ -363,16 +360,13 @@ export class ExercisePickerModal extends Modal {
 	 * Refresh exercise list and remount component
 	 */
 	private async refreshExercises(): Promise<void> {
-		// Reload exercises from storage
 		this.exercises = await this.plugin.storage.loadExerciseLibrary();
 
-		// Reload favorites
 		const splitIdForFavorites = this.currentSplit?.id || "global";
 		this.favoriteExercises =
 			await this.plugin.storage.getFavoriteExercises(splitIdForFavorites);
 		this.favoriteIds = new Set(this.favoriteExercises.map((e) => e.id));
 
-		// Get recent exercises
 		const recentExercises: Exercise[] = [];
 		if (this.plugin.activeWorkout) {
 			const recentIds = new Set<string>();
@@ -394,7 +388,6 @@ export class ExercisePickerModal extends Modal {
 			}
 		}
 
-		// Determine selected muscles
 		let selectedMuscles: string[] = [];
 		if (this.currentSplit && this.currentSplit.muscleGroups.length > 0) {
 			const allMajorMuscles = [

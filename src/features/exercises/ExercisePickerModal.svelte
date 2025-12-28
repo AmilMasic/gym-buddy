@@ -122,28 +122,23 @@
 		document.dispatchEvent(event);
 	}
 
+	let deleteConfirmId = $state<string | null>(null);
+
 	function deleteExercise(exerciseId: string, e: MouseEvent) {
 		e.stopPropagation();
-		// Show confirmation state
 		if (deleteConfirmId === exerciseId) {
-			// Second click - actually delete
 			const event = new CustomEvent('delete-exercise', {
 				detail: { exerciseId }
 			});
 			document.dispatchEvent(event);
 			deleteConfirmId = null;
 		} else {
-			// First click - show confirmation
 			deleteConfirmId = exerciseId;
-			// Auto-reset after 3 seconds
 			setTimeout(() => {
 				deleteConfirmId = null;
 			}, 3000);
 		}
 	}
-
-	// Track which exercise is in delete confirmation state
-	let deleteConfirmId = $state<string | null>(null);
 
 	function isCustomExercise(exercise: Exercise): boolean {
 		return exercise.source === 'custom';

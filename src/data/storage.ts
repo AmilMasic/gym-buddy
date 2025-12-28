@@ -207,17 +207,13 @@ export class Storage {
 			({} as PluginData);
 
 		const customExercises = data.exercises || [];
-
-		// Check if exercise already exists (by ID)
 		const existingIndex = customExercises.findIndex(
 			(ex) => ex.id === exercise.id
 		);
 
 		if (existingIndex >= 0) {
-			// Update existing
 			customExercises[existingIndex] = { ...exercise, source: "custom" };
 		} else {
-			// Add new
 			customExercises.push({ ...exercise, source: "custom" });
 		}
 
