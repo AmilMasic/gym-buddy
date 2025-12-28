@@ -225,10 +225,6 @@ Mobile-first design with touch-friendly targets
 	flex-wrap: wrap;
 }
 
-.gb-set-input-row--time {
-	/* Time row: minutes and seconds side by side */
-}
-
 .gb-set-input-row--time .gb-stepper {
 	flex: 1;
 	min-width: 120px;
