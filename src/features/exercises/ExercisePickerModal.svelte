@@ -122,22 +122,12 @@
 		document.dispatchEvent(event);
 	}
 
-	let deleteConfirmId = $state<string | null>(null);
-
 	function deleteExercise(exerciseId: string, e: MouseEvent) {
 		e.stopPropagation();
-		if (deleteConfirmId === exerciseId) {
-			const event = new CustomEvent('delete-exercise', {
-				detail: { exerciseId }
-			});
-			document.dispatchEvent(event);
-			deleteConfirmId = null;
-		} else {
-			deleteConfirmId = exerciseId;
-			setTimeout(() => {
-				deleteConfirmId = null;
-			}, 3000);
-		}
+		const event = new CustomEvent('delete-exercise', {
+			detail: { exerciseId }
+		});
+		document.dispatchEvent(event);
 	}
 
 	function isCustomExercise(exercise: Exercise): boolean {
@@ -347,10 +337,10 @@
 									onclick={(e) => openEditExercise(exercise, e)}
 								/>
 								<IconButton
-									icon={deleteConfirmId === exercise.id ? "check" : "trash-2"}
-									variant={deleteConfirmId === exercise.id ? "danger" : "ghost"}
+									icon="trash-2"
+									variant="ghost"
 									size="sm"
-									ariaLabel={deleteConfirmId === exercise.id ? "Confirm delete" : "Delete exercise"}
+									ariaLabel="Delete exercise"
 									onclick={(e) => deleteExercise(exercise.id, e)}
 								/>
 							{/if}

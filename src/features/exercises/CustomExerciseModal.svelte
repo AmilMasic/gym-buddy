@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import type { Exercise, ExerciseType, WeightUnit } from '../../types';
 	import { Button, Chip, Input, Select, IconButton } from '../../ui/components';
 
@@ -9,13 +10,24 @@
 
 	let { exercise = null, defaultUnit = 'lbs' }: CustomExerciseModalProps = $props();
 
-	let name = $state(exercise?.name || '');
-	let selectedMuscles = $state<string[]>(exercise?.muscles || []);
-	let exerciseType = $state<ExerciseType>(exercise?.type || 'weight');
-	let secondaryMuscles = $state<string[]>(exercise?.secondaryMuscles || []);
-	let equipment = $state(exercise?.equipment || '');
-	let force = $state<'push' | 'pull' | 'static' | ''>(exercise?.force || '');
-	let instructions = $state(exercise?.instructions?.join('\n') || '');
+	// Extract initial values - untrack since we only want initial values, not reactive updates
+	const initial = untrack(() => ({
+		name: exercise?.name || '',
+		muscles: exercise?.muscles || [],
+		type: exercise?.type || 'weight',
+		secondaryMuscles: exercise?.secondaryMuscles || [],
+		equipment: exercise?.equipment || '',
+		force: exercise?.force || '',
+		instructions: exercise?.instructions?.join('\n') || ''
+	}));
+
+	let name = $state(initial.name);
+	let selectedMuscles = $state<string[]>([...initial.muscles]);
+	let exerciseType = $state<ExerciseType>(initial.type);
+	let secondaryMuscles = $state<string[]>([...initial.secondaryMuscles]);
+	let equipment = $state(initial.equipment);
+	let force = $state<'push' | 'pull' | 'static' | ''>(initial.force);
+	let instructions = $state(initial.instructions);
 	let showAdvanced = $state(false);
 
 	const AVAILABLE_MUSCLES = [
