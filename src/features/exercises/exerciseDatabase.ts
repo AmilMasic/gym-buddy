@@ -94,9 +94,11 @@ export class ExerciseDatabase {
 		const exerciseType =
 			CATEGORY_TO_TYPE[external.category.toLowerCase()] || "weight";
 
-		// Add "Cardio" to muscles array for cardio exercises so they appear in the Cardio filter
-		if (exerciseType === "cardio" && !primaryMuscles.includes("Cardio")) {
-			primaryMuscles.unshift("Cardio");
+		// For cardio exercises, use ONLY "Cardio" as the muscle group
+		// This prevents cardio exercises from appearing under muscle filters like Quadriceps
+		if (exerciseType === "cardio") {
+			primaryMuscles.length = 0;
+			primaryMuscles.push("Cardio");
 		}
 
 		// Special case: Rucking tracks weight (pack weight) in addition to distance/time
