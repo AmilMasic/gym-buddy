@@ -4,6 +4,7 @@
 
 export type ExerciseType = "weight" | "bodyweight" | "timed" | "cardio";
 export type WeightUnit = "lbs" | "kg";
+export type DistanceUnit = "mi" | "km";
 
 export type Exercise = {
 	id: string;
@@ -113,6 +114,7 @@ export type WeeklySchedule = {
 export type GymBuddySettings = {
 	workoutFolder: string; // Default: "Workouts"
 	defaultUnit: WeightUnit;
+	defaultDistanceUnit: DistanceUnit;
 	showRPE: boolean;
 	restTimerEnabled: boolean;
 	restTimerDuration: number; // seconds (default: 90)
@@ -151,6 +153,7 @@ export type GymBuddySettings = {
 export const DEFAULT_SETTINGS: GymBuddySettings = {
 	workoutFolder: "Workouts",
 	defaultUnit: "lbs",
+	defaultDistanceUnit: "mi",
 	showRPE: true,
 	restTimerEnabled: true,
 	restTimerDuration: 90,

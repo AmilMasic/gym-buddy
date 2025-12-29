@@ -72,14 +72,16 @@ export class WorkoutParser {
 			const hasWeight = exercise.sets.some((s) => s.weight !== undefined);
 			const hasReps = exercise.sets.some((s) => s.reps !== undefined);
 			const hasTime = exercise.sets.some((s) => s.time !== undefined);
+			const hasDistance = exercise.sets.some((s) => s.distance !== undefined);
 			const hasRPE = exercise.sets.some((s) => s.rpe !== undefined);
 
-			if (hasWeight || hasReps || hasTime || hasRPE) {
+			if (hasWeight || hasReps || hasTime || hasDistance || hasRPE) {
 				// Build header row
 				const headers = ["Set"];
 				if (hasWeight) headers.push("Weight");
 				if (hasReps) headers.push("Reps");
 				if (hasTime) headers.push("Time");
+				if (hasDistance) headers.push("Distance");
 				if (hasRPE) headers.push("RPE");
 
 				lines.push(`| ${headers.join(" | ")} |`);
@@ -94,6 +96,7 @@ export class WorkoutParser {
 						const timeStr = set.time ? `${set.time}s` : "";
 						cells.push(timeStr);
 					}
+					if (hasDistance) cells.push(set.distance?.toString() || "");
 					if (hasRPE) cells.push(set.rpe?.toString() || "");
 					lines.push(`| ${cells.join(" | ")} |`);
 				}
@@ -271,6 +274,14 @@ export class WorkoutParser {
 					const timeMatch = value.match(/(\d+)s?/);
 					if (timeMatch && timeMatch[1]) {
 						set.time = parseInt(timeMatch[1], 10);
+					}
+					break;
+				}
+				case "distance": {
+					// Parse distance value (e.g., "1.5" or "2.4")
+					const distMatch = value.match(/(\d+\.?\d*)/);
+					if (distMatch && distMatch[1]) {
+						set.distance = parseFloat(distMatch[1]);
 					}
 					break;
 				}

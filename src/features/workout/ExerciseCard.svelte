@@ -9,8 +9,18 @@
 		exerciseInfo = null,
 		showRPE = true,
 		unit = "lbs",
+		distanceUnit = "mi",
 		onToggleComplete,
 	}: ExerciseCardProps = $props();
+
+	// Format time in seconds to human readable format
+	function formatTime(seconds: number): string {
+		const mins = Math.floor(seconds / 60);
+		const secs = seconds % 60;
+		if (mins === 0) return `${secs}s`;
+		if (secs === 0) return `${mins}m`;
+		return `${mins}m ${secs}s`;
+	}
 
 	let expanded = $state(true);
 	let currentSet = $state<WorkoutSet>({
@@ -141,13 +151,12 @@
 						>
 							<div class="gb-set-number">Set {set.setNumber}</div>
 							<div class="gb-set-details">
-								{#if set.weight}<span>{set.weight} {unit}</span
-									>{/if}
+								{#if set.weight}<span>{set.weight} {unit}</span>{/if}
 								{#if set.weight && set.reps}<span> x </span>{/if}
 								{#if set.reps}<span>{set.reps} reps</span>{/if}
-								{#if set.rpe}<span class="gb-set-rpe">
-										@ RPE {set.rpe}</span
-									>{/if}
+								{#if set.time}<span class="gb-set-time">{formatTime(set.time)}</span>{/if}
+								{#if set.distance}<span class="gb-set-distance">{set.distance} {distanceUnit}</span>{/if}
+								{#if set.rpe}<span class="gb-set-rpe">@ RPE {set.rpe}</span>{/if}
 							</div>
 							<Icon name="check" size={16} class="gb-set-check" />
 						</div>
@@ -162,8 +171,13 @@
 					bind:set={currentSet}
 					{showRPE}
 					{unit}
+					{distanceUnit}
 					{lastSet}
 					onLogSet={handleLogSet}
+					trackWeight={exerciseInfo?.trackWeight ?? true}
+					trackReps={exerciseInfo?.trackReps ?? true}
+					trackTime={exerciseInfo?.trackTime ?? false}
+					trackDistance={exerciseInfo?.trackDistance ?? false}
 				/>
 			</div>
 		</div>

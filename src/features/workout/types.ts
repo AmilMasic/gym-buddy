@@ -5,6 +5,7 @@ export type ActiveWorkoutViewProps = {
   exercises: Exercise[];
   showRPE?: boolean;
   unit?: string;
+  distanceUnit?: string;
   splitName?: string;
 };
 
@@ -14,6 +15,7 @@ export type ExerciseCardProps = {
   exerciseInfo?: Exercise | null;
   showRPE?: boolean;
   unit?: string;
+  distanceUnit?: string;
   onToggleComplete?: (exerciseIndex: number, isCompleted: boolean) => void;
 };
 
