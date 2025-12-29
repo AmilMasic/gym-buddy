@@ -199,6 +199,42 @@ export class Storage {
 	}
 
 	/**
+	 * Save a single custom exercise (add or update)
+	 */
+	async saveCustomExercise(exercise: Exercise): Promise<void> {
+		const data =
+			((await this.plugin.loadData()) as PluginData | null) ||
+			({} as PluginData);
+
+		const customExercises = data.exercises || [];
+		const existingIndex = customExercises.findIndex(
+			(ex) => ex.id === exercise.id
+		);
+
+		if (existingIndex >= 0) {
+			customExercises[existingIndex] = { ...exercise, source: "custom" };
+		} else {
+			customExercises.push({ ...exercise, source: "custom" });
+		}
+
+		data.exercises = customExercises;
+		await this.plugin.saveData(data);
+	}
+
+	/**
+	 * Delete a custom exercise by ID
+	 */
+	async deleteCustomExercise(exerciseId: string): Promise<void> {
+		const data =
+			((await this.plugin.loadData()) as PluginData | null) ||
+			({} as PluginData);
+
+		const customExercises = data.exercises || [];
+		data.exercises = customExercises.filter((ex) => ex.id !== exerciseId);
+		await this.plugin.saveData(data);
+	}
+
+	/**
 	 * Load PR records from plugin data
 	 */
 	async loadPRRecords(): Promise<PRRecord[]> {
