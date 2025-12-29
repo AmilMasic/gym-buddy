@@ -1,6 +1,6 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import type GymBuddyPlugin from "../main";
-import { WeightUnit } from "../types";
+import { WeightUnit, DistanceUnit } from "../types";
 import { BUILT_IN_TEMPLATES } from "../features/splits/splitTemplates";
 
 /**
@@ -49,7 +49,7 @@ export class GymBuddySettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName("Default unit")
+			.setName("Default weight unit")
 			.setDesc("Default weight unit (lbs or kg)")
 			.addDropdown((dropdown) =>
 				dropdown
@@ -58,6 +58,20 @@ export class GymBuddySettingTab extends PluginSettingTab {
 					.setValue(settings.defaultUnit)
 					.onChange(async (value: WeightUnit) => {
 						settings.defaultUnit = value;
+						await this.gbPlugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Default distance unit")
+			.setDesc("Default distance unit for cardio exercises")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption("mi", "Miles")
+					.addOption("km", "Kilometers")
+					.setValue(settings.defaultDistanceUnit)
+					.onChange(async (value: DistanceUnit) => {
+						settings.defaultDistanceUnit = value;
 						await this.gbPlugin.saveSettings();
 					})
 			);

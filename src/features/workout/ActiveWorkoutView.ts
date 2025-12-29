@@ -110,6 +110,7 @@ export class ActiveWorkoutView extends ItemView {
 				exercises: this.exercises,
 				showRPE: this.plugin.settings.showRPE,
 				unit: this.plugin.settings.defaultUnit,
+				distanceUnit: this.plugin.settings.defaultDistanceUnit,
 				splitName: this.getSplitName(),
 			},
 		});

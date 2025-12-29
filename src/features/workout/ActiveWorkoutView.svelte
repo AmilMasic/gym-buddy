@@ -10,6 +10,7 @@
 		exercises,
 		showRPE = true,
 		unit = "lbs",
+		distanceUnit = "mi",
 		splitName = "",
 	}: ActiveWorkoutViewProps = $props();
 
@@ -58,6 +59,7 @@
 					exerciseInfo={getExerciseInfo(exercise.exerciseId)}
 					{showRPE}
 					{unit}
+					{distanceUnit}
 				/>
 			{/each}
 		</div>
