@@ -136,11 +136,11 @@ SORT date DESC
 
 Planned:
 
-- Add custom exercises
-- Rename exercises
 - Exercise history view
 - Periodization support
 - Streak tracker & badges
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 Open to suggestions — [open an issue](https://github.com/AmilMasic/gym-buddy/issues)!
 
